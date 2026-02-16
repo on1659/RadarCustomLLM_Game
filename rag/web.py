@@ -161,13 +161,20 @@ HTML = """<!DOCTYPE html>
     .menu-btn { display: block; }
     .header h1 { font-size: 15px; }
     .header p { font-size: 11px; }
-    .msg { padding: 10px 14px; font-size: 13.5px; }
-    .user { max-width: 80%; }
+    .msg { padding: 8px 12px; font-size: 13px; line-height: 1.5; margin: 6px 8px; max-width: 85%; border-radius: 10px; }
+    .user { max-width: 75%; margin-left: auto; margin-right: 8px; }
+    .bot { max-width: 85%; margin-left: 8px; }
+    .system-msg { margin: 6px 8px; padding: 6px 10px; font-size: 11px; }
+    .bot .sources { font-size: 10px; }
     .input-wrap { gap: 6px; }
     input { font-size: 14px; padding: 10px 12px; }
-    button.send-btn { padding: 10px 16px; font-size: 14px; }
-    .theme-panel { right: 8px; width: 260px; top: 50px; }
-    .chat { padding: 16px 12px; }
+    button.send-btn { padding: 10px 14px; font-size: 13px; }
+    .theme-panel { right: 8px; width: 240px; top: 46px; padding: 14px; }
+    .chat { padding: 8px 4px; }
+    .header { padding: 10px 14px; }
+    .header .clear-btn { padding: 4px 10px; font-size: 11px; }
+    .input-area { padding: 10px 12px; }
+    .empty-state { font-size: 15px; }
   }
 </style>
 </head><body>
