@@ -489,6 +489,22 @@ def tokenize_ko(text):
                     tokens.append(t[i:i+3])
     return tokens if tokens else raw_tokens
 
+def dedupe_sentences(text):
+    """반복 문장 제거"""
+    sentences = re.split(r'(?<=[.다요함임])\s+', text)
+    seen = set()
+    result = []
+    for s in sentences:
+        s = s.strip()
+        if not s:
+            continue
+        # 정규화해서 비교 (공백/조사 차이 무시)
+        key = re.sub(r'\s+', '', s)[:50]
+        if key not in seen:
+            seen.add(key)
+            result.append(s)
+    return ' '.join(result)
+
 def get_db():
     global db, bm25_index, bm25_docs
     if db is None:
@@ -609,7 +625,7 @@ class Handler(BaseHTTPRequestHandler):
             results = merged
 
             if game_filter:
-                results = [d for d in results if d.metadata.get("game", "") == game_filter][:5]
+                results = [d for d in results if d.metadata.get("game", "") == game_filter][:3]
             else:
                 found_games = set()
                 for doc in results:
@@ -628,14 +644,14 @@ class Handler(BaseHTTPRequestHandler):
                     conn.close()
                     self._json({"answer": ask_msg, "sources": [], "ask_game": True, "games": game_list, "session_id": session_id})
                     return
-                results = results[:5]
+                results = results[:3]
 
             context = ""
             sources = []
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
-                chunk = doc.page_content[:800]
+                chunk = doc.page_content[:400]
                 context += f"\n[{game} - {title}]\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
@@ -666,16 +682,19 @@ class Handler(BaseHTTPRequestHandler):
 
             payload = {
                 "prompt": prompt,
-                "n_predict": 256,
+                "n_predict": 150,
                 "temperature": 0.1,
-                "repeat_penalty": 1.5,
-                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "참고 자료:"],
+                "repeat_penalty": 1.8,
+                "frequency_penalty": 0.5,
+                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "참고 자료:", "당신은", "정답:", "\n\n\n"],
             }
             try:
                 resp = requests.post(LLAMA_URL, json=payload, timeout=60)
                 resp.raise_for_status()
                 result = resp.json()
                 answer = result.get("content", "").strip() or "응답을 생성할 수 없습니다."
+                # 후처리: 반복 문장 제거
+                answer = dedupe_sentences(answer)
             except Exception as e:
                 answer = f"LLM 오류: {e}"
 

@@ -376,3 +376,24 @@ prompt eval time =    5518.69 ms /  2860 tokens (    1.93 ms per token,   518.24
 slot      release: id  3 | task 851 | stop processing: n_tokens = 3098, truncated = 0
 srv  update_slots: all slots are idle
 srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = 81331589079
+slot launch_slot_: id  2 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  2 | task 1092 | processing task, is_child = 0
+slot update_slots: id  2 | task 1092 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 2314
+slot update_slots: id  2 | task 1092 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  2 | task 1092 | prompt processing progress, n_tokens = 2048, batch.n_tokens = 2048, progress = 0.885048
+decode: failed to find a memory slot for batch of size 2048
+srv  try_clear_id: purging slot 3 with 3098 tokens
+slot prompt_clear: id  3 | task -1 | clearing prompt with 3098 tokens
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 0, n_batch = 2048, ret = 1
+slot update_slots: id  2 | task 1092 | n_tokens = 2048, memory_seq_rm [2048, end)
+slot update_slots: id  2 | task 1092 | prompt processing progress, n_tokens = 2314, batch.n_tokens = 266, progress = 1.000000
+slot update_slots: id  2 | task 1092 | prompt done, n_tokens = 2314, batch.n_tokens = 266
+slot init_sampler: id  2 | task 1092 | init sampler, took 0.19 ms, tokens: text = 2314, total = 2314
+slot print_timing: id  2 | task 1092 | 
+prompt eval time =    4429.03 ms /  2314 tokens (    1.91 ms per token,   522.46 tokens per second)
+       eval time =    3149.09 ms /   140 tokens (   22.49 ms per token,    44.46 tokens per second)
+      total time =    7578.12 ms /  2454 tokens
+slot      release: id  2 | task 1092 | stop processing: n_tokens = 2453, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200
