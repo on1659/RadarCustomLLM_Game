@@ -348,3 +348,31 @@ prompt eval time =    4424.61 ms /  2314 tokens (    1.91 ms per token,   522.98
 slot      release: id  0 | task 593 | stop processing: n_tokens = 2569, truncated = 0
 srv  update_slots: all slots are idle
 srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = 80375656100
+srv  get_availabl: updating prompt cache
+srv   prompt_save:  - saving prompt with length 591, total state size = 20.785 MiB
+srv          load:  - looking for better prompt, base f_keep = 0.000, sim = 0.000
+srv        update:  - cache state: 2 prompts, 41.429 MiB (limits: 8192.000 MiB, 4096 tokens, 232931 est)
+srv        update:    - prompt 0x600000dcaa90:     587 tokens, checkpoints:  0,    20.644 MiB
+srv        update:    - prompt 0x600000dcc090:     591 tokens, checkpoints:  0,    20.785 MiB
+srv  get_availabl: prompt cache update took 1.58 ms
+slot launch_slot_: id  3 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  3 | task 851 | processing task, is_child = 0
+slot update_slots: id  3 | task 851 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 2860
+slot update_slots: id  3 | task 851 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  3 | task 851 | prompt processing progress, n_tokens = 2048, batch.n_tokens = 2048, progress = 0.716084
+decode: failed to find a memory slot for batch of size 2048
+srv  try_clear_id: purging slot 0 with 2569 tokens
+slot prompt_clear: id  0 | task -1 | clearing prompt with 2569 tokens
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 0, n_batch = 2048, ret = 1
+slot update_slots: id  3 | task 851 | n_tokens = 2048, memory_seq_rm [2048, end)
+slot update_slots: id  3 | task 851 | prompt processing progress, n_tokens = 2860, batch.n_tokens = 812, progress = 1.000000
+slot update_slots: id  3 | task 851 | prompt done, n_tokens = 2860, batch.n_tokens = 812
+slot init_sampler: id  3 | task 851 | init sampler, took 0.24 ms, tokens: text = 2860, total = 2860
+slot print_timing: id  3 | task 851 | 
+prompt eval time =    5518.69 ms /  2860 tokens (    1.93 ms per token,   518.24 tokens per second)
+       eval time =    5484.55 ms /   239 tokens (   22.95 ms per token,    43.58 tokens per second)
+      total time =   11003.24 ms /  3099 tokens
+slot      release: id  3 | task 851 | stop processing: n_tokens = 3098, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200

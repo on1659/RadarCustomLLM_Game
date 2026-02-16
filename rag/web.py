@@ -96,12 +96,12 @@ HTML = """<!DOCTYPE html>
   /* 사이드바 */
   .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
   .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); }
-  .sidebar-header button { width: 100%; padding: 10px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 500; }
-  .sidebar-header button:hover { background: var(--accent-hover); }
+  .sidebar-header button { width: 100%; padding: 10px; background: var(--c-pale); color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 500; }
+  .sidebar-header button:hover { background: var(--danger-hover); }
   .session-list { flex: 1; overflow-y: auto; padding: 8px; }
   .session-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-light); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
   .session-item:hover { background: var(--c-light); }
-  .session-item.active { background: var(--c-mid); color: var(--text); font-weight: 500; }
+  .session-item.active { background: var(--c-mid); color: var(--text); font-weight: 500; border-left: 3px solid var(--c-pale); }
   .session-item .delete-btn { margin-left: auto; opacity: 0; color: var(--text-pale); font-size: 16px; flex-shrink: 0; transition: opacity 0.15s; }
   .session-item:hover .delete-btn { opacity: 1; }
   .session-item .delete-btn:hover { color: var(--danger); }
@@ -117,22 +117,22 @@ HTML = """<!DOCTYPE html>
   .msg { max-width: 700px; margin: 12px auto; padding: 14px 18px; border-radius: 12px; line-height: 1.7; font-size: 14.5px; }
   .user { background: var(--bg-user); color: var(--text-user); margin-left: auto; max-width: 500px; text-align: right; border-radius: 12px 12px 2px 12px; }
   .bot { background: var(--bg-bot); color: var(--text-bot); border: 1px solid var(--border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.04); border-radius: 12px 12px 12px 2px; }
-  .bot .sources { font-size: 12px; color: var(--text-pale); margin-top: 8px; border-top: 1px solid var(--border-light); padding-top: 8px; }
+  .bot .sources { font-size: 12px; color: var(--text-pale); margin-top: 8px; border-top: 1px solid var(--c-pale); padding-top: 8px; opacity: 0.8; }
   .system-msg { max-width: 700px; margin: 12px auto; padding: 10px 16px; border-radius: 8px; background: var(--bg-system); border: 1px solid var(--c-light); color: var(--c-dark); font-size: 13px; text-align: center; }
   .input-area { padding: 16px 24px; background: var(--bg-header); border-top: 1px solid var(--border); }
   .input-wrap { max-width: 700px; margin: 0 auto; display: flex; gap: 10px; }
   input { flex: 1; padding: 12px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px; outline: none; transition: border 0.15s; }
-  input:focus { border-color: var(--accent); }
+  input:focus { border-color: var(--c-pale); }
   input::placeholder { color: var(--text-pale); }
-  button.send-btn { padding: 12px 24px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 500; transition: background 0.15s; }
-  button.send-btn:hover { background: var(--accent-hover); }
+  button.send-btn { padding: 12px 24px; background: var(--c-pale); color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 500; transition: background 0.15s; }
+  button.send-btn:hover { background: var(--danger-hover); }
   button.send-btn:disabled { background: var(--border); cursor: not-allowed; }
   .loading { color: var(--text-pale); font-style: italic; }
   .empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-pale); font-size: 18px; }
 
   /* 게임 선택 버튼 */
-  .game-btns button { background: var(--accent) !important; transition: background 0.15s; }
-  .game-btns button:hover { background: var(--accent-hover) !important; }
+  .game-btns button { background: var(--c-pale) !important; transition: background 0.15s; }
+  .game-btns button:hover { background: var(--danger-hover) !important; }
 
   /* 테마 패널 */
   .theme-panel { display: none; position: absolute; top: 56px; right: 24px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 100; width: 280px; }
