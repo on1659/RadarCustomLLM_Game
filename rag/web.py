@@ -59,44 +59,80 @@ HTML = """<!DOCTYPE html>
 <meta charset="utf-8">
 <title>🎮 게임위키 AI</title>
 <style>
+  /* ── 🎨 테마 (여기만 바꾸면 전체 적용) ── */
+  :root {
+    --c-dark:     #96A78D;   /* 진한 세이지 — 액센트, 버튼 */
+    --c-mid:      #B6CEB4;   /* 중간 세이지 — 사이드바, 호버 */
+    --c-light:    #D9E9CF;   /* 연한 세이지 — 유저 메시지, 배경 */
+    --c-pale:     #F0F0F0;   /* 오프화이트 — 메인 배경 */
+
+    --bg-body:    #f7f7f5;
+    --bg-sidebar: #eef3eb;
+    --bg-header:  #e8efe4;
+    --bg-input:   #ffffff;
+    --bg-chat:    #f7f7f5;
+    --bg-user:    var(--c-dark);
+    --bg-bot:     #ffffff;
+    --bg-system:  #eef6e8;
+
+    --border:     #d4ddd0;
+    --border-light: #e2ebe0;
+
+    --text:       #2c3e2c;
+    --text-light: #6b7b6b;
+    --text-pale:  #8a9a8a;
+    --text-user:  #ffffff;
+    --text-bot:   #2c3e2c;
+
+    --accent:     var(--c-dark);
+    --accent-hover: #849a7b;
+    --danger:     #c45;
+    --danger-hover: #b33;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, sans-serif; background: #0a0a0a; color: #e0e0e0; height: 100vh; display: flex; }
+  body { font-family: -apple-system, 'Pretendard', sans-serif; background: var(--bg-body); color: var(--text); height: 100vh; display: flex; }
 
   /* 사이드바 */
-  .sidebar { width: 260px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; flex-shrink: 0; }
-  .sidebar-header { padding: 16px; border-bottom: 1px solid #222; }
-  .sidebar-header button { width: 100%; padding: 10px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; }
-  .sidebar-header button:hover { background: #3a7bc8; }
+  .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-header button { width: 100%; padding: 10px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 500; }
+  .sidebar-header button:hover { background: var(--accent-hover); }
   .session-list { flex: 1; overflow-y: auto; padding: 8px; }
-  .session-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #bbb; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; }
-  .session-item:hover { background: #1a1a2e; }
-  .session-item.active { background: #1a3a5c; color: #fff; }
-  .session-item .delete-btn { margin-left: auto; opacity: 0; color: #888; font-size: 16px; flex-shrink: 0; }
+  .session-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-light); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
+  .session-item:hover { background: var(--c-light); }
+  .session-item.active { background: var(--c-mid); color: var(--text); font-weight: 500; }
+  .session-item .delete-btn { margin-left: auto; opacity: 0; color: var(--text-pale); font-size: 16px; flex-shrink: 0; transition: opacity 0.15s; }
   .session-item:hover .delete-btn { opacity: 1; }
-  .session-item .delete-btn:hover { color: #e44; }
+  .session-item .delete-btn:hover { color: var(--danger); }
 
   /* 메인 */
   .main { flex: 1; display: flex; flex-direction: column; }
-  .header { padding: 16px 24px; background: #111; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
-  .header h1 { font-size: 18px; }
-  .header p { font-size: 12px; color: #888; }
-  .header .clear-btn { padding: 6px 14px; background: #333; color: #aaa; border: 1px solid #444; border-radius: 6px; font-size: 12px; cursor: pointer; }
-  .header .clear-btn:hover { background: #444; color: #fff; }
-  .chat { flex: 1; overflow-y: auto; padding: 24px; }
-  .msg { max-width: 700px; margin: 12px auto; padding: 14px 18px; border-radius: 12px; line-height: 1.6; }
-  .user { background: #1a3a5c; margin-left: auto; max-width: 500px; text-align: right; }
-  .bot { background: #1a1a2e; border: 1px solid #333; }
-  .bot .sources { font-size: 12px; color: #666; margin-top: 8px; border-top: 1px solid #333; padding-top: 8px; }
-  .system-msg { max-width: 700px; margin: 12px auto; padding: 10px 16px; border-radius: 8px; background: #1a2a1a; border: 1px solid #2a4a2a; color: #8c8; font-size: 13px; text-align: center; }
-  .input-area { padding: 16px 24px; background: #111; border-top: 1px solid #222; }
+  .header { padding: 16px 24px; background: var(--bg-header); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; color: var(--text); }
+  .header p { font-size: 12px; color: var(--text-pale); }
+  .header .clear-btn { padding: 6px 14px; background: var(--c-light); color: var(--text-light); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .header .clear-btn:hover { background: var(--c-mid); color: var(--text); }
+  .chat { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg-chat); }
+  .msg { max-width: 700px; margin: 12px auto; padding: 14px 18px; border-radius: 12px; line-height: 1.7; font-size: 14.5px; }
+  .user { background: var(--bg-user); color: var(--text-user); margin-left: auto; max-width: 500px; text-align: right; border-radius: 12px 12px 2px 12px; }
+  .bot { background: var(--bg-bot); color: var(--text-bot); border: 1px solid var(--border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.04); border-radius: 12px 12px 12px 2px; }
+  .bot .sources { font-size: 12px; color: var(--text-pale); margin-top: 8px; border-top: 1px solid var(--border-light); padding-top: 8px; }
+  .system-msg { max-width: 700px; margin: 12px auto; padding: 10px 16px; border-radius: 8px; background: var(--bg-system); border: 1px solid var(--c-light); color: var(--c-dark); font-size: 13px; text-align: center; }
+  .input-area { padding: 16px 24px; background: var(--bg-header); border-top: 1px solid var(--border); }
   .input-wrap { max-width: 700px; margin: 0 auto; display: flex; gap: 10px; }
-  input { flex: 1; padding: 12px 16px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 15px; outline: none; }
-  input:focus { border-color: #4a90d9; }
-  button.send-btn { padding: 12px 24px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
-  button.send-btn:hover { background: #3a7bc8; }
-  button.send-btn:disabled { background: #333; cursor: not-allowed; }
-  .loading { color: #888; font-style: italic; }
-  .empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #555; font-size: 18px; }
+  input { flex: 1; padding: 12px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px; outline: none; transition: border 0.15s; }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--text-pale); }
+  button.send-btn { padding: 12px 24px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 500; transition: background 0.15s; }
+  button.send-btn:hover { background: var(--accent-hover); }
+  button.send-btn:disabled { background: var(--border); cursor: not-allowed; }
+  .loading { color: var(--text-pale); font-style: italic; }
+  .empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-pale); font-size: 18px; }
+
+  /* 게임 선택 버튼 */
+  .game-btns button { background: var(--accent) !important; transition: background 0.15s; }
+  .game-btns button:hover { background: var(--accent-hover) !important; }
 
   /* 모바일 */
   @media (max-width: 768px) {
