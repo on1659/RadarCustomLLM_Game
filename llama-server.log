@@ -1,6 +1,6 @@
 ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
 ggml_metal_library_init: using embedded metal library
-ggml_metal_library_init: loaded in 0.031 sec
+ggml_metal_library_init: loaded in 0.009 sec
 ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
 ggml_metal_device_init: GPU name:   MTL0
 ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
@@ -26,10 +26,10 @@ start: binding port with default address family
 main: loading model
 srv    load_model: loading model 'models/Qwen2.5-3B-Instruct.Q4_K_M.gguf'
 common_init_result: fitting params to device memory, for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on
-llama_params_fit_impl: projected to use 2175 MiB of device memory vs. 10922 MiB of free device memory
-llama_params_fit_impl: will leave 8746 >= 1024 MiB of free device memory, no changes needed
+llama_params_fit_impl: projected to use 2279 MiB of device memory vs. 10922 MiB of free device memory
+llama_params_fit_impl: will leave 8642 >= 1024 MiB of free device memory, no changes needed
 llama_params_fit: successfully fit params to free device memory
-llama_params_fit: fitting params to free memory took 0.12 seconds
+llama_params_fit: fitting params to free memory took 0.11 seconds
 llama_model_load_from_file_impl: using device MTL0 (Apple M4) (unknown id) - 10922 MiB free
 llama_model_loader: loaded meta data with 26 key-value pairs and 434 tensors from models/Qwen2.5-3B-Instruct.Q4_K_M.gguf (version GGUF V3 (latest))
 llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
@@ -148,16 +148,16 @@ common_init_result: added <|repo_name|> logit bias = -inf
 common_init_result: added <|file_sep|> logit bias = -inf
 llama_context: constructing llama_context
 llama_context: n_seq_max     = 4
-llama_context: n_ctx         = 1024
-llama_context: n_ctx_seq     = 1024
-llama_context: n_batch       = 1024
+llama_context: n_ctx         = 4096
+llama_context: n_ctx_seq     = 4096
+llama_context: n_batch       = 2048
 llama_context: n_ubatch      = 512
 llama_context: causal_attn   = 1
 llama_context: flash_attn    = auto
 llama_context: kv_unified    = true
 llama_context: freq_base     = 1000000.0
 llama_context: freq_scale    = 1
-llama_context: n_ctx_seq (1024) < n_ctx_train (32768) -- the full capacity of the model will not be utilized
+llama_context: n_ctx_seq (4096) < n_ctx_train (32768) -- the full capacity of the model will not be utilized
 ggml_metal_init: allocating
 ggml_metal_init: found device: Apple M4
 ggml_metal_init: picking default device: Apple M4
@@ -165,12 +165,12 @@ ggml_metal_init: use fusion         = true
 ggml_metal_init: use concurrency    = true
 ggml_metal_init: use graph optimize = true
 llama_context:        CPU  output buffer size =     2.32 MiB
-llama_kv_cache:       MTL0 KV buffer size =    36.00 MiB
-llama_kv_cache: size =   36.00 MiB (  1024 cells,  36 layers,  4/1 seqs), K (f16):   18.00 MiB, V (f16):   18.00 MiB
+llama_kv_cache:       MTL0 KV buffer size =   144.00 MiB
+llama_kv_cache: size =  144.00 MiB (  4096 cells,  36 layers,  4/1 seqs), K (f16):   72.00 MiB, V (f16):   72.00 MiB
 sched_reserve: reserving ...
 sched_reserve: Flash Attention was auto, set to enabled
-sched_reserve:       MTL0 compute buffer size =   304.75 MiB
-sched_reserve:        CPU compute buffer size =    10.01 MiB
+sched_reserve:       MTL0 compute buffer size =   300.75 MiB
+sched_reserve:        CPU compute buffer size =    16.01 MiB
 sched_reserve: graph nodes  = 1231
 sched_reserve: graph splits = 2
 sched_reserve: reserve took 7.90 ms, sched copies = 1
@@ -178,16 +178,16 @@ common_init_from_params: warming up the model with an empty run - please wait ..
 srv    load_model: initializing slots, n_slots = 4
 no implementations specified for speculative decoding
 slot   load_model: id  0 | task -1 | speculative decoding context not initialized
-slot   load_model: id  0 | task -1 | new slot, n_ctx = 1024
+slot   load_model: id  0 | task -1 | new slot, n_ctx = 4096
 no implementations specified for speculative decoding
 slot   load_model: id  1 | task -1 | speculative decoding context not initialized
-slot   load_model: id  1 | task -1 | new slot, n_ctx = 1024
+slot   load_model: id  1 | task -1 | new slot, n_ctx = 4096
 no implementations specified for speculative decoding
 slot   load_model: id  2 | task -1 | speculative decoding context not initialized
-slot   load_model: id  2 | task -1 | new slot, n_ctx = 1024
+slot   load_model: id  2 | task -1 | new slot, n_ctx = 4096
 no implementations specified for speculative decoding
 slot   load_model: id  3 | task -1 | speculative decoding context not initialized
-slot   load_model: id  3 | task -1 | new slot, n_ctx = 1024
+slot   load_model: id  3 | task -1 | new slot, n_ctx = 4096
 srv    load_model: prompt cache is enabled, size limit: 8192 MiB
 srv    load_model: use `--cache-ram 0` to disable the prompt cache
 srv    load_model: for more info see https://github.com/ggml-org/llama.cpp/pull/16391
@@ -206,3 +206,33 @@ main: model loaded
 main: server is listening on http://127.0.0.1:8090
 main: starting the main loop...
 srv  update_slots: all slots are idle
+slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = -1
+slot launch_slot_: id  3 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  3 | task 0 | processing task, is_child = 0
+slot update_slots: id  3 | task 0 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 876
+slot update_slots: id  3 | task 0 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  3 | task 0 | prompt processing progress, n_tokens = 876, batch.n_tokens = 876, progress = 1.000000
+slot update_slots: id  3 | task 0 | prompt done, n_tokens = 876, batch.n_tokens = 876
+slot init_sampler: id  3 | task 0 | init sampler, took 0.10 ms, tokens: text = 876, total = 876
+slot print_timing: id  3 | task 0 | 
+prompt eval time =    1641.92 ms /   876 tokens (    1.87 ms per token,   533.52 tokens per second)
+       eval time =    3761.83 ms /   170 tokens (   22.13 ms per token,    45.19 tokens per second)
+      total time =    5403.75 ms /  1046 tokens
+slot      release: id  3 | task 0 | stop processing: n_tokens = 1045, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = -1
+slot launch_slot_: id  2 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  2 | task 171 | processing task, is_child = 0
+slot update_slots: id  2 | task 171 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 814
+slot update_slots: id  2 | task 171 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  2 | task 171 | prompt processing progress, n_tokens = 814, batch.n_tokens = 814, progress = 1.000000
+slot update_slots: id  2 | task 171 | prompt done, n_tokens = 814, batch.n_tokens = 814
+slot init_sampler: id  2 | task 171 | init sampler, took 0.09 ms, tokens: text = 814, total = 814
+slot print_timing: id  2 | task 171 | 
+prompt eval time =    1527.58 ms /   814 tokens (    1.88 ms per token,   532.87 tokens per second)
+       eval time =    5702.01 ms /   256 tokens (   22.27 ms per token,    44.90 tokens per second)
+      total time =    7229.59 ms /  1070 tokens
+slot      release: id  2 | task 171 | stop processing: n_tokens = 1069, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200

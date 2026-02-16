@@ -7,12 +7,14 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 DB_DIR = os.path.join(os.path.dirname(__file__), "faiss_db")
-LLAMA_URL = "http://localhost:8090/v1/chat/completions"
+LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3333
 
-SYSTEM_PROMPT = """당신은 게임 전문가입니다. 아래 참고 자료를 기반으로 질문에 정확하게 답변하세요.
-참고 자료에 없는 내용은 "해당 정보가 없습니다"라고 답하세요.
-한국어로 답변하세요.
+SYSTEM_PROMPT = """게임 전문가로서 참고 자료만 기반으로 간결하게 답변하세요.
+규칙:
+- 질문에 대한 답변만 하세요. 추가 질문을 만들지 마세요.
+- 참고 자료에 없으면 "해당 정보가 없습니다"라고 답하세요.
+- 한국어로 답변하세요.
 
 [참고 자료]
 {context}"""
@@ -136,40 +138,50 @@ class Handler(BaseHTTPRequestHandler):
 
             # RAG 검색 (필터 있으면 더 많이 가져온 뒤 필터링)
             vdb = get_db()
-            k_search = 15 if game_filter else 5
+            k_search = 10 if game_filter else 5
             results = vdb.similarity_search(query, k=k_search)
             
             if game_filter:
-                results = [d for d in results if d.metadata.get("game", "") == game_filter][:5]
+                results = [d for d in results if d.metadata.get("game", "") == game_filter][:3]
             else:
-                results = results[:5]
+                results = results[:3]
 
             context = ""
             sources = []
+            max_chunk_len = 500  # 청크당 최대 500자로 제한
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
-                context += f"\n[{game} - {title}]\n{doc.page_content}\n"
+                chunk = doc.page_content[:max_chunk_len]
+                context += f"\n[{game} - {title}]\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
                     sources.append(src)
 
             # LLM
             system = SYSTEM_PROMPT.format(context=context)
+            prompt = f"{system}\n\n질문: {query}\n\n답변:"
             payload = {
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": query},
-                ],
-                "max_tokens": 1024,
+                "prompt": prompt,
+                "n_predict": 256,
                 "temperature": 0.3,
-                "repeat_penalty": 1.3,
+                "repeat_penalty": 1.5,
+                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "해당 정보가 없습니다.", "참고 자료:"],
             }
             try:
                 resp = requests.post(LLAMA_URL, json=payload, timeout=60)
-                answer = resp.json()["choices"][0]["message"]["content"]
-            except Exception as e:
+                resp.raise_for_status()
+                result = resp.json()
+                if "content" in result:
+                    answer = result["content"].strip()
+                else:
+                    answer = f"LLM 응답 형식 오류: {list(result.keys())}"
+            except requests.exceptions.RequestException as e:
                 answer = f"LLM 연결 실패: {e}"
+            except (KeyError, ValueError) as e:
+                answer = f"LLM 응답 파싱 실패: {e}"
+            except Exception as e:
+                answer = f"예상치 못한 오류: {e}"
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
