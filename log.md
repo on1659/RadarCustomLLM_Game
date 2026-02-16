@@ -1,5 +1,62 @@
 # LLM 추론모델 프로젝트 로그
 
+## 📌 프로젝트 요약 (새 세션용)
+
+### 환경
+- Mac mini M4 16GB, macOS
+- llama.cpp: `~/llama.cpp/build/bin/llama-server`
+- Python venv: `~/Work/LLM/crawler/venv/` (RAG/크롤러 공용)
+- GitHub: https://github.com/on1659/RadarCustomLLM_Game
+
+### 파인튜닝 모델
+- 베이스: Qwen2.5-3B-Instruct
+- 방법: Unsloth + LoRA (r=16), Colab T4 GPU
+- 학습 데이터: 121개 chain-of-thought (`<think>추론</think>답변`)
+- GGUF: `~/llama.cpp/models/Qwen2.5-3B-Instruct.Q4_K_M.gguf` (1.93GB)
+- Colab 노트북: `~/.openclaw/workspace/reasoning-model/colab_notebook.ipynb`
+- 학습 데이터 JSON: `~/.openclaw/workspace/reasoning-model/training_data.json`
+
+### RAG 시스템
+- 크롤러: `~/Work/LLM/crawler/`
+  - `namu_crawler.py` — 나무위키 (오버워치 15개, 마크 12개, 팰월드 1개)
+  - `palworld_crawler.py` — palworld.gg (57개 문서)
+  - 크롤링 데이터: `~/Work/LLM/crawler/data/`
+- RAG: `~/Work/LLM/rag/`
+  - `ingest.py` — 벡터화 (FAISS + ko-sroberta-multitask)
+  - `web.py` — 웹 UI (localhost:3333)
+  - `chat.py` — CLI 챗봇
+  - 벡터DB: `~/Work/LLM/rag/faiss_db/` (4,064청크)
+- 임베딩: `jhgan/ko-sroberta-multitask` (한국어 특화)
+- 게임명 자동 필터: 팰월드/오버워치/마크 키워드 감지
+
+### 실행 방법
+```bash
+# 1. LLM 서버
+cd ~/llama.cpp && ./build/bin/llama-server -m models/Qwen2.5-3B-Instruct.Q4_K_M.gguf -c 1024 -ngl 99 --port 8090
+
+# 2. RAG 웹 UI
+cd ~/Work/LLM/rag && source ../crawler/venv/bin/activate && python3 web.py
+# → localhost:3333
+
+# 3. 외부 접속 (ngrok)
+ngrok http 3333
+
+# 4. 크롤링 데이터 추가 후 벡터DB 재생성
+cd ~/Work/LLM/rag && source ../crawler/venv/bin/activate && python3 ingest.py
+```
+
+### 현재 이슈 & TODO
+- [ ] `<think>` 추론 태그 아직 안 나옴 → 학습 데이터 500개로 확장 필요
+- [ ] 3B 모델 한국어 코딩 능력 약함 → 128GB PC에서 70B 모델 시도 예정
+- [ ] 팰월드 나무위키 하위문서 크롤링 URL 수정 필요
+- [ ] 16GB 메모리 부족으로 llama-server 가끔 kill됨 → `-c 1024`로 완화
+
+### Colab 사용 팁
+- wandb 물어보면 **3** 입력 (시각화 스킵)
+- 무료 GPU 할당량 소진 시 다른 구글 계정 사용
+- 학습 완료 후 바로 Drive 저장 셀 실행 (세션 끊기면 파일 소실)
+- Colab 가이드: `~/Work/LLM/colab_guide.md`
+
 ---
 
 ## 2026-02-15 22:10 — 프로젝트 시작 & Colab 노트북 생성
