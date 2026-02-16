@@ -61,33 +61,33 @@ HTML = """<!DOCTYPE html>
 <style>
   /* ── 🎨 테마 (여기만 바꾸면 전체 적용) ── */
   :root {
-    --c-dark:     #96A78D;   /* 진한 세이지 — 액센트, 버튼 */
-    --c-mid:      #B6CEB4;   /* 중간 세이지 — 사이드바, 호버 */
-    --c-light:    #D9E9CF;   /* 연한 세이지 — 유저 메시지, 배경 */
-    --c-pale:     #F0F0F0;   /* 오프화이트 — 메인 배경 */
+    --c-dark:     #9CAFAA;   /* 민트그레이 — 액센트, 버튼 */
+    --c-mid:      #D6DAC8;   /* 연올리브 — 사이드바, 호버 */
+    --c-light:    #FBF3D5;   /* 크림 — 유저 메시지, 배경 */
+    --c-pale:     #D6A99D;   /* 핑크베이지 — 포인트 */
 
-    --bg-body:    #f7f7f5;
-    --bg-sidebar: #eef3eb;
-    --bg-header:  #e8efe4;
+    --bg-body:    #faf8f4;
+    --bg-sidebar: #f2efe8;
+    --bg-header:  #eeebe4;
     --bg-input:   #ffffff;
-    --bg-chat:    #f7f7f5;
+    --bg-chat:    #faf8f4;
     --bg-user:    var(--c-dark);
     --bg-bot:     #ffffff;
-    --bg-system:  #eef6e8;
+    --bg-system:  #f5f3e8;
 
-    --border:     #d4ddd0;
-    --border-light: #e2ebe0;
+    --border:     #ddd9d0;
+    --border-light: #e8e4dc;
 
-    --text:       #2c3e2c;
-    --text-light: #6b7b6b;
-    --text-pale:  #8a9a8a;
+    --text:       #3a3530;
+    --text-light: #7a7570;
+    --text-pale:  #9a9590;
     --text-user:  #ffffff;
-    --text-bot:   #2c3e2c;
+    --text-bot:   #3a3530;
 
     --accent:     var(--c-dark);
-    --accent-hover: #849a7b;
-    --danger:     #c45;
-    --danger-hover: #b33;
+    --accent-hover: #889e98;
+    --danger:     var(--c-pale);
+    --danger-hover: #c4948a;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
