@@ -146,21 +146,42 @@ HTML = """<!DOCTYPE html>
   .theme-presets button { padding: 5px 10px; font-size: 11px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: var(--bg-input); color: var(--text-light); transition: all 0.15s; }
   .theme-presets button:hover { background: var(--c-light); color: var(--text); }
 
+  /* 햄버거 메뉴 */
+  .menu-btn { display: none; padding: 6px 10px; background: none; border: 1px solid var(--border); border-radius: 6px; font-size: 18px; cursor: pointer; color: var(--text); }
+  .sidebar .close-btn { display: none; position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-pale); }
+  .overlay { display: none; }
+
   /* 모바일 */
   @media (max-width: 768px) {
-    .sidebar { width: 220px; }
-    .theme-panel { right: 8px; width: 260px; }
+    .sidebar { position: fixed; left: -280px; top: 0; bottom: 0; width: 260px; z-index: 200; transition: left 0.25s ease; box-shadow: none; }
+    .sidebar.open { left: 0; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+    .sidebar .close-btn { display: block; }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199; }
+    .overlay.open { display: block; }
+    .menu-btn { display: block; }
+    .header h1 { font-size: 15px; }
+    .header p { font-size: 11px; }
+    .msg { padding: 10px 14px; font-size: 13.5px; }
+    .user { max-width: 80%; }
+    .input-wrap { gap: 6px; }
+    input { font-size: 14px; padding: 10px 12px; }
+    button.send-btn { padding: 10px 16px; font-size: 14px; }
+    .theme-panel { right: 8px; width: 260px; top: 50px; }
+    .chat { padding: 16px 12px; }
   }
 </style>
 </head><body>
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
+  <button class="close-btn" onclick="closeSidebar()">✕</button>
   <div class="sidebar-header">
     <button onclick="newSession()">+ 새 대화</button>
   </div>
   <div class="session-list" id="sessionList"></div>
 </div>
 <div class="main">
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
   <div class="header">
+    <button class="menu-btn" onclick="openSidebar()">☰</button>
     <div>
       <h1>🎮 게임위키 AI</h1>
       <p>팰월드 · 오버워치 · 마인크래프트 — RAG</p>
@@ -267,6 +288,7 @@ async function loadSession(id) {
     }
   });
   chat.scrollTop = chat.scrollHeight;
+  closeSidebar();
   await loadSessions();
 }
 
@@ -351,6 +373,16 @@ async function send() {
 function sendWithGame(game, originalQ) {
   input.value = game + ' ' + originalQ;
   send();
+}
+
+// 모바일 사이드바
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
 }
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\n/g,'<br>'); }
@@ -686,7 +718,7 @@ class Handler(BaseHTTPRequestHandler):
                 "temperature": 0.1,
                 "repeat_penalty": 1.8,
                 "frequency_penalty": 0.5,
-                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "참고 자료:", "당신은", "정답:", "\n\n\n"],
+                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "참고 자료:", "당신은", "정답:", "\n\n\n", "답변:", "\"라고", "질의가"],
             }
             try:
                 resp = requests.post(LLAMA_URL, json=payload, timeout=60)
