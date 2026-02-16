@@ -1,0 +1,108 @@
+Palworld Items ( All ) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Palworld .gg Pals Map Items Breeding Calculator Structures Tier List Technology Capture Rate English Deutsch EspaÃ±ol FranÃ§ais italiano Ð ÑÑÑÐºÐ¸Ð¹ æ¥æ¬èª íêµ­ì´ PortuguÃªs ç¹é«ä¸­æ ç®ä½ä¸­æ Palworld Items Every item in Palworld with full details. Search for item Item Type Select Type All Accessory Weapon Material Consumable Ammo Essential Food Blueprint Armor Glider Spheres Page 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 Gold Coin Material Currency traded on Palpagos Island.
+Can be exchanged for items or Pals with merchants. Rarity 0 Rank 1 Price 1 Weight 0 Recipe 1 Ingot Animal Skin Material Animal Skin Rarity 0 Rank 1 Price 140 Weight 1 Arrow Ammo An Arrow for use with a bow. Rarity 0 Rank 1 Price 5 Weight 0.025 Recipe 1 Wood 1 Stone Poison Arrow Ammo Arrows for shooting with Bow_Poison and BowGun_Poison.
+It poisons any target it hits. Rarity 0 Rank 1 Price 15 Weight 0.025 Recipe 3 Wood 3 Stone 1 Venom Gland Fire Arrow Ammo Arrows for shooting with Bow_Fire and BowGun_Fire.
+Deals COMMON_ELEMENT_NAME_Fire damage. Rarity 0 Rank 1 Price 15 Weight 0.025 Recipe 3 Wood 3 Stone 1 Flame Organ Assault Rifle Weapon Mows down enemies with overwhelming force.
+It excels at rapid-fire and is well suited to taking down powerful foes. Rarity 0 Rank 3 Price 82400 Weight 15 Durability 3000 Magazine 20 Physical Attack 320 Recipe 40 Refined Ingot 10 Polymer 30 Carbon Fiber Stone Axe Weapon An axe for cutting wood.
+Made from stone, it s not very sharp. Rarity 0 Rank 1 Price 200 Weight 10 Durability 150 Physical Attack 20 Recipe 5 Stone 5 Wood Metal Axe Weapon An axe for cutting wood.
+Made from metal, its sharpness has improved. Rarity 0 Rank 2 Price 2800 Weight 15 Durability 250 Physical Attack 30 Recipe 15 Stone 20 Wood 5 Ingot Refined Metal Axe Weapon An axe for cutting wood.
+Made from high quality metal, its sharpness has improved even further. Rarity 0 Rank 3 Price 7000 Weight 20 Durability 300 Physical Attack 60 Recipe 30 Stone 40 Wood 10 Refined Ingot Axe4 Weapon Axe4 Rarity 0 Rank 3 Price 33000 Weight 25 Durability 400 Physical Attack 75 Metal Detector Weapon Holding it allows you to detect hidden ores nearby.
+It marks the metal when close to the ore, but the mark disappears if you move away. Rarity 0 Rank 3 Price 33000 Weight 25 Durability 400 Recipe 30 Plasteel 100 Paldium Fragment 30 Circuit Board 20 Nightstar Sand Wooden Club Weapon A Bat for close range combat.
+Can beat a small Pal to a pulp if need be. Rarity 0 Rank 1 Price 80 Weight 5 Durability 150 Physical Attack 25 Recipe 5 Wood Bat Weapon Baseball bat for close-range combat.
+Might be tough to get a home run with a Pal. Rarity 0 Rank 1 Price 80 Weight 3 Durability 150 Physical Attack 50 Recipe 30 Wood 10 Stone Meat Cleaver Weapon Knife for butchering Pals.
+When equipped, the Pet command becomes Butcher.
+Butchered Pals will be gone for good. Rarity 0 Rank 1 Price 100 Weight 10 Durability 300 Physical Attack 25 Recipe 5 Ingot 20 Wood 5 Stone Stun Baton Weapon Close range weapon that sends out an electric jolt upon contact.
+Pals are easier to capture when electrocuted. Rarity 0 Rank 2 Price 19000 Weight 10 Durability 300 Physical Attack 10 Recipe 20 Ingot 20 Electric Organ Red Berries Food A versatile ingredient that is delicious raw or cooked.
+They can be found anywhere on the island. Rarity 0 Rank 1 Price 50 Weight 0.2 Restore Satiety 15 Baked Berries Food Cooking enhances their nutritional value,
+and surprisingly, they are quite filling. Rarity 0 Rank 1 Price 100 Weight 0.15 Restore Sanity 1 Restore Satiety 21 Recipe 1 Red Berries Crossbow Weapon Fires an Arrow effortlessly.
+Though it takes time to load, it delivers a powerful shot. Rarity 0 Rank 2 Price 25200 Weight 13 Durability 300 Magazine 1 Physical Attack 280 Recipe 50 Wood 40 Stone 10 Ingot 5 Nail Charcoal Material Charcoal made from burning Wood.
+It can be combined with Sulfur to create Gunpowder2. Rarity 0 Rank 1 Price 20 Weight 2 Recipe 2 Wood Claw Material Claw Rarity 0 Rank 1 Price 120 Weight 1 Cloth Material Cloth woven from Wool. 
+Required to create armor. Rarity 0 Rank 1 Price 80 Weight 1 Recipe 2 Wool High Quality Cloth Material Cloth2 woven from a large amount of Wool. 
+Required to create high quality armor. Rarity 1 Rank 2 Price 400 Weight 1 Recipe 10 Wool Cloth Outfit Armor Clothes made from Cloth.
+Protects against cold nights. Rarity 0 Rank 1 Price 320 Weight 4 Durability 150 HP 70 Physical Defense 15 Recipe 2 Cloth Coal Material Coal often found in caves and other places.
+Required to create high quality metal. Rarity 0 Rank 1 Price 30 Weight 5 Metal Armor Armor Armor made of metal.
+Somewhat heavy, but provides good defense. Rarity 0 Rank 2 Price 4920 Weight 30 Durability 700 HP 250 Physical Defense 70 Recipe 30 Ingot 10 Leather 5 Cloth Metal Helm Armor A helm made of metal.
+A reliable piece of armor that protects your head, and all the thoughts within. Rarity 0 Rank 2 Price 2460 Weight 10 Durability 700 HP 100 Physical Defense 50 Recipe 20 Ingot 10 Paldium Fragment Ingot Material A material required to create metal weapons and armor.
+Refined from CopperOre using a furnace. Rarity 0 Rank 1 Price 200 Weight 5 Recipe 2 Ore Ore Material Becomes an ingot when refined using a furnace.
+Can be found in caves and other places.
+There are rumors of Pals capable of detecting ore. Rarity 0 Rank 1 Price 50 Weight 8 Double-Barreled Shotgun Weapon Wreaks havoc at close range. Can fire twice before reloading.
+Despite the limited load capacity, it still packs a punch. Rarity 0 Rank 3 Price 55200 Weight 24 Durability 200 Magazine 2 Physical Attack 190 Recipe 30 Refined Ingot 7 Polymer Rocket Ammo Ammo Ammo for the Launcher_Default and other similar weapons. Rarity 0 Rank 4 Price 5000 Weight 0.5 Recipe 1 Pal Metal Ingot 5 Gunpowder Fang Material Fang Rarity 0 Rank 1 Price 120 Weight 1 Fiber Material Fiber collected from trees.
+A material used when creating bows, etc. Rarity 0 Rank 1 Price 10 Weight 0.5 Recipe 1 Wood Pelt Armor Armor Armor made from Leather.
+Its warmth and defense have been improved. Rarity 0 Rank 2 Price 360 Weight 10 Durability 300 HP 140 Physical Defense 35 Recipe 10 Leather Feathered Hair Band Armor A beautiful feathered headband.
+Though improbable, it somehow seems to protect its wearer from lethal head injuries. Rarity 0 Rank 1 Price 180 Weight 5 Durability 200 HP 60 Physical Defense 15 Recipe 10 Fiber 5 Paldium Fragment Grilled Meat Food Grilled meat.
+A full stomach leads to smiling faces. Rarity 0 Rank 1 Price 100 Weight 1 Restore Sanity 3 Restore Satiety 45 Gunpowder Material Gunpowder Rarity 0 Rank 1 Price 10 Weight 0.2 Gunpowder Material Gunpowder2 used to fire ammunition.
+Required to make bullets. Rarity 0 Rank 2 Price 220 Weight 0.2 Recipe 2 Charcoal 1 Sulfur Handgun Weapon A handgun with improved capacity and rapid-fire capabilities.
+Has more immediate firepower than a MakeshiftHandgun. Rarity 0 Rank 2 Price 33000 Weight 8 Durability 400 Magazine 8 Physical Attack 250 Recipe 50 Ingot 15 High Quality Pal Oil Decal Gun 1 Weapon Strange gun that paints a picture of PinkCat where it is fired.
+Have some fun and paint the walls or ceilings! Rarity 0 Rank 2 Price 33000 Weight 8 Magazine 99 Recipe 30 Ingot 10 Polymer 15 Paldium Fragment 3 Ancient Civilization Parts Decal Gun 2 Weapon Strange gun that paints a picture of SheepBall where it is fired.
+Have some fun and paint the walls or ceilings! Rarity 0 Rank 2 Price 33000 Weight 8 Magazine 99 Recipe 30 Ingot 10 Polymer 15 Paldium Fragment 3 Ancient Civilization Parts Decal Gun 3 Weapon Strange gun that paints a picture of Alpaca where it is fired.
+Have some fun and paint the walls or ceilings! Rarity 0 Rank 2 Price 33000 Weight 8 Magazine 99 Recipe 30 Ingot 10 Polymer 15 Paldium Fragment 3 Ancient Civilization Parts Decal Gun 4 Weapon Strange gun that paints a picture of Anubis where it is fired.
+Have some fun and paint the walls or ceilings! Rarity 0 Rank 2 Price 33000 Weight 8 Magazine 99 Recipe 30 Ingot 10 Polymer 15 Paldium Fragment 3 Ancient Civilization Parts Decal Gun 5 Weapon Strange gun that paints a picture of LazyDragon where it is fired.
+Have some fun and paint the walls or ceilings! Rarity 0 Rank 2 Price 33000 Weight 8 Magazine 99 Recipe 30 Ingot 10 Polymer 15 Paldium Fragment 3 Ancient Civilization Parts Low Grade Medical Supplies Consumable Herbs good for Sick, Sprain, and Overfull.
+They don t heal Health when eaten, however. Rarity 0 Rank 1 Price 240 Weight 0.2 Restore Satiety 1 Recipe 5 Red Berries 2 Horn Medical Supplies Consumable Strange Medicines that are effective at treating COMMON_CONDITION_NAME_GastricUlcer and COMMON_CONDITION_NAME_Fracture.
+Unfortunately, they have no healing effect. Rarity 0 Rank 2 Price 800 Weight 0.2 Restore Satiety 1 Recipe 3 Ingot 3 Horn 1 Bone High Grade Medical Supplies Consumable LuxuryMedicines that are effective at treating COMMON_CONDITION_NAME_Weakness and COMMON_CONDITION_NAME_DepressionSprain.
+Unfortunately, they have no healing effect. Rarity 0 Rank 3 Price 3000 Weight 0.2 Restore Satiety 1 Recipe 5 Ingot 5 Horn 2 Bone Mind Control Meds Consumable MindControlDrug that are extremely effective in controlling dissidents.
+Unfortunately, they have no healing effect. Rarity 0 Rank 4 Price 10000 Weight 0.2 Restore Satiety 1 Recipe 10 Refined Ingot 10 Horn 5 Bone 3 Pal Fluids Beautiful Flower Material A plant that blooms colorful flowers.
+Can be used to make Opium and Narcotic. Rarity 0 Rank 1 Price 240 Weight 0.2 Restore Sanity 5 Restore Satiety 1 Suspicious Juice Consumable Juice that improves mood when consumed.
+Drinking it increases work speed for a period of time,
+but lowers SAN. Rarity 0 Rank 2 Price 10000 Weight 0.2 Restore Sanity 30 Restore Satiety 1 Recipe 3 Beautiful Flower 3 Horn 1 Bone 1 Pal Fluids Strange Juice Consumable Juice that greatly improves mood when consumed.
+Drinking it significantly increases work speed for a period of time,
+but significantly lowers SAN. Rarity 0 Rank 3 Price 40000 Weight 0.2 Restore Sanity 60 Restore Satiety 1 Recipe 5 Beautiful Flower 5 Horn 2 Bone 2 Pal Fluids Memory Wiping Medicine Consumable A potion that allows the player to reset their status points when consumed.
+It has no effect if consumed by a Pal. Rarity 0 Rank 4 Price 10000 Weight 0.2 Restore Sanity 1 Restore Satiety 1 Recipe 99 Beautiful Flower 50 Horn 50 Bone 50 Pal Fluids Homing Sphere Launcher Weapon A launcher for firing spheres.
+Fired spheres home in on Pals. Rarity 0 Rank 4 Price 460000 Weight 30 Recipe 100 Pal Metal Ingot 50 Polymer 200 Paldium Fragment 50 Carbon Fiber 20 Ancient Civilization Parts Refined Metal Armor Armor Armor made from high quality metal.
+Quite heavy, but provides excellent defense. Rarity 0 Rank 3 Price 9840 Weight 35 Durability 1500 HP 500 Physical Defense 150 Recipe 30 Refined Ingot 15 Leather 2 High Quality Cloth Refined Metal Helm Armor A helm made from high quality metal.
+The luster from the polished metal gives the wearer that added boost of confidence. Rarity 0 Rank 3 Price 5240 Weight 12 Durability 1500 HP 250 Physical Defense 100 Recipe 20 Refined Ingot 15 Paldium Fragment Refined Ingot Material A material required to create high quality metal weapons and armor.
+Refined from CopperOre and Coal using a furnace. Rarity 0 Rank 2 Price 320 Weight 5 Recipe 2 Ore 2 Coal Energy Cartridge Ammo Ammo used by the LaserRifle and similar weapons. Rarity 0 Rank 4 Price 950 Weight 0.01 Recipe 5 Electric Organ 1 Pal Metal Ingot Laser Rifle Weapon A weapon that fires high-energy lasers.
+It has impressive firepower and is easy to handle. Rarity 0 Rank 4 Price 324000 Weight 18 Durability 3000 Magazine 30 Physical Attack 1250 Recipe 50 Pal Metal Ingot 40 Plasteel 40 Carbon Fiber Rocket Launcher Weapon A Launcher_Default 
+that can fire a powerful round from long distances. Rarity 0 Rank 4 Price 324000 Weight 30 Durability 300 Magazine 1 Physical Attack 10000 Recipe 75 Pal Metal Ingot 30 Polymer 50 Carbon Fiber Leather Material Leather taken from a Pal, it serves as a defensive material.
+It can be obtained from certain Pals. Rarity 0 Rank 1 Price 150 Weight 2 Nail Material Necessary for building various facilities.
+Can be made with a WorkBench. Rarity 0 Rank 1 Price 200 Weight 2 Recipe 1 Ingot Circuit Board Material Required to create precision equipment.
+Can be made with a Factory_Hard_02. Rarity 0 Rank 3 Price 1000 Weight 2 Recipe 4 Pure Quartz 2 Polymer Pal Sphere Spheres An item that captures Pals when thrown.
+This basic model is only effective on low level Pals. Rarity 0 Rank 1 Price 120 Weight 0.1 Recipe 1 Paldium Fragment 3 Wood 3 Stone Mega Sphere Spheres An item that captures Pals when thrown.
+Its capabilities have been improved, allowing it to catch a wider range of Pals. Rarity 0 Rank 2 Price 920 Weight 0.1 Recipe 1 Paldium Fragment 1 Ingot 5 Wood 5 Stone Giga Sphere Spheres An item that captures Pals when thrown.
+Able to capture moderately powerful Pals. Rarity 1 Rank 3 Price 1520 Weight 0.1 Recipe 2 Paldium Fragment 2 Ingot 7 Wood 7 Stone Hyper Sphere Spheres An item that captures Pals when thrown.
+Enhanced capabilities allow it to capture even more powerful Pals. Rarity 2 Rank 4 Price 4240 Weight 0.1 Recipe 3 Paldium Fragment 3 Ingot 10 Wood 2 Cement Ultra Sphere Spheres An item that captures Pals when thrown.
+Not many Pals can escape its highly efficient design. Rarity 3 Rank 5 Price 9880 Weight 0.1 Recipe 5 Paldium Fragment 5 Refined Ingot 2 Carbon Fiber 3 Cement Legendary Sphere Spheres An item that captures Pals when thrown.
+Very few Pals can escape its perfected design. Rarity 4 Rank 6 Price 45200 Weight 0.1 Recipe 10 Paldium Fragment 5 Pal Metal Ingot 3 Carbon Fiber 5 Cement Radar Sphere Spheres A sphere that captures Pals when thrown.
+Though it has a low chance of success,
+it can forcibly capture another personâs Pal. Rarity 1 Rank 3 Price 5500 Weight 1 Pal Sphere Spheres en Text Rarity 99 Rank 99 Price 1 Weight 0 Bread Food Pan made from baked Flour.
+A tasty staple food. Rarity 0 Rank 1 Price 200 Weight 0.3 Restore Sanity 4 Restore Satiety 27 Recipe 1 Flour Stone Pickaxe Weapon A pickaxe used for mining.
+Made from stone, the efficiency is questionable. Rarity 0 Rank 1 Price 200 Weight 10 Durability 150 Physical Attack 20 Recipe 5 Stone 5 Wood Metal Pickaxe Weapon A pickaxe used for mining.
+Made from metal, its durability and efficiency have improved. Rarity 0 Rank 2 Price 2800 Weight 15 Durability 250 Physical Attack 30 Recipe 15 Stone 20 Wood 5 Ingot Contact us Privacy Policy Wuthering.gg PlaysSuikaGame.com Marvel Rivals Tracker We are not associated with or endorsed by Pocket Pair, Inc.

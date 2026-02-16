@@ -1,0 +1,62 @@
+[
+  {
+    "title": "마인크래프트",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트.txt",
+    "length": 250979
+  },
+  {
+    "title": "마인크래프트/아이템",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_아이템.txt",
+    "length": 79158
+  },
+  {
+    "title": "마인크래프트/블록",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_블록.txt",
+    "length": 81138
+  },
+  {
+    "title": "마인크래프트/몹",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_몹.txt",
+    "length": 110600
+  },
+  {
+    "title": "마인크래프트/바이옴",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_바이옴.txt",
+    "length": 184727
+  },
+  {
+    "title": "마인크래프트/인챈트",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_인챈트.txt",
+    "length": 138982
+  },
+  {
+    "title": "마인크래프트/양조",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_양조.txt",
+    "length": 169877
+  },
+  {
+    "title": "마인크래프트/레드스톤",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_레드스톤.txt",
+    "length": 198845
+  },
+  {
+    "title": "마인크래프트/마을",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_마을.txt",
+    "length": 42762
+  },
+  {
+    "title": "마인크래프트/농사",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_농사.txt",
+    "length": 194961
+  },
+  {
+    "title": "마인크래프트/조합법",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_조합법.txt",
+    "length": 80179
+  },
+  {
+    "title": "마인크래프트/팁",
+    "file": "/Users/radar/Work/LLM/crawler/data/minecraft/마인크래프트_팁.txt",
+    "length": 121629
+  }
+]

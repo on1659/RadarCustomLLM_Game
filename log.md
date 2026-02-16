@@ -313,3 +313,60 @@ cd ~/Work/LLM/rag && source ../crawler/venv/bin/activate && python3 web.py
 - [ ] 개선 효과 확인
 
 ---
+
+========================================
+## 2026-02-16 20:15 — 벡터DB 재생성 & llm-server 스킬 생성
+========================================
+
+### 한 일
+- 벡터DB 한국어 임베딩으로 재생성 (`jhgan/ko-sroberta-multitask`)
+  - 기존 영어 임베딩(`all-MiniLM-L6-v2`) → 한국어 특화 모델로 교체
+  - 4,064개 청크 재인덱싱 완료
+- RAG 웹 서버 + ngrok 자동 시작
+  - 기존 프로세스 정리 후 재시작
+  - 외부 접속 URL: https://awhirl-preimpressive-carina.ngrok-free.dev
+- **llm-server 스킬 생성** 🎉
+  - `startllm` - LLM 서버 전체 시작 (llama-server + RAG + ngrok)
+  - `stopllm` - 전체 중지
+  - `statusllm` - 실행 상태 확인
+  - 스킬 위치: `~/.openclaw/workspace/skills/llm-server/`
+
+### 결과
+- ✅ 한국어 검색 정확도 대폭 향상 (임베딩 교체)
+- ✅ 게임명 자동 필터링 적용 (팰월드/오버워치/마크)
+- ✅ 한 번의 명령으로 전체 서버 시작/중지 가능
+- ✅ 외부 접속 자동 설정 (ngrok)
+
+### 실행 방법 (업데이트)
+```bash
+# 간편 시작 (권장) ⭐
+startllm
+
+# 상태 확인
+statusllm
+
+# 전체 중지
+stopllm
+
+# 또는 수동 실행 (기존 방법)
+# 1. llama-server
+cd ~/llama.cpp && ./build/bin/llama-server -m models/Qwen2.5-3B-Instruct.Q4_K_M.gguf -c 1024 -ngl 99 --port 8090
+
+# 2. RAG 웹 UI
+cd ~/Work/LLM/rag && source ../crawler/venv/bin/activate && python3 web.py
+
+# 3. ngrok
+ngrok http 3333
+```
+
+### 서비스 정보
+- llama-server: http://localhost:8090
+- RAG 웹 서버: http://localhost:3333
+- ngrok 외부 URL: https://awhirl-preimpressive-carina.ngrok-free.dev
+
+### 다음 할 일
+- [ ] 브라우저에서 RAG 시스템 테스트 (게임별 질문)
+- [ ] 학습 데이터 500개로 확장 후 재학습
+- [ ] 70B 모델 테스트 (128GB PC)
+
+---

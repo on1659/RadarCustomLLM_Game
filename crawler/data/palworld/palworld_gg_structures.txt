@@ -1,0 +1,434 @@
+Palworld Structures ( All ) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Palworld .gg Pals Map Items Breeding Calculator Structures Tier List Technology Capture Rate English Deutsch EspaÃ±ol FranÃ§ais italiano Ð ÑÑÑÐºÐ¸Ð¹ æ¥æ¬èª íêµ­ì´ PortuguÃªs ç¹é«ä¸­æ ç®ä½ä¸­æ Palworld Structures Every structure that you can build in Palworld. Search for Structures Structure Type Select Type All Food Foundation Defense Infrastructure Storage Pals Light Product Furniture Other Summoning Altar Other Offer a Slab depicting a Pal
+to summon a powerful Pal to your base.
+Adequate caution and battle readiness is paramount. Build Work 10000 Materials 100 Stone 20 Paldium Fragment Japanese Paper Lantern Furniture Decorative Paper Lantern.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 3 Flame Organ Furniture Build Work 2000 Materials 10 Wood 10 Fiber Red Metal Barrel Furniture Decorative red metal barrel.
+ Build Work 3000 Materials 10 Ingot 1 Flame Organ Blue Metal Barrel Furniture Decorative blue metal barrel.
+ Build Work 3000 Materials 10 Ingot 1 Pal Fluids Green Metal Barrel Furniture Decorative green metal barrel.
+ Build Work 3000 Materials 10 Ingot 1 Venom Gland Wooden Barrel Storage Wooden barrel for storing items. Build Work 2000 Materials 30 Wood 5 Stone Alarm Bell Defense Bell that sets the alert status for Pals on base.
+Change Pal behavior to either attack invading enemies, or focus entirely on work whenever you like. Build Work 3000 Materials 5 Paldium Fragment 20 Stone Item Retrieval Machine Storage A device that lets you freely access items from all chests in the base. Build Work 30000 Materials 100 Pal Metal Ingot 30 Paldium Fragment Monitoring Stand Pals Command your Pals to work on various things inside a base.
+You can allow or prohibit individual kinds of work. Build Work 2000 Materials 30 Wood 10 Stone Palbox Control Device Pals A remote-access terminal for the Palbox. 
+Set it up wherever you d like and build a base of your own design. Build Work 10000 Materials 20 Ingot 30 Paldium Fragment Antique Bathtub Furniture Decorative antique bathtub.
+ Build Work 4000 Materials 1 Cloth 20 Stone 1 Ingot Free Pal Alliance Vertical Banner Furniture Decorative Free Pal Alliance banner. Build Work 2000 Materials 10 Ingot 10 Fiber 20 Cloth Free Pal Alliance Standard Furniture Decorative Free Pal Alliance flag. Build Work 2000 Materials 20 Wood 10 Fiber 20 Cloth Wooden Bench Furniture Decorative wooden bench.
+ Build Work 1000 Materials 10 Wood Primitive Furnace Product Allows refinement of CopperIngot.
+The quality leaves much to desire, and processing is slow.
+Requires a Fire Pal to light a flame. Build Work 5000 Materials 20 Wood 50 Stone 3 Flame Organ Improved Furnace Product Allows refinement of IronIngot.
+The quality has improved, but the processing speed is still unsatisfactory.
+Requires a Fire Pal to light a flame. Build Work 30000 Materials 100 Stone 30 Cement 15 Flame Organ Electric Furnace Product Allows refinement of StealIngot.
+It requires electricity to use, but is quicker to process.
+Requires a Fire Pal to light a flame. Build Work 100000 Materials 50 Refined Ingot 10 Circuit Board 20 Polymer 20 Carbon Fiber Gigantic Furnace Product Allows refinement of StainlessSteel.
+By growing in size, multiple Pals can collaborate to perform smelting.
+Requires a Fire Pal to light a flame. Build Work 600000 Materials 150 Plasteel 100 Polymer 200 Flame Organ 20 Ancient Civilization Parts Bonsai Furniture Decorative Bonsai.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 1 Paldium Fragment Small Container Storage Small container for storing items. Build Work 2000 Materials 10 Ingot 20 Wood Antique Braided Basket Furniture Decorative antique braided basket.
+ Build Work 1500 Materials 10 Fiber Cloth Covered Container Storage Cloth covered container for storing items. Build Work 2000 Materials 10 Ingot 15 Wood 2 Cloth Wooden Box Storage Wooden box for storing items. Build Work 2000 Materials 30 Wood 5 Stone Breeding Farm Pals Assign one male and one female Pal to produce eggs.
+Placing Cake in the facility is required for production. Build Work 15000 Materials 100 Wood 20 Stone 50 Fiber Statue of Power Pals Stone statue spoken of in legends on Palpagos Island.
+Offer up Relic to receive strange powers. Build Work 5000 Materials 20 Stone 10 Paldium Fragment Folding Screen Furniture Decorative folding screen.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 10 Fiber Cable Reel Furniture Decorative cable reel.
+ Build Work 6000 Materials 20 Wood 10 Ingot Campfire Food Needed for cooking food.
+It can only be used to grill simple ingredients.
+Requires a Fire Pal to light a flame. Build Work 1000 Materials 10 Wood Majestic Candlestick Other An imposing candlestick lit by the Brothers of the Eternal Pyre and revered as sacred. 
+It can be placed on the ground. Requires a Fire Pal to light a flame. Build Work 1000 Materials 5 Ingot 2 Flame Organ Witch Cauldron Other Place in base to improve medicine manufacturing speed.
+Placing more than one has no additional effect. Build Work 60000 Materials 50 Ingot 50 Stone 15 Pal Fluids 15 High Quality Pal Oil Ceiling Lamp Light A light source that provides illumination to a base even at night.
+It can be placed on a ceiling.
+Requires electricity, but lights up a larger area. Build Work 7000 Materials 20 Ingot 3 Electric Organ 3 Nail Leather Chair Furniture Decorative leather chair.
+ Build Work 1000 Materials 2 Ingot 1 Leather Frog Chair Furniture Cute decorative chair. Build Work 1000 Materials 2 Ingot 2 Leather Antique Wooden Chair Furniture Decorative antique wooden chair.
+ Build Work 2000 Materials 10 Wood Wooden Chair Furniture Decorative wooden chair.
+ Build Work 1000 Materials 10 Wood Iron Chair Furniture Decorative wooden chair.
+ Build Work 2000 Materials 3 Ingot Antique Green Wooden Chair Furniture Decorative antique green wooden chair.
+ Build Work 2000 Materials 10 Wood 1 Venom Gland Pal Essence Condenser Pals A chamber for increasing a Pal s rank.
+Pals can surpass their physical limitations if given
+a concentrated extract taken from a Pal of the same type. Build Work 30000 Materials 20 Paldium Fragment 20 Ingot 5 Ancient Civilization Parts Antique Grandfather Clock Furniture Decorative antique grandfather clock.
+Broken, it doesn t tell time. Build Work 4000 Materials 30 Wood 5 Ingot Wall Clock Furniture Decorative wall clock.
+Broken, it doesn t tell time. Build Work 2000 Materials 5 Ingot 3 Paldium Fragment Coal Mine Product Facility for producing Coal.
+Digging Coal is grueling physical work.
+Leave it to a Pal that is good at mining. Build Work 30000 Materials 70 Stone 100 Coal 30 Paldium Fragment Drafting Table Product A facility that lets you combine multiple schematics to create more advanced ones. Build Work 20000 Materials 20 Refined Ingot 100 Wood 30 Charcoal Free Pal Alliance Flag Other Decorative Free Pal Alliance flag. Build Work 2000 Materials 10 Wood 5 Fiber 10 Cloth Free Pal Alliance Horizontal Banner Other Decorative Free Pal Alliance banner. Build Work 2000 Materials 10 Fiber 10 Cloth Large Container Storage Large container for storing items.
+Imitates the designs left behind by an ancient and prosperous civilization. Build Work 50000 Materials 100 Ingot Cooking Pot Food Needed for cooking food.
+Use of a cooking pot allows for a wider variety of meal preparation.
+Requires a Fire Pal to light a flame. Build Work 10000 Materials 20 Wood 15 Ingot 3 Flame Organ Cooler Infrastructure A device that blows cool air, lowering the temperature of a base.
+It doesn t provide much relief from the heat, but helps one to endure somewhat hot environments.
+Requires an Ice Pal for cooling. Build Work 10000 Materials 20 Ingot 20 Stone 5 Ice Organ Cooler Box Storage Small food vault.
+Assign an Ice Pal to help prevent
+food stored inside from spoiling. Build Work 5000 Materials 20 Ingot 20 Stone 5 Ice Organ Cold Food Box Food A feeding box that can be kept cold.
+Assign an Ice Pal to it and
+the food inside will be less likely to spoil. Build Work 50000 Materials 20 Pal Metal Ingot 20 Plasteel 50 Ice Organ Ore Mining Site Product Facility for producing CopperOre.
+Mining CopperOre is hard work that requires physical endurance.
+Leave it to Pals skilled at mining. Build Work 10000 Materials 50 Stone 25 Ingot 20 Paldium Fragment Ore Mining Site II Product Facility for producing large quantities of CopperOre.
+Mining CopperOre is hard work that requires physical endurance.
+Leave it to Pals skilled at mining. Build Work 10000 Materials 100 Stone 50 Ingot 40 Paldium Fragment Wooden Counter Furniture Decorative wooden counter.
+ Build Work 10000 Materials 30 Wood 5 Stone Crusher Product Facility for breaking down Stone and Wood to exchange them for other materials.
+Requires Pal with the Watering trait to spin the water turbine. Build Work 8000 Materials 50 Wood 20 Stone 10 Paldium Fragment Hexolite Quartz Mine Product Facility for producing RainbowCrystals. 
+Digging RainbowCrystals is grueling physical work. 
+Leave it to a Pal that is good at mining. Build Work 50000 Materials 70 Stone 100 Hexolite Quartz Antique Curtain Furniture Decorative antique curtain.
+Can be placed on walls.
+ Build Work 2000 Materials 10 Wood 3 Cloth 1 Ingot Training Dummy Other Training dummy shaped like a Penguin.
+Can only be placed in wide open areas. Build Work 2000 Materials 20 Wood 5 Fiber 5 Paldium Fragment Tuppanyan sticker Furniture en Text Build Work 2000 Materials 1 Wood 3 Mounted Crossbow Defense Deploy a Pal to operate this defensive installation.
+Requires Arrow to use.
+Place ammo in the chest, and the deployed Pal will automatically load the weapon. Build Work 10000 Materials 30 Ingot 30 Wood 15 Stone 5 Nail Mounted Machine Gun Defense Deploy a Pal to operate this defensive installation.
+Requires RifleBullet to use.
+Place ammo in the chest, and the deployed Pal will automatically load the weapon. Build Work 50000 Materials 30 Ingot 10 Nail 15 Cement Mounted Missile Launcher Defense Deploy a Pal to operate this defensive installation.
+Requires ExplosiveBullet to use.
+Place ammo in the chest, and the deployed Pal will automatically load the weapon. Build Work 150000 Materials 100 Refined Ingot 20 Circuit Board 20 Nail 50 Cement Sandbag Defense Defensive installation to protect a base from enemies.
+Place a Pal and it will ignore other work
+to stay on lookout and prepare for combat. Build Work 3000 Materials 10 Wood 10 Stone Stone Defensive Wall Foundation Massive defensive wall to prevent enemy intrusions.
+Made from stone, it is reasonably sturdy. Materials 10 Stone 1 Metal Defensive Wall Foundation Massive defensive wall to prevent enemy intrusions.
+Made from metal, it is extremely durable. Materials 10 Ingot 1 Wooden Defensive Wall Foundation Massive defensive wall to prevent enemy intrusions.
+Made from wood, it breaks easily. Materials 10 Wood Iron Desk Furniture Decorative iron desk.
+ Build Work 8000 Materials 20 Wood 15 Ingot Antique Desk Furniture Decorative antique desk.
+ Build Work 5000 Materials 25 Wood 5 Fiber 5 Stone Dimensional Pal Storage Pals A facility for storing a large number of captured Pals. 
+Any guild member can deposit or withdraw Pals.
+If you set it to private, it can serve as your personal Pal storage. Build Work 20000 Materials 20 Ingot 40 Paldium Fragment 5 Ancient Civilization Parts Pal Disassembly Conveyor Pals A dream-like facility that automatically butchers any Pal that is placed inside. Build Work 120000 Materials 100 Pal Metal Ingot 30 Circuit Board 30 Nail 30 Plasteel Viewing Cage Pals Container for observing captured Pals.
+Pals inside cannot participate in battle or production,
+but they do not become hungry. Build Work 5000 Materials 10 Paldium Fragment 10 Wood 20 Stone Electric Cooler Infrastructure A device that blows cool air, lowering the temperature of a base.
+Using electricity, it can really lower the temperature.
+Requires an Ice Pal for cooling. Build Work 100000 Materials 30 Refined Ingot 10 Circuit Board 30 Ingot 10 Ice Organ Power Generator Infrastructure A power generator fueled by Electric Pals.
+Electric equipment won t run without this. Build Work 50000 Materials 50 Ingot 20 Electric Organ Large Power Generator Infrastructure A power generator fueled by Electric Pals.
+Larger and with improved power generation efficiency. Build Work 500000 Materials 200 Pal Metal Ingot 200 Electric Organ Electric Egg Incubator Pals Device for incubating Pal eggs.
+Requires electricity, but automatically keeps the
+inside of the incubator at appropriate temperatures. Build Work 5000 Materials 50 Refined Ingot 15 Circuit Board 10 Ancient Civilization Parts 5 Ancient Civilization Core Electric Heater Infrastructure A device that blows warm air, raising the temperature of a base.
+Using electricity, it can really heat things up.
+Requires a Fire Pal to light a flame. Build Work 100000 Materials 30 Refined Ingot 10 Circuit Board 30 Ingot 10 Flame Organ Electric Kitchen Food Needed for cooking food.
+It requires electricity to run, but allows a large amount of meals to be prepared rapidly.
+Requires a Fire Pal to light a flame. Build Work 70000 Materials 30 Refined Ingot 5 Circuit Board 20 Charcoal 5 Flame Organ Accumulator Infrastructure A facility for storing excess electricity generated by the ElectricGenerator. Build Work 50000 Materials 50 Ingot 20 Electric Organ Pal Expedition Station Pals A facility that allows Pals to be sent on expeditions to places like dungeons. 
+The dispatched Pals engage in battles and gather items, bringing back resources to the base. Build Work 10000 Materials 20 Wood 20 Stone 5 Paldium Fragment High Quality Workbench Product An Assembly Line for producing items and gear.
+A small workspace limits production speeds.
+Requires Pals that can work with their hands. Build Work 3000 Materials 15 Ingot 50 Wood 10 Nail Production Assembly Line Product An Assembly Line for producing items and gear.
+By splitting Pals into groups, production speeds have somewhat increased.
+Requires Pals that can work with their hands. Build Work 10000 Materials 100 Ingot 50 Wood 20 Nail 10 Cement Production Assembly Line II Product An Assembly Line for producing items and gear.
+Through clever management, production speeds have greatly increased.
+Requires Pals that can work with their hands. Build Work 50000 Materials 100 Refined Ingot 10 Circuit Board 30 Nail Advanced Civilization Workshop Product An Assembly Line for producing items and gear.
+Advanced machinery has been introduced, enabling high-speed production.
+Requires Pals that can work with their hands. Build Work 500000 Materials 50 Coralum Ingot 50 Hexolite 30 Circuit Board 20 Nail Gold Coin Assembly Line Product An Assemby Line that manufactures Money. 
+The work puts a strain on the mind, causing a decrease in Pal s SAN value.
+Requires Pals that can work with their hands. Build Work 10000 Materials 100 Pal Metal Ingot 50 Nail 20 Circuit Board 30 Cement Berry Plantation Food A farm that can grow Berries.
+Harvest time is quick, but eating them doesn t provide much sustenance.
+Requires a few Pals to plant seeds, water, and harvest the crops. Build Work 3000 Materials 3 Berry Seeds 20 Wood 20 Carrot Plantation Food A farm where you can grow Carrot.
+It takes time to harvest, but increases the variety of meals you can prepare.
+Requires a few Pals to plant seeds, water, and harvest the crops. Build Work 20000 Materials 3 Carrot Seeds 70 Wood 50 5 Pal Fluids Lettuce Plantation Food A farm that can grow Lettuce.
+It takes time to harvest, but increases the variety of meals you can prepare.
+Requires a few Pals to plant seeds, water, and harvest the crops. Build Work 40000 Materials 3 Lettuce Seeds 100 Wood 70 10 Pal Fluids Onion Plantation Food A farm where you can grow Onion.
+It takes time to harvest, but increases the variety of meals you can prepare.
+Requires a few Pals to plant seeds, water, and harvest the crops. Build Work 20000 Materials 3 Onion Seeds 70 Wood 50 5 Pal Fluids Potato Plantation Food A farm where you can grow Potato.
+It takes time to harvest, but increases the variety of meals you can prepare.
+Requires a few Pals to plant seeds, water, and harvest the crops. Build Work 20000 Materials 3 Potato Seeds 70 Wood 50 5 Pal Fluids Tomato Plantation Food A farm that can grow Tomato.
+They take time to harvest, but increase the variety of meals you can prepare.
+Requires a few Pals to plant seeds, water, and harvest the crops. Build Work 20000 Materials 3 Tomato Seeds 70 Wood 50 5 Pal Fluids Wheat Plantation Food A farm that can grow Wheat.
+It requires an average amount of time to harvest.
+Requires a few Pals to plant seeds, water, and harvest crops. Build Work 8000 Materials 3 Wheat Seeds 35 Wood 35 Skillfruit Orchard Food A farm where Skillfruits can be cultivated.
+By planting the original fruit in the ground,
+multiple fruits of the same type can be harvested. Build Work 100000 Materials 200 Wood 50 Paldium Fragment 30 Pal Fluids Great Eagle Statue Infrastructure A stone monument in the shape of a ChickenPal.
+Allows fast travel to the location where it is placed. Build Work 1000 Materials 5 Paldium Fragment 10 Stone Brothers of the Eternal Pyre Vertical Banner Furniture Decorative Brothers of the Eternal Pyre banner. Build Work 2000 Materials 10 Refined Ingot 10 Fiber 20 Cloth Brothers of the Eternal Pyre Standard Furniture Decorative Brothers of the Eternal Pyre flag. Build Work 2000 Materials 20 Refined Ingot 10 Fiber 20 Cloth Ceremonial Candlestick Other An imposing ceremonial candlestick lit by the Brothers of the Eternal Pyre and revered as sacred. 
+It can be placed on the ground. Requires a Fire Pal to light a flame. Build Work 1000 Materials 5 Ingot 2 Flame Organ 2 Charcoal Fishing Pond Product A ready-to-use fishing pond. 
+Assign a Pal to fish here at their own leisure. 
+Requires Pals that can work with their hands. Build Work 23500 Materials 40 Wood 5 Cement 10 Pal Fluids Large Fishing Pond Product A ready-to-use large fishing pond. 
+The expanded body of water makes it possible to catch even larger Pals. 
+Requires Pals that can work with their hands. Build Work 85000 Materials 60 Wood 20 Stone 10 Plasteel 20 High Quality Pal Oil Mill Product Facility for milling Wheat to produce Flour.
+Requires Pal with the Watering trait to spin the water turbine. Build Work 8000 Materials 50 Wood 40 Stone Flower Bed Other Place in base to improve gathering speed.
+Placing more than one has no additional effect. Build Work 32000 Materials 50 Wood 100 Stone 40 Cement 20 Beautiful Flower Water Fountain Other Place in base to improve watering speed.
+Placing more than one has no additional effect. Build Work 20000 Materials 100 Ingot 200 Stone 20 Pal Fluids Japanese Writing Table Furniture Decorative Ornamental Writing Table.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood Garbage Bag Furniture Decorative garbage bag.
+ Build Work 2000 Materials 5 Wood 5 Stone 5 Fiber Glass Wall and Door Foundation Door built on a foundation. Becomes an entrance.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Glass Fence Foundation Fence built on foundations or roofs to prevent falls. 
+Made of industrial-strength glass, it s quite sturdy. Materials 3 Stone 1 Paldium Fragment Glass Slanted Roof Foundation Slanted roof built on top of walls to keep out the rain and wind.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Glass Triangular Wall Foundation Triangular wall built on a foundation for keeping out intruders.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Glass Wall and Window Foundation Wall with windows, built on foundations for keeping out intruders.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Glass Foundation Foundation A foundation for building walls or facilities on.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Foundation Materials 1 Stone 2 Paldium Fragment Glass Roof Foundation A roof built on top of walls to keep out the rain and wind.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Glass Stairs Foundation Stairs placed below a foundation or roof for climbing up.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Glass Wall Foundation Walls built on foundations for keeping out intruders.
+Made of industrial-strength glass, it s quite sturdy. Materials 1 Stone 2 Paldium Fragment Global Palbox Pals A facility that can store the genetic data of Pals
+and allows you to reconstruct them from this data. 
+The stored genetic data can also be transferred to other worlds. Build Work 1000 Materials 3 Paldium Fragment 5 Wood 15 Stone Antique Globe Furniture Decorative antique globe.
+ Build Work 5000 Materials 50 Wood 1 Ingot Soccer Goal Furniture Decorative soccer goal.
+Kicking a SheepBall into it will get you no points. Build Work 10000 Materials 20 Ingot 20 Fiber Yakumo Statue Other Decorative Yakumo statue. Build Work 2000 Materials 70 Stone Guild Chest Storage A chest that can instantly send and receive items through subspace. 
+The items inside are shared across all bases where it is placed. Build Work 120000 Materials 50 Refined Ingot 100 Paldium Fragment 10 Ancient Civilization Parts Egg Incubator Pals Used for incubating a Pal Egg.
+If a Pal Egg is left in it, it will automatically hatch after some time has passed. Build Work 5000 Materials 10 Paldium Fragment 5 Cloth 30 Stone 2 Ancient Civilization Parts Tombstone Other A gravestone that can be inscribed with text. 
+Use it for recording purposes. Build Work 1000 Materials 10 Stone Heater Infrastructure A device that blows warm air, raising the temperature of a base.
+It doesn t provide much warmth, but helps one to endure somewhat cold environments.
+Requires a Fire Pal to light a flame. Build Work 10000 Materials 20 Ingot 10 Charcoal 5 Flame Organ Large-Scale Stone Oven Food Needed for cooking food.
+By becoming larger, multiple Pals can cooperate to cook together.
+Requires a Fire Pal to light a flame. Build Work 200000 Materials 200 Cement 1000 Stone 200 Charcoal 20 Flame Organ Rayne Syndicate Vertical Banner Furniture Decorative Rayne Syndicate banner. Build Work 2000 Materials 10 Ingot 10 Fiber 20 Cloth Rayne Syndicate Standard Furniture Decorative Rayne Syndicate flag. Build Work 2000 Materials 20 Ingot 10 Fiber 20 Cloth Rayne Syndicate Flag Other Decorative Rayne Syndicate flag. Build Work 2000 Materials 10 Wood 2 Cloth Refrigerated Crusher Product Facility that crushes CopperOre and
+converts it into other materials.
+Requires a power supply and a Pal with Cooling suitability, but it s very efficient. Build Work 100000 Materials 50 Pal Metal Ingot 30 Plasteel 50 Ice Organ Metal Fence Foundation Fence built on foundations or roofs to prevent falls. 
+Made from metal, it is extremely durable. Materials 3 Ingot Japanese Hearth Furniture Decorative Hearth.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 3 Ingot 2 Charcoal Flea Market (Items) Other A facility for selling items.
+By setting products in the sales list, you can sell items to other players.
+Assign an Ice Pal to it and the food inside will be less likely to spoil. Build Work 9000 Materials 20 Ingot 40 Wood 3 Cloth Wooden Chest Storage Stores items.
+Made from wood, it breaks easily.
+It s probably not the best thing to store valuables in. Build Work 1000 Materials 15 Wood 5 Stone Metal Chest Storage Stores items.
+Reinforced with metal, it is somewhat durable.
+The increased size allows for the storage of more things. Build Work 8000 Materials 15 Ingot 30 Wood Refined Metal Chest Storage Stores items.
+Made of iron, it is extremely durable.
+It is useful as a large, secure storage box. Build Work 50000 Materials 20 Refined Ingot 50 Wood 20 Nail Advanced Chest Storage Stores items.
+Quite sturdy, with plenty of storage space.
+It is useful as a large, secure storage box. Build Work 50000 Materials 20 Hexolite 50 Carbon Fiber 20 Nail Big Wall Ivy Furniture Decorative large ivy.
+Can be placed on a wall.
+ Materials 10 Fiber Small Wall Ivy Furniture Decorative small ivy.
+Can be placed on a wall.
+ Materials 5 Fiber Horizontal Wall Ivy Furniture Decorative horizontal ivy.
+Can be placed on a wall.
+ Materials 5 Fiber Japanese-Style Door A Foundation Door built on a foundation. Becomes an entrance.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Door B Foundation Japanese sliding door (shoji) built on a foundation. Becomes an indoor entrance.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Door C Foundation Japanese sliding door (fusuma) built on a foundation. Becomes an indoor entrance.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Fence Foundation Fence built on foundations or roofs to prevent falls. 
+Can be used to create stylish Japanese-style architecture. Materials 5 Wood Japanese-Style Pillar Foundation Column for structural support.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Slanted Roof Foundation Slanted roof built on top of walls to keep out the rain and wind.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Triangular Wall Foundation Triangular wall built on a foundation for keeping out intruders.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Wall and Window Foundation Wall with windows, built on foundations for keeping out intruders.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Foundation Foundation A foundation for building walls or facilities on.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Roof A Foundation A roof built on top of walls to keep out the rain and wind.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Roof B Foundation A roof built on top of walls to keep out the rain and wind.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Stairs Foundation Stairs placed below a foundation or roof for climbing up.
+You can create stylish Japanese-style architecture. Materials 4 Wood Japanese-Style Wall Foundation Walls built on foundations for keeping out intruders.
+You can create stylish Japanese-style architecture. Materials 4 Wood Hanging Scroll Furniture Decorative hanging scroll.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 10 Fiber Incense Burner Furniture Decorative Incense Burner.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 3 Ingot 5 Wood Pal Labor Research Laboratory Pals A facility for conducting research on the various tasks of Pals. 
+By assigning tasks to Pals in this facility, research progresses, granting various benefits. Build Work 5000 Materials 10 Ingot 10 Paldium Fragment Lamp Light A light source that provides illumination to a base even at night.
+Requires electricity, but lights up a larger area. Build Work 7000 Materials 10 Ingot 3 Electric Organ 3 Nail 20 Wood Paper Lantern Other Decorative paper lantern. Build Work 7000 Materials 5 Ingot 2 Electric Organ Large Ceiling Lamp Light A light source that provides illumination to a base even at night.
+It can be placed on a ceiling.
+Requires a significant amount of electricity, but lights up an even larger area. Build Work 30000 Materials 50 Ingot 5 Circuit Board 5 Nail Large Mounted Lamp Light A light source that provides illumination to a base even at night.
+Requires a significant amount of electricity, but lights up an even larger area. Build Work 30000 Materials 50 Ingot 5 Circuit Board 5 Nail Chandelier Light Chandelier that provides illumination.
+Requires electricity to light. Build Work 10000 Materials 20 Ingot 3 Electric Organ 3 Nail Wall Lamp Light Wall lamp that provides illumination.
+Requires electricity to light. Build Work 7000 Materials 10 Ingot 2 Electric Organ 2 Nail Brick Fireplace Light Brick fireplace that provides illumination.
+Must be lit with fire from a Fire Pal. Build Work 10000 Materials 30 Wood 15 Stone 5 Charcoal Fireplace Light Fireplace that provides illumination.
+Must be lit with fire from a Fire Pal. Build Work 10000 Materials 15 Wood 30 Stone 5 Charcoal Antique Brown Floor Lamp Light Antique brown floor lamp that provides illumination.
+Requires electricity to light. Build Work 7000 Materials 30 Wood 3 Electric Organ 3 Nail Antique Red Floor Lamp Light Antique red floor lamp that provides illumination.
+Requires electricity to light. Build Work 7000 Materials 30 Wood 3 Electric Organ 3 Nail Simple Street Lamp Light Simple street lamp that provides illumination.
+Requires electricity to light. Build Work 10000 Materials 20 Ingot 3 Electric Organ 3 Nail Double Street Lamp Light Double street lamp that provides illumination.
+Requires electricity to light. Build Work 10000 Materials 20 Ingot 3 Electric Organ 3 Nail Retro Street Lamp Light Retro street lamp that provides illumination.
+Requires electricity to light. Build Work 10000 Materials 20 Ingot 3 Electric Organ 3 Nail Stylish Street Lamp Light Stylish street lamp that provides illumination.
+Requires electricity to light. Build Work 10000 Materials 20 Ingot 3 Electric Organ 3 Nail Lyleen Statue Other Decorative Lyleen statue. Build Work 2000 Materials 100 Stone Claw Crane Furniture Decorative claw crane.
+Broken, it can t be played. Build Work 12000 Materials 30 Ingot 5 Cloth Cola Vending Machine Furniture Decorative cola vending machine.
+Cannot be used to buy items. Build Work 10000 Materials 30 Ingot 2 Ice Organ Human-Powered Generator Infrastructure A facility that converts rotational motion into electrical energy.
+The efficiency is low, and the Pals working here will experience a decrease in SAN value, but they will gain experience points. Build Work 5000 Materials 50 Wood 5 Electric Organ Straw Pal Bed Infrastructure A straw bed for Pals.
+Pals can rest on it when injured, or to sleep at night.
+It isn t soft, but it s better than nothing. Build Work 2000 Materials 10 Wood 5 Fiber Fluffy Pal Bed Infrastructure A fluffy bed that Pals can get a good rest on.
+Pals can rest on it when injured, or to sleep at night.
+Pals love sleeping on fluffy beds like this. Build Work 10000 Materials 10 Cloth 30 Wood 5 Nail 10 Fiber Large Pal Bed Infrastructure A fluffy bed that Pals can get a good rest on.
+Pals can rest on it when injured, or to sleep at night.
+Even large Pals can sleep soundly on a bed like this. Build Work 50000 Materials 10 High Quality Cloth 60 Wood 20 Nail 30 Fiber Pal Pod Infrastructure A healing pod for Pals.
+Used when Pals are injured or to rest at night.
+Thanks to technological advancements, the healing amount has increased. Build Work 50000 Materials 10 Hexolite 30 Pal Fluids 5 Circuit Board Medieval Medicine Workbench Product A facility for making Pal medicine.
+It can only produce simple medicines.
+Leave its operation to a Pal that can make medicine. Build Work 3000 Materials 30 Wood 5 Nail 10 Paldium Fragment Electric Medicine Workbench Product A facility for making Pal medicine.
+It requires electricity, but can produce high quality medicine.
+Leave its operation to a Pal that can make medicine. Build Work 50000 Materials 40 Refined Ingot 10 Circuit Board 20 Carbon Fiber Advanced Medicine Workbench Product A facility for making medicine to cure Pals illnesses. 
+With advanced technology, it can also create unknown medicines. 
+Assign the task to a Pal capable of pharmacy work. Build Work 500000 Materials 50 Hexolite 50 Plasteel 30 Circuit Board Metal Door Foundation Door built on a foundation. Becomes an entrance.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Iron Gate Foundation Gate large enough for big Pals to pass through.
+Made from metal, it is extremely durable. Build Work 15000 Materials 10 Ingot 1 Metal Slanted Roof Foundation Slanted roof built on top of walls to keep out the rain and wind.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Metal Triangular Wall Foundation Triangular wall built on a foundation for keeping out intruders.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Metal Wall and Window Foundation Wall built on a foundation for keeping out intruders. Includes a window.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Metal Foundation Foundation A foundation for building walls or facilities on.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Foundation Materials 1 Ingot 2 Stone Metal Roof Foundation A roof built on top of walls to keep out the rain and wind.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Metal Stairs Foundation Stairs placed below a foundation or roof for climbing up.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Metal Wall Foundation Walls built on foundations for keeping out intruders.
+Made from metal, it is extremely durable. Materials 1 Ingot 2 Stone Pickaxe and Helmet Other Place in base to improve mining speed.
+Placing more than one has no additional effect. Build Work 48000 Materials 50 Wood 50 Stone 50 Ingot Antique Oval Mirror Furniture Decorative antique oval mirror.
+ Build Work 3000 Materials 10 Wood 10 Stone 2 Paldium Fragment Antique Wall Mirror Furniture Decorative antique wall mirror.
+Can be placed on walls.
+ Build Work 3000 Materials 10 Wood 10 Stone 2 Paldium Fragment Antique Mirror Furniture Decorative antique mirror.
+ Build Work 2000 Materials 10 Wood 8 Stone 1 Paldium Fragment Ranch Pals Farm for raising sheep and fowl-like Pals.
+Assign a Pal with the appropriate Partner Skill to a farm
+to produce items. Build Work 15000 Materials 50 Wood 20 Stone 30 Fiber Large-Scale Electric Egg Incubator Pals Device for incubating Pal eggs.
+While power supply is required, it allows multiple eggs to be incubated simultaneously at the optimal temperature. Build Work 5000 Materials 100 Hexolite 50 Circuit Board 30 Ancient Civilization Parts 20 Ancient Civilization Core Large Incubator Pals Device for incubating Pal eggs. 
+It automatically maintains a suitable temperature and can hatch multiple eggs at once. Build Work 5000 Materials 50 Pal Metal Ingot 20 Cloth 20 Ancient Civilization Parts 10 Ancient Civilization Core Moonflower Vertical Banner Furniture Decorative Moonflower banner. Build Work 2000 Materials 10 Refined Ingot 10 Fiber 20 High Quality Cloth Moonflower Standard Furniture Decorative Moonflower flag. Build Work 2000 Materials 20 Refined Ingot 10 Fiber 20 High Quality Cloth Crude Oil Extractor Product Equipment required to extract CrudeOil from oil fields.
+Requires a power supply to operate. Build Work 500000 Materials 250 Pal Metal Ingot 50 Circuit Board Flame Cauldron Other Place in base to improve fire-making speed.
+Placing more than one has no additional effect. Build Work 16000 Materials 50 Ingot 100 Wood 20 Flame Organ Pal Surgery Table Pals A facility where surgery can be performed on Pals to change their gender or passive skills. Build Work 1000 Materials 30 Refined Ingot 20 High Quality Cloth Flea Market (Pals) Other A facility for selling Pals.
+By setting Pals in the sales list, you can sell them to other players.
+Assign an Ice Pal to it and the food inside will be less likely to spoil. Build Work 9000 Materials 20 Ingot 40 Wood 5 Paldium Fragment Palbox Pals Facility for storing captured Pals.
+Pals inside gradually recover Health.
+Area around this facility becomes a base. Build Work 1000 Materials 1 Paldium Fragment 8 Wood 3 Stone Aerial Cage Furniture Decorative aerial cage. Build Work 2000 Materials 10 Wood 10 Fiber Feed Box Food A box for storing Pal food.
+Pals can feed from it when hungry.
+Make sure to keep it well-stocked to keep your Pals happy. Build Work 1000 Materials 20 Wood Medicine Rack Infrastructure A shelf for storing medicine. Sick Pals will come here to take their medicine. Be sure to keep the medicine stocked. Build Work 10000 Materials 20 Ingot 30 Wood 5 Cloth Antique Partition Furniture Decorative antique partition.
+ Build Work 2000 Materials 20 Wood Grand Piano Furniture Decorative grand piano.
+Cannot be played. Build Work 10000 Materials 100 Wood 20 Fiber 5 Ingot Upright Piano Furniture Decorative upright piano.
+Cannot be played. Build Work 10000 Materials 100 Wood 20 Fiber 5 Ingot Earthen Pipe Furniture Decorative earthen pipe.
+ Build Work 2000 Materials 5 Cement Houseplant Furniture Decorative houseplant.
+ Build Work 2000 Materials 10 Wood 5 Fiber Houseplant and Chair Furniture Decorative houseplant and chair.
+ Build Work 2000 Materials 10 Wood 5 Fiber Tabletop Houseplant Furniture Decorative tabletop houseplant.
+ Build Work 2000 Materials 10 Stone 5 Fiber Potted Houseplant Furniture Decorative potted houseplant.
+ Build Work 1000 Materials 5 Stone 5 Fiber Shoddy Bed Infrastructure A shoddy bed for humans.
+Use it when injured or to sleep at night.
+You won t be able to sleep soundly without a roof over your head. Build Work 2000 Materials 20 Wood 5 Fiber 1 Wool Fine Bed Infrastructure A fluffy bed for humans.
+Use it when injured or to sleep at night.
+You won t be able to sleep soundly without a roof over your head. Build Work 20000 Materials 10 Cloth 50 Wood 10 Nail 20 Fiber PIDF Vertical Banner Furniture Decorative PIDF banner. Build Work 2000 Materials 10 Refined Ingot 10 Fiber 20 Cloth PIDF Standard Furniture Decorative PIDF flag. Build Work 2000 Materials 20 Refined Ingot 10 Fiber 20 Cloth Pure Quartz Mine Product A facility for producing Quartz. 
+Mining Quartz is grueling physical work.
+Leave it to Pals skilled at mining. Build Work 50000 Materials 70 Stone 100 Pure Quartz 30 Paldium Fragment Refrigerator Storage Large food vault.
+Assign an Ice Pal to help prevent
+food stored inside from spoiling. Build Work 50000 Materials 50 Refined Ingot 20 Polymer 15 Ice Organ 5 Circuit Board Repair Bench Product Workbench for repairing broken tools.
+Materials are needed to make repairs. Build Work 3000 Materials 10 Wood 10 Stone Antique Carpet Furniture Decorative antique carpet.
+ Build Work 2000 Materials 3 Cloth 1 Venom Gland Antique Red Carpet Furniture Decorative antique red carpet.
+ Build Work 1500 Materials 2 Cloth 1 Flame Organ Antique Green Carpet Furniture Decorative antique green carpet.
+ Build Work 1500 Materials 2 Cloth 1 High Quality Pal Oil Antique Long Carpet Furniture Decorative antique long carpet.
+ Build Work 1000 Materials 1 Cloth 1 Flame Organ Fur rug Furniture en Text Build Work 2000 Materials 1 Wood 3 Laboratory Chair Other Decorative laboratory chair. Build Work 1000 Materials 10 Polymer Laboratory Desk Other Decorative laboratory desk. Build Work 5000 Materials 15 Polymer Clean Wall and Door Foundation Door built on a foundation. Becomes an entrance. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Clean Fence Foundation Fence built on foundations or roofs to prevent falls. 
+Can be used to create clean, futuristic architecture. Materials 2 Polymer Clean Slanted Roof Foundation Slanted roof built on top of walls to keep out the rain and wind. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Clean Triangular Wall Foundation Triangular wall built on a foundation to keep out intruders. 
+Can be used to create create clean, futuristic architecture. Materials 1 Polymer Clean Wall and Window Foundation Wall with windows, built on a foundation to keep out intruders. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Clean Foundation Foundation A foundation for building walls or facilities. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Foundation Materials 1 Polymer Clean Roof Foundation A roof built on top of walls to keep out the rain and wind. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Clean Stairs Foundation Stairs placed below a foundation or roof to climb up. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Clean Wall Foundation Walls built on foundations to keep out intruders. 
+Can be used to create clean, futuristic architecture. Materials 1 Polymer Alpha Wave Generator Infrastructure A device that emits alpha waves to relax Pals. 
+It slows the rate at which the SAN value of Pals at the base decreases.
+Placing more than one will not have any additional effect. Build Work 50000 Materials 40 Refined Ingot 20 Circuit Board 30 Electric Organ 20 Paldium Fragment PAL Genetic Research Unit Vertical Banner Furniture Decorative PAL Genetic Research Unit banner. Build Work 2000 Materials 10 Refined Ingot 10 Fiber 20 High Quality Cloth PAL Genetic Research Unit Standard Furniture Decorative PAL Genetic Research Unit flag. Build Work 2000 Materials 20 Refined Ingot 10 Fiber 20 High Quality Cloth Flower Arrangement Furniture Decorative Flower Arrangement.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 1 Beautiful Flower Iron Shelf Storage Iron shelf for storing items. Build Work 8000 Materials 20 Ingot 1 Nail Antique Bookshelf Storage Antique bookshelf for storing items. Build Work 5000 Materials 40 Wood 2 Nail Iron Wall Shelf Storage Iron wall shelf for storing items.
+Can be placed on a wall. Build Work 4000 Materials 15 Wood 10 Ingot Antique Wall Cabinet Storage Antique cabinet for storing items.
+Can be placed on walls. Build Work 2000 Materials 20 Wood 5 Stone 3 Red Berries Long Iron Shelf Storage Long iron shelf for storing items. Build Work 8000 Materials 20 Ingot 2 Nail Antique Wardrobe Storage Antique wardrobe for storing items. Build Work 10000 Materials 70 Wood 5 Nail Orange Locker Storage Orange locker for storing items.
+Decorated with Pal stickers. Build Work 12000 Materials 30 Ingot 3 Nail Antique Chest Storage Antique chest for storing items.
+Adorned with a photo of a Pal. Build Work 5000 Materials 30 Wood 10 Ingot Locker Storage Locker for storing items.
+Decorated with Pal stickers. Build Work 12000 Materials 30 Ingot 3 Nail Antique Side Chest Storage Antique side chest for storing items.
+Adorned with a photo of a Pal. Build Work 2500 Materials 15 Wood 3 Ingot Antique Cabinet Storage Antique cabinet for storing items. Build Work 5000 Materials 30 Wood 10 Fiber Antique Long Cabinet Storage Antique long cabinet for storing items.
+Adorned with a photo of a Pal. Build Work 7000 Materials 40 Wood 10 Fiber Large Antique Cabinet Storage Large antique cabinet for storing items. Build Work 8000 Materials 40 Wood 10 Fiber 3 Ingot Wooden Barrel Shelf Storage Wooden barrel shelf for storing items. Build Work 5000 Materials 70 Wood 10 Stone Wooden Wall Shelf Storage Wooden shelf for storing items.
+Can be placed on a wall. Build Work 2000 Materials 20 Wood 5 Stone Wooden Decorative Wall Shelf Furniture Decorative wooden shelf.
+Can be placed on a wall. Build Work 2000 Materials 5 Wood 5 Stone Wooden Shelf Storage Wooden shelf for storing items. Build Work 5000 Materials 40 Wood 2 Nail Deer Scare Furniture Decorative Deer Scare.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 10 Wood 3 Pal Fluids Red Wooden Lantern Other Decorative festival lantern. Build Work 7000 Materials 10 Ingot 3 Electric Organ 10 Stone Emergency Exit Ceiling Sign Furniture Decorative emergency exit sign.
+Can be placed on ceilings.
+ Build Work 1000 Materials 1 Polymer 1 Electric Organ Emergency Exit Wall Sign Furniture Decorative emergency exit sign.
+Can be placed on walls.
+ Build Work 1000 Materials 1 Polymer 1 Electric Organ Sign Other Can be written on.
+Use for memos or to communicate with others. Build Work 1000 Materials 10 Wood Silo Other Place in base to improve planting speed.
+Placing more than one has no additional effect. Build Work 40000 Materials 300 Wood 100 Stone 100 Fiber Pal Dressing Facility Pals Pal Dressing Facility.
+Give your Pals a new look!
+Skins obtained inside and outside the game can be applied here! Build Work 3000 Materials 10 Stone 10 Paldium Fragment Snowman Other Place in base to improve cooling speed.
+Placing more than one has no additional effect. Build Work 40000 Materials 50 Ice Organ 50 Wood 20 Cloth Leather Armchair Furniture Decorative leather armchair.
+ Build Work 2000 Materials 10 Wood 2 Leather 1 Cloth Antique Armchair Furniture Decorative antique armchair.
+ Build Work 2500 Materials 10 Wood 2 Cloth 1 Flame Organ Leather Couch Furniture Decorative leather couch.
+ Build Work 4000 Materials 20 Wood 3 Leather Antique Couch Furniture Decorative antique couch.
+ Build Work 5000 Materials 20 Wood 3 Cloth 2 Flame Organ Antique Ottoman Furniture Decorative antique ottoman.
+ Build Work 1500 Materials 8 Wood 1 Cloth 1 Flame Organ Hot Spring Infrastructure Facility where Pals on base can rest.
+Restores SAN after a long day of hard work. Build Work 8000 Materials 30 Wood 15 Stone 10 Paldium Fragment 10 Pal Fluids High Quality Hot Spring Infrastructure Facility where Pals on base can rest.
+Now comfier and restores more SAN. Build Work 50000 Materials 100 Stone 100 Wood 30 Paldium Fragment 20 Cement Japanese-Style Hot Spring Infrastructure Facility where Pals on base can rest. 
+Its calming, traditional Japanese design offers an extra boost to SAN recovery. Build Work 50000 Materials 50 Stone 300 Wood 50 Paldium Fragment 40 Cement Sphere Workbench Pals A WorkBench for producing spheres used for capturing Pals.
+A small workspace keeps the production speed slow.
+Requires Pals that can work with their hands. Build Work 5000 Materials 10 Paldium Fragment 30 Wood 10 Nail Sphere Assembly Line Pals An Assembly Line for producing spheres used for capturing Pals.
+By splitting Pals into groups, production speeds have somewhat increased.
+Requires Pals that can work with their hands. Build Work 30000 Materials 30 Paldium Fragment 50 Wood 100 Ingot 20 Nail Sphere Assembly Line II Pals An Assembly Line for producing spheres used for capturing Pals.
+Through clever management, production speeds have greatly increased.
+Requires Pals that can work with their hands. Build Work 120000 Materials 100 Refined Ingot 10 Circuit Board 30 Nail 50 Paldium Fragment Advanced Sphere Assembly Line Pals An Assembly Line for producing spheres used for capturing Pals.
+Advanced machinery has been introduced, allowing for the production of spheres at high speed.
+Requires Pals that can work with their hands. Build Work 500000 Materials 50 Hexolite 50 Plasteel 30 Circuit Board 50 Nail Logging Site Product A facility for producing Wood.
+Cutting wood is hard work that requires much physical endurance.
+Leave it to Pals skilled in logging. Build Work 10000 Materials 50 Wood 20 Stone 10 Paldium Fragment Stone Pit Product A facility for producing Stone.
+Mining Stone is hard work that requires much physical endurance.
+Leave it to Pals skilled at mining. Build Work 10000 Materials 50 Stone 20 Wood 10 Paldium Fragment Stone Door Foundation Door built on a foundation. Becomes an entrance.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Fence Foundation Fence built on foundations or roofs to prevent falls. 
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Gate Foundation Gate large enough for big Pals to pass through.
+Made from stone, it is reasonably sturdy. Build Work 5000 Materials 10 Stone 1 Stone Slanted Roof Foundation Slanted roof built on top of walls to keep out the rain and wind.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Triangular Wall Foundation Triangular wall built on a foundation for keeping out intruders.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Wall and Window Foundation Wall built on a foundation for keeping out intruders. Includes a window.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Foundation Foundation A foundation for building walls or facilities on.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Foundation Materials 3 Stone Stone Roof Foundation A roof built on top of walls to keep out the rain and wind.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Stairs Foundation Stairs placed below a foundation or roof for climbing up.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Stone Wall Foundation Walls built on foundations for keeping out intruders.
+Made from stone, it is reasonably sturdy. Materials 3 Stone Iron Stool Furniture Decorative iron stool.
+ Build Work 2000 Materials 3 Ingot Antique Stool Furniture Decorative antique stool.
+ Build Work 1000 Materials 5 Wood Wooden Bar Stool Furniture Decorative bar stool.
+ Build Work 1000 Materials 8 Wood Wooden Stool Furniture Decorative wooden stool.
+ Build Work 1000 Materials 5 Wood Antique Stove Furniture Decorative antique stove.
+ Build Work 8000 Materials 20 Ingot 5 Charcoal Stump and Axe Other Place in base to improve logging speed.
+Placing more than one has no additional effect. Build Work 32000 Materials 150 Wood 40 Ingot 30 Stone Sulfur Mine Product Facility for producing Sulfur.
+Digging Sulfur is grueling physical work.
+Leave it to a Pal that is good at mining. Build Work 30000 Materials 70 Stone 100 Sulfur 30 Paldium Fragment Round Iron Table Furniture Decorative round iron table.
+ Build Work 4000 Materials 5 Ingot Antique Round Table Furniture Decorative antique round table.
+ Build Work 3000 Materials 15 Wood 5 Fiber 2 Stone Round Table Furniture Decorative round table.
+ Build Work 3000 Materials 20 Wood 5 Red Berries Antique Dresser Furniture Dresser useful for giving yourself a remake.
+Allows players to edit their appearance. Build Work 2500 Materials 100 Wood 20 Fiber 30 Stone 5 Ancient Civilization Parts Ironwood Side Table Furniture Decorative ironwood side table.
+ Build Work 1500 Materials 10 Wood 2 Ingot Antique Washstand Furniture Decorative antique washstand.
+ Build Work 5000 Materials 30 Wood 10 Stone 2 Paldium Fragment 1 Cloth Ironwood Table Furniture Decorative ironwood table.
+ Build Work 5000 Materials 20 Wood 5 Ingot 2 Red Berries Ironwood Low Table Furniture Decorative ironwood low table.
+ Build Work 3000 Materials 20 Wood 2 Ingot Square Table Furniture Decorative square table.
+ Build Work 3000 Materials 20 Wood 5 Red Berries Japanese-Style Chest Storage Stores items.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 15 Wood 5 Stone Old TV Furniture Decorative old TV.
+Left behind by an ancient civilization.
+Now it only shows images of Pengullet. Build Work 5000 Materials 20 Wood 1 Circuit Board Tire Furniture Decorative tire.
+ Build Work 2000 Materials 2 High Quality Pal Oil 2 Pal Fluids Antique Toilet Furniture Decorative antique toilet.
+Cannot be used for its original purpose. Build Work 3000 Materials 5 Wood 20 Stone 2 Ingot Antique Toilet Paper Holder Furniture Decorative antique toilet paper holder.
+ Build Work 500 Materials 1 Ingot 3 Fiber Large Toolbox Other Place in base to improve handiwork speed.
+Placing more than one has no additional effect. Build Work 12000 Materials 40 Ingot 100 Wood 15 Nail Mounted Torch Light A light source that provides illumination to a base even at night.
+Requires a Fire Pal to light a flame. Build Work 1000 Materials 5 Wood 2 Stone Stone Lantern Furniture Decorative Stone Lantern.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 15 Stone Antique Towel Rack Furniture Decorative antique towel rack.
+ Build Work 2000 Materials 1 Ingot 2 Cloth Barricade Furniture Decorative barricade.
+ Build Work 2000 Materials 5 Ingot Orange Barricade Furniture Decorative orange barricade.
+ Build Work 2000 Materials 3 Ingot 1 Polymer 3 Red Iron Barricade Furniture Decorative red barricade.
+ Build Work 3000 Materials 5 Ingot 1 Flame Organ 3 White Iron Barricade Furniture Decorative white barricade.
+ Build Work 3000 Materials 5 Ingot 3 Iron Fence Furniture Decorative iron fence.
+ Build Work 3000 Materials 5 Ingot 3 Traffic Cone Furniture Decorative traffic cone.
+ Build Work 2000 Materials 1 Polymer Fat Traffic Cone Furniture Decorative fat traffic cone.
+ Build Work 3000 Materials 2 Polymer Skinny Traffic Cone Furniture Decorative skinny traffic cone.
+ Build Work 1000 Materials 1 Polymer Traffic Light Furniture Decorative traffic light.
+ Build Work 6000 Materials 20 Ingot 2 Electric Organ No Pals Beyond Sign Furniture Decorative No Pals Beyond sign.
+Used in ancient times, it now serves no real purpose. Build Work 2000 Materials 5 Ingot Stop Sign Furniture Decorative Stop sign.
+Used in ancient times, it now serves no real purpose. Build Work 2000 Materials 5 Ingot Beware of Eikthyrdeer Sign Furniture Decorative Beware of Eikthyrdeer sign.
+In ancient times, collisions between Eikthyrdeer and other Pals were frequent. Build Work 2000 Materials 5 Ingot Beware of Mammorest Sign Furniture Decorative Beware of Mammorest sign.
+In ancient times, those who angered a Mammorest were often killed. Build Work 2000 Materials 5 Ingot Electric Pylon Other Place in base to improve electricity generating speed.
+Placing more than one has no additional effect. Build Work 60000 Materials 100 Ingot 30 Electric Organ 20 Circuit Board Bear Trap (Small) Defense Trap that immobilizes Pals who step on it. The capture rate with the sphere increases when a Pal is trapped. Only effective on small Pals. Materials 5 Ingot Bear Trap (Large) Defense A bear trap to immobilize large Pals. The capture rate with the sphere increases when a Pal is trapped. Only effective on large Pals, small Pals will not be caught. Materials 20 Ingot Mine Defense Trap that explodes when a Pal steps on it. It deals damage to a wide area. Materials 5 Ingot 2 Flame Organ Electric Mine Defense Trap that electrocutes the Pal that steps on it. The electrocuted Pal has a higher capture rate with the sphere. Materials 5 Ingot 2 Electric Organ Ice Mine Defense Trap that freezes the Pal that steps on it. The frozen Pal has a higher capture rate with the sphere. Materials 5 Ingot 2 Ice Organ Moving panels Defense A description of the moving panel Materials 50 Paldium Fragment Hanging Trap Defense Trap that catches Pals passing through it.
+Pals caught in the trap are easier to catch with Spheres.
+Only effective on small Pals. Materials 10 Wood 5 Stone Wall-Mounted Sign Other A signboard to write on.
+Can be hung on walls. Build Work 1000 Materials 10 Wood Wall Torch Light A light source that provides illumination to a base even at night.
+It can be placed on walls.
+Requires a Fire Pal to light a flame. Build Work 1000 Materials 5 Wood 2 Stone Majestic Wall Torch Other An imposing torch lit by the Brothers of the Eternal Pyre and revered as sacred. 
+It can be placed on walls. Requires a Fire Pal to light a flame. Build Work 1000 Materials 5 Wood 2 Stone 2 Flame Organ Weapon Workbench Product A WorkBench for producing weapons and ammunition.
+A small workspace prevents the production of high quality weapons.
+Requires Pals that can work with their hands. Build Work 5000 Materials 15 Ingot 50 Wood 10 Nail Weapon Assembly Line Product An Assembly Line for producing weapons and ammunition.
+By splitting Pals into groups, production speeds have somewhat increased.
+Requires Pals that can work with their hands. Build Work 30000 Materials 100 Ingot 50 Wood 20 Nail 10 High Quality Pal Oil Weapon Assembly Line II Product An Assembly Line for producing weapons and ammunition.
+Through clever management, production speeds have greatly increased.
+Requires Pals that can work with their hands. Build Work 120000 Materials 100 Refined Ingot 10 Circuit Board 30 Nail Advanced Civilization Weapon Assembly Line Product An Assembly Line for producing weapons and ammunition.
+Advanced machinery has been introduced, enabling high-speed weapon production.
+Requires Pals that can work with their hands. Build Work 600000 Materials 50 Coralum Ingot 50 Hexolite 30 Circuit Board 20 Nail Wire Fence Other Decorative wired fence. Build Work 2000 Materials 5 Ingot 10 Stone en Text Other en Text Build Work 1000 Materials 15 Wood 5 Stone Wooden Fence Foundation Fence built on foundations or roofs to prevent falls. 
+Made from wood, it breaks easily. Materials 3 Wood Wooden Gate Foundation Gate large enough for big Pals to pass through.
+Made from wood, it breaks easily. Build Work 2000 Materials 10 Wood Wooden Slanted Roof Foundation Slanted roof built on top of walls to keep out the rain and wind.
+Made from wood, it breaks easily. Materials 2 Wood Wooden Triangular Wall Foundation Triangular wall built on a foundation for keeping out intruders.
+Made from wood, it breaks easily. Materials 2 Wood Wooden Wall and Window Foundation Wall built on a foundation for keeping out intruders. Includes a window.
+Made from wood, it breaks easily. Materials 2 Wood Wooden Barricade Other Decorative wooden barricade. Build Work 2000 Materials 10 Wood 10 Fiber Wooden Door Foundation Door built on a foundation. Becomes an entrance.
+Made from wood, it breaks easily. Materials 2 Wood Wooden Foundation Foundation A foundation for building walls or facilities on.
+Made from wood, it breaks easily. Materials 2 Wood Ladder Foundation A ladder that allows you to climb to a slightly higher place. Materials 10 Wood Foundation Materials 2 Wood Wooden Roof Foundation A roof built on top of walls to keep out the rain and wind.
+Made from wood, it breaks easily. Materials 2 Wood Wooden Stairs Foundation Stairs placed below a foundation or roof for climbing up.
+Made from wood, it breaks easily. Materials 2 Wood Wooden Wall Foundation Walls built on foundations for keeping out intruders.
+Made from wood, it breaks easily. Materials 2 Wood Primitive Workbench Product A WorkBench for producing simple items.
+Requires a Pal that can work with their hands. Build Work 500 Materials 2 Wood Pal Gear Workbench Product A WorkBench for producing Pal tools.
+Make a saddle to ride Pals, or make a gun for Pals to use. Build Work 5000 Materials 10 Paldium Fragment 30 Wood 2 Cloth Beta Wave Generator Infrastructure A device that emits beta waves to energize Pals. 
+It increases the work speed of Pals in the base. 
+Placing more than one will not have additional effects. Build Work 120000 Materials 40 Pal Metal Ingot 30 Circuit Board 40 Electric Organ Japanese Floor Cushion Furniture Decorative floor cushion.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 3 Cloth 10 Fiber Japanese Floor Chair Furniture Decorative floor chair.
+Perfect for Japanese-style buildings. Build Work 2000 Materials 15 Wood 3 Cloth 10 Fiber Contact us Privacy Policy Wuthering.gg PlaysSuikaGame.com Marvel Rivals Tracker We are not associated with or endorsed by Pocket Pair, Inc.
