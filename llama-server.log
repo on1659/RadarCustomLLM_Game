@@ -173,7 +173,7 @@ sched_reserve:       MTL0 compute buffer size =   300.75 MiB
 sched_reserve:        CPU compute buffer size =    16.01 MiB
 sched_reserve: graph nodes  = 1231
 sched_reserve: graph splits = 2
-sched_reserve: reserve took 7.90 ms, sched copies = 1
+sched_reserve: reserve took 8.69 ms, sched copies = 1
 common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
 srv    load_model: initializing slots, n_slots = 4
 no implementations specified for speculative decoding
@@ -206,33 +206,3 @@ main: model loaded
 main: server is listening on http://127.0.0.1:8090
 main: starting the main loop...
 srv  update_slots: all slots are idle
-slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = -1
-slot launch_slot_: id  3 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  3 | task 0 | processing task, is_child = 0
-slot update_slots: id  3 | task 0 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 876
-slot update_slots: id  3 | task 0 | n_tokens = 0, memory_seq_rm [0, end)
-slot update_slots: id  3 | task 0 | prompt processing progress, n_tokens = 876, batch.n_tokens = 876, progress = 1.000000
-slot update_slots: id  3 | task 0 | prompt done, n_tokens = 876, batch.n_tokens = 876
-slot init_sampler: id  3 | task 0 | init sampler, took 0.10 ms, tokens: text = 876, total = 876
-slot print_timing: id  3 | task 0 | 
-prompt eval time =    1641.92 ms /   876 tokens (    1.87 ms per token,   533.52 tokens per second)
-       eval time =    3761.83 ms /   170 tokens (   22.13 ms per token,    45.19 tokens per second)
-      total time =    5403.75 ms /  1046 tokens
-slot      release: id  3 | task 0 | stop processing: n_tokens = 1045, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /completion 127.0.0.1 200
-slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = -1
-slot launch_slot_: id  2 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  2 | task 171 | processing task, is_child = 0
-slot update_slots: id  2 | task 171 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 814
-slot update_slots: id  2 | task 171 | n_tokens = 0, memory_seq_rm [0, end)
-slot update_slots: id  2 | task 171 | prompt processing progress, n_tokens = 814, batch.n_tokens = 814, progress = 1.000000
-slot update_slots: id  2 | task 171 | prompt done, n_tokens = 814, batch.n_tokens = 814
-slot init_sampler: id  2 | task 171 | init sampler, took 0.09 ms, tokens: text = 814, total = 814
-slot print_timing: id  2 | task 171 | 
-prompt eval time =    1527.58 ms /   814 tokens (    1.88 ms per token,   532.87 tokens per second)
-       eval time =    5702.01 ms /   256 tokens (   22.27 ms per token,    44.90 tokens per second)
-      total time =    7229.59 ms /  1070 tokens
-slot      release: id  2 | task 171 | stop processing: n_tokens = 1069, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /completion 127.0.0.1 200

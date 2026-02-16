@@ -1,12 +1,12 @@
-t=2026-02-16T20:58:14+0900 lvl=info msg="no configuration paths supplied"
-t=2026-02-16T20:58:14+0900 lvl=info msg="using configuration at default config path" path="/Users/radar/Library/Application Support/ngrok/ngrok.yml"
-t=2026-02-16T20:58:14+0900 lvl=info msg="open config file" path="/Users/radar/Library/Application Support/ngrok/ngrok.yml" err=nil
-t=2026-02-16T20:58:14+0900 lvl=info msg="FIPS 140 mode" enabled=false
-t=2026-02-16T20:58:14+0900 lvl=eror msg="unable to check host info" obj=tunnels.session err="getting host ID: exec: \"ioreg\": executable file not found in $PATH"
-t=2026-02-16T20:58:14+0900 lvl=eror msg="unable to check ComputerName" obj=tunnels.session err="exec: \"scutil\": executable file not found in $PATH"
-t=2026-02-16T20:58:14+0900 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040 allow_hosts=[]
-t=2026-02-16T20:58:14+0900 lvl=info msg="client session established" obj=tunnels.session
-t=2026-02-16T20:58:14+0900 lvl=info msg="tunnel session started" obj=tunnels.session
-t=2026-02-16T20:58:14+0900 lvl=info msg="started tunnel" obj=tunnels name=command_line addr=http://localhost:3333 url=https://awhirl-preimpressive-carina.ngrok-free.dev
-t=2026-02-16T20:58:17+0900 lvl=info msg=start pg=/api/tunnels id=753640202ab72c1e
-t=2026-02-16T20:58:17+0900 lvl=info msg=end pg=/api/tunnels id=753640202ab72c1e status=200 dur=1.170667ms
+t=2026-02-16T21:43:53+0900 lvl=info msg="no configuration paths supplied"
+t=2026-02-16T21:43:53+0900 lvl=info msg="using configuration at default config path" path="/Users/radar/Library/Application Support/ngrok/ngrok.yml"
+t=2026-02-16T21:43:53+0900 lvl=info msg="open config file" path="/Users/radar/Library/Application Support/ngrok/ngrok.yml" err=nil
+t=2026-02-16T21:43:53+0900 lvl=info msg="FIPS 140 mode" enabled=false
+t=2026-02-16T21:43:53+0900 lvl=eror msg="unable to check host info" obj=tunnels.session err="getting host ID: exec: \"ioreg\": executable file not found in $PATH"
+t=2026-02-16T21:43:53+0900 lvl=eror msg="unable to check ComputerName" obj=tunnels.session err="exec: \"scutil\": executable file not found in $PATH"
+t=2026-02-16T21:43:53+0900 lvl=info msg="starting web service" obj=web addr=127.0.0.1:4040 allow_hosts=[]
+t=2026-02-16T21:43:53+0900 lvl=info msg="client session established" obj=tunnels.session
+t=2026-02-16T21:43:53+0900 lvl=info msg="tunnel session started" obj=tunnels.session
+t=2026-02-16T21:43:54+0900 lvl=info msg="started tunnel" obj=tunnels name=command_line addr=http://localhost:3333 url=https://awhirl-preimpressive-carina.ngrok-free.dev
+t=2026-02-16T21:43:56+0900 lvl=info msg=start pg=/api/tunnels id=37e21178e4a993ec
+t=2026-02-16T21:43:56+0900 lvl=info msg=end pg=/api/tunnels id=37e21178e4a993ec status=200 dur=184.667µs

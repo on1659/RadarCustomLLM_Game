@@ -81,11 +81,21 @@ async function send() {
     const data = await r.json();
     document.getElementById('loading').remove();
     
-    let html = esc(data.answer);
-    if (data.sources && data.sources.length) {
-      html += `<div class="sources">📚 참고: ${data.sources.map(s => esc(s)).join(', ')}</div>`;
+    if (data.ask_game && data.games) {
+      let html = esc(data.answer);
+      html += '<div class="game-btns" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">';
+      data.games.forEach(g => {
+        html += `<button onclick="sendWithGame('${esc(g)}','${esc(q)}')" style="padding:8px 16px;background:#4a90d9;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;">${esc(g)}</button>`;
+      });
+      html += '</div>';
+      chat.innerHTML += `<div class="msg bot">${html}</div>`;
+    } else {
+      let html = esc(data.answer);
+      if (data.sources && data.sources.length) {
+        html += `<div class="sources">📚 참고: ${data.sources.map(s => esc(s)).join(', ')}</div>`;
+      }
+      chat.innerHTML += `<div class="msg bot">${html}</div>`;
     }
-    chat.innerHTML += `<div class="msg bot">${html}</div>`;
   } catch(e) {
     document.getElementById('loading').remove();
     chat.innerHTML += `<div class="msg bot">❌ 오류: ${esc(e.message)}</div>`;
@@ -94,6 +104,11 @@ async function send() {
   btn.disabled = false;
   chat.scrollTop = chat.scrollHeight;
   input.focus();
+}
+
+function sendWithGame(game, originalQ) {
+  input.value = game + ' ' + originalQ;
+  send();
 }
 
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\n/g,'<br>'); }
@@ -138,12 +153,40 @@ class Handler(BaseHTTPRequestHandler):
 
             # RAG 검색 (필터 있으면 더 많이 가져온 뒤 필터링)
             vdb = get_db()
-            k_search = 10 if game_filter else 5
+            k_search = 10 if game_filter else 8
             results = vdb.similarity_search(query, k=k_search)
             
             if game_filter:
                 results = [d for d in results if d.metadata.get("game", "") == game_filter][:3]
             else:
+                # 게임 필터 없을 때: 여러 게임이 섞여있으면 역질문
+                found_games = set()
+                for doc in results:
+                    g = doc.metadata.get("game", "")
+                    if g:
+                        found_games.add(g)
+                
+                if len(found_games) >= 2:
+                    # 역질문 반환
+                    game_names = {
+                        "palworld": "팰월드",
+                        "overwatch": "오버워치",
+                        "minecraft": "마인크래프트",
+                    }
+                    game_list = [game_names.get(g, g) for g in sorted(found_games)]
+                    ask_msg = f"'{query}'은(는) 여러 게임에 존재합니다. 어떤 게임에 대해 알고 싶으신가요?"
+                    
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "answer": ask_msg,
+                        "sources": [],
+                        "ask_game": True,
+                        "games": game_list,
+                    }, ensure_ascii=False).encode())
+                    return
+                
                 results = results[:3]
 
             context = ""
