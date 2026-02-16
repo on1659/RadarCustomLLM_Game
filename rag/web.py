@@ -1,7 +1,10 @@
-"""나무위키 RAG 웹 UI — localhost:3333 (하이브리드 검색: BM25 + 벡터)"""
+"""게임위키 AI — localhost:3333 (하이브리드 검색 + 대화 세션)"""
 import os
 import json
 import re
+import sqlite3
+import time
+import uuid
 import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from langchain_community.vectorstores import FAISS
@@ -9,6 +12,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from rank_bm25 import BM25Okapi
 
 DB_DIR = os.path.join(os.path.dirname(__file__), "faiss_db")
+CHAT_DB = os.path.join(os.path.dirname(__file__), "chat.db")
 LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3333
 
@@ -23,68 +27,221 @@ SYSTEM_PROMPT = """당신은 게임 위키 도우미입니다. 아래 [참고 �
 [참고 자료]
 {context}"""
 
+# ── SQLite 초기화 ──
+def init_chat_db():
+    conn = sqlite3.connect(CHAT_DB)
+    conn.execute("""CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        title TEXT,
+        created_at REAL,
+        updated_at REAL
+    )""")
+    conn.execute("""CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT,
+        role TEXT,
+        content TEXT,
+        sources TEXT,
+        created_at REAL,
+        FOREIGN KEY (session_id) REFERENCES sessions(id)
+    )""")
+    conn.commit()
+    conn.close()
+
+def get_chat_conn():
+    return sqlite3.connect(CHAT_DB)
+
+init_chat_db()
+
+# ── HTML ──
 HTML = """<!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">
 <title>🎮 게임위키 AI</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, sans-serif; background: #0a0a0a; color: #e0e0e0; height: 100vh; display: flex; flex-direction: column; }
-  .header { padding: 16px 24px; background: #111; border-bottom: 1px solid #222; }
-  .header h1 { font-size: 20px; }
-  .header p { font-size: 13px; color: #888; margin-top: 4px; }
+  body { font-family: -apple-system, sans-serif; background: #0a0a0a; color: #e0e0e0; height: 100vh; display: flex; }
+
+  /* 사이드바 */
+  .sidebar { width: 260px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-header { padding: 16px; border-bottom: 1px solid #222; }
+  .sidebar-header button { width: 100%; padding: 10px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; }
+  .sidebar-header button:hover { background: #3a7bc8; }
+  .session-list { flex: 1; overflow-y: auto; padding: 8px; }
+  .session-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #bbb; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; }
+  .session-item:hover { background: #1a1a2e; }
+  .session-item.active { background: #1a3a5c; color: #fff; }
+  .session-item .delete-btn { margin-left: auto; opacity: 0; color: #888; font-size: 16px; flex-shrink: 0; }
+  .session-item:hover .delete-btn { opacity: 1; }
+  .session-item .delete-btn:hover { color: #e44; }
+
+  /* 메인 */
+  .main { flex: 1; display: flex; flex-direction: column; }
+  .header { padding: 16px 24px; background: #111; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; }
+  .header p { font-size: 12px; color: #888; }
+  .header .clear-btn { padding: 6px 14px; background: #333; color: #aaa; border: 1px solid #444; border-radius: 6px; font-size: 12px; cursor: pointer; }
+  .header .clear-btn:hover { background: #444; color: #fff; }
   .chat { flex: 1; overflow-y: auto; padding: 24px; }
   .msg { max-width: 700px; margin: 12px auto; padding: 14px 18px; border-radius: 12px; line-height: 1.6; }
   .user { background: #1a3a5c; margin-left: auto; max-width: 500px; text-align: right; }
   .bot { background: #1a1a2e; border: 1px solid #333; }
   .bot .sources { font-size: 12px; color: #666; margin-top: 8px; border-top: 1px solid #333; padding-top: 8px; }
+  .system-msg { max-width: 700px; margin: 12px auto; padding: 10px 16px; border-radius: 8px; background: #1a2a1a; border: 1px solid #2a4a2a; color: #8c8; font-size: 13px; text-align: center; }
   .input-area { padding: 16px 24px; background: #111; border-top: 1px solid #222; }
   .input-wrap { max-width: 700px; margin: 0 auto; display: flex; gap: 10px; }
   input { flex: 1; padding: 12px 16px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 15px; outline: none; }
   input:focus { border-color: #4a90d9; }
-  button { padding: 12px 24px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
-  button:hover { background: #3a7bc8; }
-  button:disabled { background: #333; cursor: not-allowed; }
+  button.send-btn { padding: 12px 24px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
+  button.send-btn:hover { background: #3a7bc8; }
+  button.send-btn:disabled { background: #333; cursor: not-allowed; }
   .loading { color: #888; font-style: italic; }
+  .empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #555; font-size: 18px; }
+
+  /* 모바일 */
+  @media (max-width: 768px) {
+    .sidebar { width: 220px; }
+  }
 </style>
 </head><body>
-<div class="header">
-  <h1>🎮 게임위키 AI</h1>
-  <p>팰월드 · 오버워치 · 마인크래프트 — 나무위키 기반 RAG</p>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <button onclick="newSession()">+ 새 대화</button>
+  </div>
+  <div class="session-list" id="sessionList"></div>
 </div>
-<div class="chat" id="chat"></div>
-<div class="input-area">
-  <div class="input-wrap">
-    <input id="input" placeholder="게임에 대해 물어보세요..." autofocus>
-    <button id="btn" onclick="send()">전송</button>
+<div class="main">
+  <div class="header">
+    <div>
+      <h1>🎮 게임위키 AI</h1>
+      <p>팰월드 · 오버워치 · 마인크래프트 — RAG</p>
+    </div>
+    <button class="clear-btn" onclick="clearSession()" title="대화 컨텍스트 초기화">/clear</button>
+  </div>
+  <div class="chat" id="chat">
+    <div class="empty-state" id="emptyState">게임에 대해 물어보세요! 🎮</div>
+  </div>
+  <div class="input-area">
+    <div class="input-wrap">
+      <input id="input" placeholder="게임에 대해 물어보세요... (/clear로 컨텍스트 초기화)" autofocus>
+      <button class="send-btn" id="btn" onclick="send()">전송</button>
+    </div>
   </div>
 </div>
 <script>
 const chat = document.getElementById('chat');
 const input = document.getElementById('input');
 const btn = document.getElementById('btn');
+const sessionList = document.getElementById('sessionList');
+const emptyState = document.getElementById('emptyState');
+
+let currentSession = null;
+
+// 초기화
+loadSessions();
 
 input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+
+async function loadSessions() {
+  const r = await fetch('/api/sessions');
+  const sessions = await r.json();
+  sessionList.innerHTML = '';
+  sessions.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'session-item' + (currentSession === s.id ? ' active' : '');
+    div.innerHTML = `<span style="flex:1;overflow:hidden;text-overflow:ellipsis">💬 ${esc(s.title)}</span><span class="delete-btn" onclick="event.stopPropagation();deleteSession('${s.id}')">×</span>`;
+    div.onclick = () => loadSession(s.id);
+    sessionList.appendChild(div);
+  });
+}
+
+async function newSession() {
+  const r = await fetch('/api/sessions', { method: 'POST' });
+  const s = await r.json();
+  currentSession = s.id;
+  chat.innerHTML = '<div class="empty-state">게임에 대해 물어보세요! 🎮</div>';
+  await loadSessions();
+  input.focus();
+}
+
+async function loadSession(id) {
+  currentSession = id;
+  const r = await fetch(`/api/sessions/${id}/messages`);
+  const msgs = await r.json();
+  chat.innerHTML = '';
+  if (msgs.length === 0) {
+    chat.innerHTML = '<div class="empty-state">게임에 대해 물어보세요! 🎮</div>';
+  }
+  msgs.forEach(m => {
+    if (m.role === 'user') {
+      chat.innerHTML += `<div class="msg user">${esc(m.content)}</div>`;
+    } else if (m.role === 'system') {
+      chat.innerHTML += `<div class="system-msg">${esc(m.content)}</div>`;
+    } else {
+      let html = esc(m.content);
+      if (m.sources) {
+        const srcs = JSON.parse(m.sources);
+        if (srcs.length) html += `<div class="sources">📚 참고: ${srcs.map(s => esc(s)).join(', ')}</div>`;
+      }
+      chat.innerHTML += `<div class="msg bot">${html}</div>`;
+    }
+  });
+  chat.scrollTop = chat.scrollHeight;
+  await loadSessions();
+}
+
+async function deleteSession(id) {
+  if (!confirm('이 대화를 삭제할까요?')) return;
+  await fetch(`/api/sessions/${id}`, { method: 'DELETE' });
+  if (currentSession === id) {
+    currentSession = null;
+    chat.innerHTML = '<div class="empty-state">게임에 대해 물어보세요! 🎮</div>';
+  }
+  await loadSessions();
+}
+
+async function clearSession() {
+  if (!currentSession) return;
+  await fetch(`/api/sessions/${currentSession}/clear`, { method: 'POST' });
+  chat.innerHTML = '<div class="system-msg">🗑️ 컨텍스트가 초기화되었습니다.</div>';
+  await loadSessions();
+}
 
 async function send() {
   const q = input.value.trim();
   if (!q) return;
+
+  // /clear 명령어
+  if (q === '/clear') {
+    input.value = '';
+    await clearSession();
+    return;
+  }
+
+  // 세션 없으면 자동 생성
+  if (!currentSession) {
+    const r = await fetch('/api/sessions', { method: 'POST' });
+    const s = await r.json();
+    currentSession = s.id;
+  }
+
   input.value = '';
   btn.disabled = true;
-  
+  if (document.getElementById('emptyState')) document.getElementById('emptyState').remove();
+
   chat.innerHTML += `<div class="msg user">${esc(q)}</div>`;
   chat.innerHTML += `<div class="msg bot loading" id="loading">🔍 검색 중...</div>`;
   chat.scrollTop = chat.scrollHeight;
-  
+
   try {
     const r = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({query: q})
+      body: JSON.stringify({ query: q, session_id: currentSession })
     });
     const data = await r.json();
     document.getElementById('loading').remove();
-    
+
     if (data.ask_game && data.games) {
       let html = esc(data.answer);
       html += '<div class="game-btns" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">';
@@ -104,10 +261,11 @@ async function send() {
     document.getElementById('loading').remove();
     chat.innerHTML += `<div class="msg bot">❌ 오류: ${esc(e.message)}</div>`;
   }
-  
+
   btn.disabled = false;
   chat.scrollTop = chat.scrollHeight;
   input.focus();
+  await loadSessions();
 }
 
 function sendWithGame(game, originalQ) {
@@ -115,12 +273,12 @@ function sendWithGame(game, originalQ) {
   send();
 }
 
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\n/g,'<br>'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\n/g,'<br>'); }
 </script>
 </body></html>"""
 
 
-# 전역 DB + BM25
+# ── 벡터 DB + BM25 ──
 db = None
 bm25_index = None
 bm25_docs = None
@@ -128,7 +286,6 @@ bm25_docs = None
 def tokenize_ko(text):
     """한국어 토크나이저 — 공백 분리 + 슬라이딩 바이그램으로 붙어쓰기 대응"""
     text = text.lower()
-    # 1) 공백/특수문자로 분리
     raw_tokens = re.findall(r'[가-힣a-zA-Z0-9]+', text)
     tokens = []
     for t in raw_tokens:
@@ -136,12 +293,11 @@ def tokenize_ko(text):
             if len(t) >= 2:
                 tokens.append(t)
         else:
-            # 긴 토큰은 2~3글자 슬라이딩 윈도우로 분해
-            tokens.append(t)  # 원본도 포함
+            tokens.append(t)
             for i in range(len(t) - 1):
-                tokens.append(t[i:i+2])  # 바이그램
+                tokens.append(t[i:i+2])
                 if i + 3 <= len(t):
-                    tokens.append(t[i:i+3])  # 트라이그램
+                    tokens.append(t[i:i+3])
     return tokens if tokens else raw_tokens
 
 def get_db():
@@ -150,8 +306,6 @@ def get_db():
         embeddings = HuggingFaceEmbeddings(model_name="jhgan/ko-sroberta-multitask")
         db = FAISS.load_local(DB_DIR, embeddings, allow_dangerous_deserialization=True)
         print("✅ 벡터DB 로드 완료")
-        
-        # BM25 인덱스 구축
         all_docs = db.docstore._dict.values()
         bm25_docs = list(all_docs)
         corpus = [tokenize_ko(doc.page_content) for doc in bm25_docs]
@@ -160,18 +314,83 @@ def get_db():
     return db
 
 
+# ── 핸들러 ──
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(HTML.encode())
+        if self.path == '/api/sessions':
+            conn = get_chat_conn()
+            rows = conn.execute("SELECT id, title, created_at, updated_at FROM sessions ORDER BY updated_at DESC").fetchall()
+            conn.close()
+            sessions = [{"id": r[0], "title": r[1], "created_at": r[2], "updated_at": r[3]} for r in rows]
+            self._json(sessions)
+        elif self.path.startswith('/api/sessions/') and self.path.endswith('/messages'):
+            sid = self.path.split('/')[3]
+            conn = get_chat_conn()
+            rows = conn.execute("SELECT role, content, sources FROM messages WHERE session_id=? ORDER BY created_at", (sid,)).fetchall()
+            conn.close()
+            msgs = [{"role": r[0], "content": r[1], "sources": r[2]} for r in rows]
+            self._json(msgs)
+        else:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(HTML.encode())
 
     def do_POST(self):
-        if self.path == "/api/chat":
-            length = int(self.headers.get("Content-Length", 0))
-            body = json.loads(self.rfile.read(length))
+        length = int(self.headers.get("Content-Length", 0))
+        body = json.loads(self.rfile.read(length)) if length > 0 else {}
+
+        if self.path == '/api/sessions':
+            # 새 세션 생성
+            sid = str(uuid.uuid4())[:8]
+            now = time.time()
+            conn = get_chat_conn()
+            conn.execute("INSERT INTO sessions (id, title, created_at, updated_at) VALUES (?,?,?,?)",
+                         (sid, "새 대화", now, now))
+            conn.commit()
+            conn.close()
+            self._json({"id": sid, "title": "새 대화"})
+
+        elif self.path.startswith('/api/sessions/') and self.path.endswith('/clear'):
+            sid = self.path.split('/')[3]
+            conn = get_chat_conn()
+            conn.execute("DELETE FROM messages WHERE session_id=?", (sid,))
+            now = time.time()
+            conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
+                         (sid, "system", "컨텍스트가 초기화되었습니다.", None, now))
+            conn.execute("UPDATE sessions SET updated_at=? WHERE id=?", (now, sid))
+            conn.commit()
+            conn.close()
+            self._json({"ok": True})
+
+        elif self.path == '/api/chat':
             query = body.get("query", "")
+            session_id = body.get("session_id")
+
+            # 세션 없으면 자동 생성
+            if not session_id:
+                session_id = str(uuid.uuid4())[:8]
+                now = time.time()
+                conn = get_chat_conn()
+                conn.execute("INSERT INTO sessions (id, title, created_at, updated_at) VALUES (?,?,?,?)",
+                             (session_id, query[:30], now, now))
+                conn.commit()
+                conn.close()
+
+            # 유저 메시지 저장
+            now = time.time()
+            conn = get_chat_conn()
+            conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
+                         (session_id, "user", query, None, now))
+
+            # 첫 메시지면 제목 업데이트
+            msg_count = conn.execute("SELECT COUNT(*) FROM messages WHERE session_id=? AND role='user'", (session_id,)).fetchone()[0]
+            if msg_count == 1:
+                title = query[:30] + ("..." if len(query) > 30 else "")
+                conn.execute("UPDATE sessions SET title=? WHERE id=?", (title, session_id))
+            conn.execute("UPDATE sessions SET updated_at=? WHERE id=?", (now, session_id))
+            conn.commit()
+            conn.close()
 
             # 게임명 감지
             game_filter = None
@@ -183,19 +402,14 @@ class Handler(BaseHTTPRequestHandler):
             elif any(kw in query_lower for kw in ["마인크래프트", "마크", "minecraft"]):
                 game_filter = "minecraft"
 
-            # 하이브리드 검색: 벡터 유사도 + BM25 키워드 매칭
+            # 하이브리드 검색
             vdb = get_db()
-            
-            # 1) 벡터 검색
             vec_results = vdb.similarity_search(query, k=8)
-            
-            # 2) BM25 키워드 검색
             query_tokens = tokenize_ko(query)
             bm25_scores = bm25_index.get_scores(query_tokens)
             top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:8]
             bm25_results = [bm25_docs[i] for i in top_bm25_idx if bm25_scores[i] > 0]
-            
-            # 3) 합치기 (중복 제거, 벡터 우선 + BM25 보충)
+
             seen = set()
             merged = []
             for doc in vec_results + bm25_results:
@@ -204,55 +418,63 @@ class Handler(BaseHTTPRequestHandler):
                     seen.add(doc_id)
                     merged.append(doc)
             results = merged
-            
+
             if game_filter:
                 results = [d for d in results if d.metadata.get("game", "") == game_filter][:5]
             else:
-                # 게임 필터 없을 때: 여러 게임이 섞여있으면 역질문
                 found_games = set()
                 for doc in results:
                     g = doc.metadata.get("game", "")
                     if g:
                         found_games.add(g)
-                
                 if len(found_games) >= 2:
-                    # 역질문 반환
-                    game_names = {
-                        "palworld": "팰월드",
-                        "overwatch": "오버워치",
-                        "minecraft": "마인크래프트",
-                    }
+                    game_names = {"palworld": "팰월드", "overwatch": "오버워치", "minecraft": "마인크래프트"}
                     game_list = [game_names.get(g, g) for g in sorted(found_games)]
                     ask_msg = f"'{query}'은(는) 여러 게임에 존재합니다. 어떤 게임에 대해 알고 싶으신가요?"
-                    
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({
-                        "answer": ask_msg,
-                        "sources": [],
-                        "ask_game": True,
-                        "games": game_list,
-                    }, ensure_ascii=False).encode())
+                    # 봇 메시지 저장
+                    conn = get_chat_conn()
+                    conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
+                                 (session_id, "assistant", ask_msg, None, time.time()))
+                    conn.commit()
+                    conn.close()
+                    self._json({"answer": ask_msg, "sources": [], "ask_game": True, "games": game_list, "session_id": session_id})
                     return
-                
                 results = results[:5]
 
             context = ""
             sources = []
-            max_chunk_len = 800  # 청크당 최대 800자
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
-                chunk = doc.page_content[:max_chunk_len]
+                chunk = doc.page_content[:800]
                 context += f"\n[{game} - {title}]\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
                     sources.append(src)
 
+            # 이전 대화 컨텍스트 (최근 4개)
+            conn = get_chat_conn()
+            prev_msgs = conn.execute(
+                "SELECT role, content FROM messages WHERE session_id=? AND role IN ('user','assistant') ORDER BY created_at DESC LIMIT 4",
+                (session_id,)
+            ).fetchall()
+            conn.close()
+            prev_msgs.reverse()
+
+            history = ""
+            for role, content in prev_msgs[:-1]:  # 현재 질문 제외
+                if role == "user":
+                    history += f"사용자: {content}\n"
+                else:
+                    history += f"답변: {content}\n"
+
             # LLM
             system = SYSTEM_PROMPT.format(context=context)
-            prompt = f"{system}\n\n질문: {query}\n\n답변:"
+            if history:
+                prompt = f"{system}\n\n[이전 대화]\n{history}\n질문: {query}\n\n답변:"
+            else:
+                prompt = f"{system}\n\n질문: {query}\n\n답변:"
+
             payload = {
                 "prompt": prompt,
                 "n_predict": 256,
@@ -264,34 +486,49 @@ class Handler(BaseHTTPRequestHandler):
                 resp = requests.post(LLAMA_URL, json=payload, timeout=60)
                 resp.raise_for_status()
                 result = resp.json()
-                if "content" in result:
-                    answer = result["content"].strip()
-                else:
-                    answer = f"LLM 응답 형식 오류: {list(result.keys())}"
-            except requests.exceptions.RequestException as e:
-                answer = f"LLM 연결 실패: {e}"
-            except (KeyError, ValueError) as e:
-                answer = f"LLM 응답 파싱 실패: {e}"
+                answer = result.get("content", "").strip() or "응답을 생성할 수 없습니다."
             except Exception as e:
-                answer = f"예상치 못한 오류: {e}"
+                answer = f"LLM 오류: {e}"
 
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"answer": answer, "sources": sources}, ensure_ascii=False).encode())
+            # 봇 메시지 저장
+            conn = get_chat_conn()
+            conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
+                         (session_id, "assistant", answer, json.dumps(sources, ensure_ascii=False), time.time()))
+            conn.commit()
+            conn.close()
+
+            self._json({"answer": answer, "sources": sources, "session_id": session_id})
         else:
             self.send_response(404)
             self.end_headers()
 
+    def do_DELETE(self):
+        if self.path.startswith('/api/sessions/'):
+            sid = self.path.split('/')[3]
+            conn = get_chat_conn()
+            conn.execute("DELETE FROM messages WHERE session_id=?", (sid,))
+            conn.execute("DELETE FROM sessions WHERE id=?", (sid,))
+            conn.commit()
+            conn.close()
+            self._json({"ok": True})
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def _json(self, data):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(json.dumps(data, ensure_ascii=False).encode())
+
     def log_message(self, format, *args):
-        pass  # 로그 숨김
+        pass
 
 
 def main():
     print(f"🎮 게임위키 AI 서버 시작: http://localhost:{PORT}")
-    get_db()  # 미리 로드
+    get_db()
     HTTPServer(("", PORT), Handler).serve_forever()
-
 
 if __name__ == "__main__":
     main()
