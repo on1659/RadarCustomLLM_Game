@@ -16,15 +16,13 @@ CHAT_DB = os.path.join(os.path.dirname(__file__), "chat.db")
 LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3333
 
-SYSTEM_PROMPT = """당신은 게임 위키 도우미입니다. 아래 [참고 자료]만을 근거로 답변하세요.
+SYSTEM_PROMPT = """너는 게임 정보를 알려주는 한국어 도우미야.
+아래 참고 자료를 바탕으로 질문에 짧게 답해.
+모르면 "잘 모르겠어요"라고만 해. 지어내지 마.
+반드시 한국어로만 답해. 중국어, 영어, 일본어 사용 금지.
+참고 자료의 태그나 코드를 답변에 포함하지 마.
 
-절대 규칙:
-1. 참고 자료에 명확한 답이 있을 때만 답변하세요.
-2. 참고 자료에 답이 없거나 불확실하면 반드시 "해당 정보를 찾을 수 없습니다."라고만 답하세요. 절대 추측하거나 지어내지 마세요.
-3. 답변은 한국어로, 간결하게 하세요.
-4. 추가 질문을 만들지 마세요.
-
-[참고 자료]
+참고:
 {context}"""
 
 # ── SQLite 초기화 ──
@@ -528,8 +526,18 @@ def tokenize_ko(text):
                     tokens.append(t[i:i+3])
     return tokens if tokens else raw_tokens
 
-def dedupe_sentences(text):
-    """반복 문장 제거"""
+def clean_answer(text):
+    """답변 후처리: 중국어 제거, 반복 제거, 태그 제거"""
+    # 1) 중국어/일본어 나오면 그 앞까지만
+    for i, ch in enumerate(text):
+        if '\u4e00' <= ch <= '\u9fff' or '\u3040' <= ch <= '\u30ff':
+            text = text[:i].rstrip('。，, ')
+            break
+    # 2) 내부 태그 제거
+    text = re.sub(r'\[[\w\s\-/_.]+\]', '', text)
+    text = re.sub(r'```[\s\S]*', '', text)
+    text = re.sub(r'#[\w]+', '', text)
+    # 3) 반복 문장 제거
     sentences = re.split(r'(?<=[.다요함임])\s+', text)
     seen = set()
     result = []
@@ -537,12 +545,19 @@ def dedupe_sentences(text):
         s = s.strip()
         if not s:
             continue
-        # 정규화해서 비교 (공백/조사 차이 무시)
         key = re.sub(r'\s+', '', s)[:50]
         if key not in seen:
             seen.add(key)
             result.append(s)
-    return ' '.join(result)
+    text = ' '.join(result)
+    # 4) 끝 정리
+    text = text.strip()
+    if text and text[-1] not in '.다요함임':
+        # 마지막 마침표/문장끝까지만
+        last = max(text.rfind('.'), text.rfind('다'), text.rfind('요'), text.rfind('함'), text.rfind('임'))
+        if last > len(text) // 2:
+            text = text[:last+1]
+    return text.strip() or "잘 모르겠어요."
 
 def get_db():
     global db, bm25_index, bm25_docs
@@ -691,7 +706,7 @@ class Handler(BaseHTTPRequestHandler):
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
                 chunk = doc.page_content[:400]
-                context += f"\n[{game} - {title}]\n{chunk}\n"
+                context += f"\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
                     sources.append(src)
@@ -721,19 +736,18 @@ class Handler(BaseHTTPRequestHandler):
 
             payload = {
                 "prompt": prompt,
-                "n_predict": 150,
-                "temperature": 0.1,
-                "repeat_penalty": 1.8,
-                "frequency_penalty": 0.5,
-                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "참고 자료:", "당신은", "정답:", "\n\n\n", "답변:", "\"라고", "질의가"],
+                "n_predict": 120,
+                "temperature": 0.05,
+                "repeat_penalty": 1.3,
+                "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
             }
             try:
                 resp = requests.post(LLAMA_URL, json=payload, timeout=60)
                 resp.raise_for_status()
                 result = resp.json()
                 answer = result.get("content", "").strip() or "응답을 생성할 수 없습니다."
-                # 후처리: 반복 문장 제거
-                answer = dedupe_sentences(answer)
+                # 후처리: 중국어 제거, 반복 제거, 태그 제거
+                answer = clean_answer(answer)
             except Exception as e:
                 answer = f"LLM 오류: {e}"
 
