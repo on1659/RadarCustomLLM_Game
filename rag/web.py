@@ -1,20 +1,24 @@
-"""나무위키 RAG 웹 UI — localhost:3333"""
+"""나무위키 RAG 웹 UI — localhost:3333 (하이브리드 검색: BM25 + 벡터)"""
 import os
 import json
+import re
 import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from rank_bm25 import BM25Okapi
 
 DB_DIR = os.path.join(os.path.dirname(__file__), "faiss_db")
 LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3333
 
-SYSTEM_PROMPT = """게임 전문가로서 참고 자료만 기반으로 간결하게 답변하세요.
-규칙:
-- 질문에 대한 답변만 하세요. 추가 질문을 만들지 마세요.
-- 참고 자료에 없으면 "해당 정보가 없습니다"라고 답하세요.
-- 한국어로 답변하세요.
+SYSTEM_PROMPT = """당신은 게임 위키 도우미입니다. 아래 [참고 자료]만을 근거로 답변하세요.
+
+절대 규칙:
+1. 참고 자료에 명확한 답이 있을 때만 답변하세요.
+2. 참고 자료에 답이 없거나 불확실하면 반드시 "해당 정보를 찾을 수 없습니다."라고만 답하세요. 절대 추측하거나 지어내지 마세요.
+3. 답변은 한국어로, 간결하게 하세요.
+4. 추가 질문을 만들지 마세요.
 
 [참고 자료]
 {context}"""
@@ -116,15 +120,29 @@ function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 </body></html>"""
 
 
-# 전역 DB
+# 전역 DB + BM25
 db = None
+bm25_index = None
+bm25_docs = None
+
+def tokenize_ko(text):
+    """간단한 한국어 토크나이저 (공백 + 2글자 이상)"""
+    tokens = re.findall(r'[가-힣a-zA-Z0-9]+', text.lower())
+    return [t for t in tokens if len(t) >= 2]
 
 def get_db():
-    global db
+    global db, bm25_index, bm25_docs
     if db is None:
         embeddings = HuggingFaceEmbeddings(model_name="jhgan/ko-sroberta-multitask")
         db = FAISS.load_local(DB_DIR, embeddings, allow_dangerous_deserialization=True)
         print("✅ 벡터DB 로드 완료")
+        
+        # BM25 인덱스 구축
+        all_docs = db.docstore._dict.values()
+        bm25_docs = list(all_docs)
+        corpus = [tokenize_ko(doc.page_content) for doc in bm25_docs]
+        bm25_index = BM25Okapi(corpus)
+        print(f"✅ BM25 인덱스 구축 완료 ({len(bm25_docs)}개 문서)")
     return db
 
 
@@ -151,13 +169,30 @@ class Handler(BaseHTTPRequestHandler):
             elif any(kw in query_lower for kw in ["마인크래프트", "마크", "minecraft"]):
                 game_filter = "minecraft"
 
-            # RAG 검색 (필터 있으면 더 많이 가져온 뒤 필터링)
+            # 하이브리드 검색: 벡터 유사도 + BM25 키워드 매칭
             vdb = get_db()
-            k_search = 10 if game_filter else 8
-            results = vdb.similarity_search(query, k=k_search)
+            
+            # 1) 벡터 검색
+            vec_results = vdb.similarity_search(query, k=8)
+            
+            # 2) BM25 키워드 검색
+            query_tokens = tokenize_ko(query)
+            bm25_scores = bm25_index.get_scores(query_tokens)
+            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:8]
+            bm25_results = [bm25_docs[i] for i in top_bm25_idx if bm25_scores[i] > 0]
+            
+            # 3) 합치기 (중복 제거, 벡터 우선 + BM25 보충)
+            seen = set()
+            merged = []
+            for doc in vec_results + bm25_results:
+                doc_id = doc.page_content[:100]
+                if doc_id not in seen:
+                    seen.add(doc_id)
+                    merged.append(doc)
+            results = merged
             
             if game_filter:
-                results = [d for d in results if d.metadata.get("game", "") == game_filter][:3]
+                results = [d for d in results if d.metadata.get("game", "") == game_filter][:5]
             else:
                 # 게임 필터 없을 때: 여러 게임이 섞여있으면 역질문
                 found_games = set()
@@ -187,11 +222,11 @@ class Handler(BaseHTTPRequestHandler):
                     }, ensure_ascii=False).encode())
                     return
                 
-                results = results[:3]
+                results = results[:5]
 
             context = ""
             sources = []
-            max_chunk_len = 500  # 청크당 최대 500자로 제한
+            max_chunk_len = 800  # 청크당 최대 800자
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
@@ -207,9 +242,9 @@ class Handler(BaseHTTPRequestHandler):
             payload = {
                 "prompt": prompt,
                 "n_predict": 256,
-                "temperature": 0.3,
+                "temperature": 0.1,
                 "repeat_penalty": 1.5,
-                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "해당 정보가 없습니다.", "참고 자료:"],
+                "stop": ["\n\n질문:", "\n질문:", "질문:", "\n\n---", "참고 자료:"],
             }
             try:
                 resp = requests.post(LLAMA_URL, json=payload, timeout=60)
