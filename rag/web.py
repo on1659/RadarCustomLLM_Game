@@ -134,9 +134,22 @@ HTML = """<!DOCTYPE html>
   .game-btns button { background: var(--accent) !important; transition: background 0.15s; }
   .game-btns button:hover { background: var(--accent-hover) !important; }
 
+  /* 테마 패널 */
+  .theme-panel { display: none; position: absolute; top: 56px; right: 24px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 100; width: 280px; }
+  .theme-panel.open { display: block; }
+  .theme-panel h3 { font-size: 14px; margin-bottom: 14px; color: var(--text); }
+  .theme-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .theme-row label { font-size: 12px; color: var(--text-light); width: 80px; flex-shrink: 0; }
+  .theme-row input[type="color"] { width: 36px; height: 36px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; padding: 2px; background: #fff; }
+  .theme-row .hex { font-size: 11px; color: var(--text-pale); font-family: monospace; }
+  .theme-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); }
+  .theme-presets button { padding: 5px 10px; font-size: 11px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: var(--bg-input); color: var(--text-light); transition: all 0.15s; }
+  .theme-presets button:hover { background: var(--c-light); color: var(--text); }
+
   /* 모바일 */
   @media (max-width: 768px) {
     .sidebar { width: 220px; }
+    .theme-panel { right: 8px; width: 260px; }
   }
 </style>
 </head><body>
@@ -153,6 +166,37 @@ HTML = """<!DOCTYPE html>
       <p>팰월드 · 오버워치 · 마인크래프트 — RAG</p>
     </div>
     <button class="clear-btn" onclick="clearSession()" title="대화 컨텍스트 초기화">/clear</button>
+    <button class="clear-btn" onclick="toggleThemePanel()" title="테마 설정" style="margin-left:6px">🎨</button>
+  </div>
+  <div class="theme-panel" id="themePanel">
+    <h3>🎨 테마 색상</h3>
+    <div class="theme-row">
+      <label>액센트</label>
+      <input type="color" id="tc-dark" value="#9CAFAA" onchange="updateTheme()">
+      <span class="hex" id="hex-dark">#9CAFAA</span>
+    </div>
+    <div class="theme-row">
+      <label>사이드바</label>
+      <input type="color" id="tc-mid" value="#D6DAC8" onchange="updateTheme()">
+      <span class="hex" id="hex-mid">#D6DAC8</span>
+    </div>
+    <div class="theme-row">
+      <label>밝은 배경</label>
+      <input type="color" id="tc-light" value="#FBF3D5" onchange="updateTheme()">
+      <span class="hex" id="hex-light">#FBF3D5</span>
+    </div>
+    <div class="theme-row">
+      <label>포인트</label>
+      <input type="color" id="tc-pale" value="#D6A99D" onchange="updateTheme()">
+      <span class="hex" id="hex-pale">#D6A99D</span>
+    </div>
+    <div class="theme-presets">
+      <button onclick="applyPreset('#9CAFAA','#D6DAC8','#FBF3D5','#D6A99D')">🍑 웜톤</button>
+      <button onclick="applyPreset('#96A78D','#B6CEB4','#D9E9CF','#F0F0F0')">🌿 세이지</button>
+      <button onclick="applyPreset('#4a90d9','#2a5a8f','#1a3a5c','#111111')">🌙 다크</button>
+      <button onclick="applyPreset('#A0937D','#C7BCA1','#E1D7C6','#F5EFE6')">☕ 베이지</button>
+      <button onclick="applyPreset('#7895B2','#AEBDCA','#D4E2F1','#F5EFE6')">🧊 블루</button>
+    </div>
   </div>
   <div class="chat" id="chat">
     <div class="empty-state" id="emptyState">게임에 대해 물어보세요! 🎮</div>
@@ -310,6 +354,115 @@ function sendWithGame(game, originalQ) {
 }
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\n/g,'<br>'); }
+
+// ── 테마 ──
+function toggleThemePanel() {
+  document.getElementById('themePanel').classList.toggle('open');
+}
+
+function updateTheme() {
+  const d = document.getElementById('tc-dark').value;
+  const m = document.getElementById('tc-mid').value;
+  const l = document.getElementById('tc-light').value;
+  const p = document.getElementById('tc-pale').value;
+  applyColors(d, m, l, p);
+  document.getElementById('hex-dark').textContent = d.toUpperCase();
+  document.getElementById('hex-mid').textContent = m.toUpperCase();
+  document.getElementById('hex-light').textContent = l.toUpperCase();
+  document.getElementById('hex-pale').textContent = p.toUpperCase();
+}
+
+function applyPreset(d, m, l, p) {
+  document.getElementById('tc-dark').value = d;
+  document.getElementById('tc-mid').value = m;
+  document.getElementById('tc-light').value = l;
+  document.getElementById('tc-pale').value = p;
+  applyColors(d, m, l, p);
+  document.getElementById('hex-dark').textContent = d.toUpperCase();
+  document.getElementById('hex-mid').textContent = m.toUpperCase();
+  document.getElementById('hex-light').textContent = l.toUpperCase();
+  document.getElementById('hex-pale').textContent = p.toUpperCase();
+}
+
+function applyColors(d, m, l, p) {
+  const r = document.documentElement.style;
+  r.setProperty('--c-dark', d);
+  r.setProperty('--c-mid', m);
+  r.setProperty('--c-light', l);
+  r.setProperty('--c-pale', p);
+  // 파생 색상 자동 계산
+  r.setProperty('--bg-user', d);
+  r.setProperty('--accent', d);
+  r.setProperty('--danger', p);
+  // 다크 프리셋 감지
+  const brightness = hexBrightness(d);
+  if (brightness < 100) {
+    // 다크 모드
+    r.setProperty('--bg-body', '#0a0a0a');
+    r.setProperty('--bg-sidebar', '#111');
+    r.setProperty('--bg-header', '#111');
+    r.setProperty('--bg-chat', '#0a0a0a');
+    r.setProperty('--bg-bot', '#1a1a2e');
+    r.setProperty('--bg-input', '#1a1a1a');
+    r.setProperty('--bg-system', '#1a2a1a');
+    r.setProperty('--border', '#333');
+    r.setProperty('--border-light', '#222');
+    r.setProperty('--text', '#e0e0e0');
+    r.setProperty('--text-light', '#bbb');
+    r.setProperty('--text-pale', '#888');
+    r.setProperty('--text-bot', '#e0e0e0');
+  } else {
+    // 라이트 모드
+    r.setProperty('--bg-body', mixColor(l, '#ffffff', 0.5));
+    r.setProperty('--bg-sidebar', mixColor(m, '#f5f5f0', 0.3));
+    r.setProperty('--bg-header', mixColor(m, '#f0f0ea', 0.3));
+    r.setProperty('--bg-chat', mixColor(l, '#ffffff', 0.5));
+    r.setProperty('--bg-bot', '#ffffff');
+    r.setProperty('--bg-input', '#ffffff');
+    r.setProperty('--bg-system', mixColor(l, '#f5f5f0', 0.4));
+    r.setProperty('--border', mixColor(m, '#cccccc', 0.4));
+    r.setProperty('--border-light', mixColor(l, '#dddddd', 0.4));
+    r.setProperty('--text', '#3a3530');
+    r.setProperty('--text-light', '#7a7570');
+    r.setProperty('--text-pale', '#9a9590');
+    r.setProperty('--text-bot', '#3a3530');
+  }
+  localStorage.setItem('theme', JSON.stringify([d, m, l, p]));
+}
+
+function hexBrightness(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
+function mixColor(c1, c2, ratio) {
+  const h = s => parseInt(s.slice(1),16);
+  const a = h(c1), b = h(c2);
+  const mix = (a,b,r) => Math.round(a + (b-a) * r);
+  const r1 = (a>>16)&0xff, g1 = (a>>8)&0xff, b1 = a&0xff;
+  const r2 = (b>>16)&0xff, g2 = (b>>8)&0xff, b2 = b&0xff;
+  const rr = mix(r1,r2,ratio), gg = mix(g1,g2,ratio), bb = mix(b1,b2,ratio);
+  return '#' + ((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);
+}
+
+// 저장된 테마 복원
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    try {
+      const [d,m,l,p] = JSON.parse(saved);
+      document.getElementById('tc-dark').value = d;
+      document.getElementById('tc-mid').value = m;
+      document.getElementById('tc-light').value = l;
+      document.getElementById('tc-pale').value = p;
+      applyColors(d, m, l, p);
+      document.getElementById('hex-dark').textContent = d.toUpperCase();
+      document.getElementById('hex-mid').textContent = m.toUpperCase();
+      document.getElementById('hex-light').textContent = l.toUpperCase();
+      document.getElementById('hex-pale').textContent = p.toUpperCase();
+    } catch(e) {}
+  }
+})();
 </script>
 </body></html>"""
 
