@@ -12,3 +12,9 @@ t=2026-02-16T21:43:56+0900 lvl=info msg=start pg=/api/tunnels id=37e21178e4a993e
 t=2026-02-16T21:43:56+0900 lvl=info msg=end pg=/api/tunnels id=37e21178e4a993ec status=200 dur=184.667µs
 t=2026-02-16T22:02:09+0900 lvl=info msg="join connections" obj=join id=1a95f695afc1 l=127.0.0.1:3333 r=125.129.59.11:61550
 t=2026-02-16T22:02:32+0900 lvl=info msg="join connections" obj=join id=b30ff3090923 l=127.0.0.1:3333 r=125.129.59.11:61550
+t=2026-02-16T22:28:32+0900 lvl=info msg="join connections" obj=join id=7654cbd4765f l=127.0.0.1:3333 r=125.129.59.11:53723
+t=2026-02-16T22:28:32+0900 lvl=info msg="join connections" obj=join id=20189cbfa8e4 l=127.0.0.1:3333 r=125.129.59.11:53723
+t=2026-02-16T22:28:46+0900 lvl=info msg="join connections" obj=join id=371c30beace3 l=127.0.0.1:3333 r=125.129.59.11:53723
+t=2026-02-16T22:30:58+0900 lvl=info msg="join connections" obj=join id=2a8ef07f071d l=127.0.0.1:3333 r=125.129.59.11:53723
+t=2026-02-16T22:30:58+0900 lvl=info msg="join connections" obj=join id=9417ff22c48e l=127.0.0.1:3333 r=125.129.59.11:53723
+t=2026-02-16T22:31:03+0900 lvl=info msg="join connections" obj=join id=f7503d95eca5 l=127.0.0.1:3333 r=125.129.59.11:53723

@@ -126,9 +126,23 @@ bm25_index = None
 bm25_docs = None
 
 def tokenize_ko(text):
-    """간단한 한국어 토크나이저 (공백 + 2글자 이상)"""
-    tokens = re.findall(r'[가-힣a-zA-Z0-9]+', text.lower())
-    return [t for t in tokens if len(t) >= 2]
+    """한국어 토크나이저 — 공백 분리 + 슬라이딩 바이그램으로 붙어쓰기 대응"""
+    text = text.lower()
+    # 1) 공백/특수문자로 분리
+    raw_tokens = re.findall(r'[가-힣a-zA-Z0-9]+', text)
+    tokens = []
+    for t in raw_tokens:
+        if len(t) <= 5:
+            if len(t) >= 2:
+                tokens.append(t)
+        else:
+            # 긴 토큰은 2~3글자 슬라이딩 윈도우로 분해
+            tokens.append(t)  # 원본도 포함
+            for i in range(len(t) - 1):
+                tokens.append(t[i:i+2])  # 바이그램
+                if i + 3 <= len(t):
+                    tokens.append(t[i:i+3])  # 트라이그램
+    return tokens if tokens else raw_tokens
 
 def get_db():
     global db, bm25_index, bm25_docs

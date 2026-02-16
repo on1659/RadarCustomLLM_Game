@@ -257,3 +257,73 @@ prompt eval time =    2549.02 ms /  1359 tokens (    1.88 ms per token,   533.15
 slot      release: id  2 | task 85 | stop processing: n_tokens = 1518, truncated = 0
 srv  update_slots: all slots are idle
 srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = -1
+slot launch_slot_: id  1 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  1 | task 246 | processing task, is_child = 0
+slot update_slots: id  1 | task 246 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 2754
+slot update_slots: id  1 | task 246 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  1 | task 246 | prompt processing progress, n_tokens = 2048, batch.n_tokens = 2048, progress = 0.743646
+decode: failed to find a memory slot for batch of size 2048
+srv  try_clear_id: purging slot 2 with 1518 tokens
+slot prompt_clear: id  2 | task -1 | clearing prompt with 1518 tokens
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 0, n_batch = 2048, ret = 1
+slot update_slots: id  1 | task 246 | n_tokens = 2048, memory_seq_rm [2048, end)
+slot update_slots: id  1 | task 246 | prompt processing progress, n_tokens = 2754, batch.n_tokens = 706, progress = 1.000000
+slot update_slots: id  1 | task 246 | prompt done, n_tokens = 2754, batch.n_tokens = 706
+slot init_sampler: id  1 | task 246 | init sampler, took 0.22 ms, tokens: text = 2754, total = 2754
+slot print_timing: id  1 | task 246 | 
+prompt eval time =    5334.86 ms /  2754 tokens (    1.94 ms per token,   516.23 tokens per second)
+       eval time =    1982.55 ms /    87 tokens (   22.79 ms per token,    43.88 tokens per second)
+      total time =    7317.41 ms /  2841 tokens
+slot      release: id  1 | task 246 | stop processing: n_tokens = 2840, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  1 | task -1 | selected slot by LCP similarity, sim_best = 0.634 (> 0.100 thold), f_keep = 0.615
+slot launch_slot_: id  1 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  1 | task 335 | processing task, is_child = 0
+slot update_slots: id  1 | task 335 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 2755
+slot update_slots: id  1 | task 335 | n_tokens = 1747, memory_seq_rm [1747, end)
+slot update_slots: id  1 | task 335 | prompt processing progress, n_tokens = 2755, batch.n_tokens = 1008, progress = 1.000000
+slot update_slots: id  1 | task 335 | prompt done, n_tokens = 2755, batch.n_tokens = 1008
+slot init_sampler: id  1 | task 335 | init sampler, took 0.28 ms, tokens: text = 2755, total = 2755
+slot print_timing: id  1 | task 335 | 
+prompt eval time =    2057.57 ms /  1008 tokens (    2.04 ms per token,   489.90 tokens per second)
+       eval time =    1959.91 ms /    86 tokens (   22.79 ms per token,    43.88 tokens per second)
+      total time =    4017.48 ms /  1094 tokens
+slot      release: id  1 | task 335 | stop processing: n_tokens = 2840, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  1 | task -1 | selected slot by LCP similarity, sim_best = 1.000 (> 0.100 thold), f_keep = 0.970
+slot launch_slot_: id  1 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  1 | task 422 | processing task, is_child = 0
+slot update_slots: id  1 | task 422 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 2755
+slot update_slots: id  1 | task 422 | need to evaluate at least 1 token for each active slot (n_past = 2755, task.n_tokens() = 2755)
+slot update_slots: id  1 | task 422 | n_past was set to 2754
+slot update_slots: id  1 | task 422 | n_tokens = 2754, memory_seq_rm [2754, end)
+slot update_slots: id  1 | task 422 | prompt processing progress, n_tokens = 2755, batch.n_tokens = 1, progress = 1.000000
+slot update_slots: id  1 | task 422 | prompt done, n_tokens = 2755, batch.n_tokens = 1
+slot init_sampler: id  1 | task 422 | init sampler, took 0.34 ms, tokens: text = 2755, total = 2755
+slot print_timing: id  1 | task 422 | 
+prompt eval time =      29.37 ms /     1 tokens (   29.37 ms per token,    34.05 tokens per second)
+       eval time =    2294.60 ms /    89 tokens (   25.78 ms per token,    38.79 tokens per second)
+      total time =    2323.97 ms /    90 tokens
+slot      release: id  1 | task 422 | stop processing: n_tokens = 2843, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200
+slot get_availabl: id  1 | task -1 | selected slot by LCP similarity, sim_best = 1.000 (> 0.100 thold), f_keep = 0.969
+slot launch_slot_: id  1 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  1 | task 512 | processing task, is_child = 0
+slot update_slots: id  1 | task 512 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 2755
+slot update_slots: id  1 | task 512 | need to evaluate at least 1 token for each active slot (n_past = 2755, task.n_tokens() = 2755)
+slot update_slots: id  1 | task 512 | n_past was set to 2754
+slot update_slots: id  1 | task 512 | n_tokens = 2754, memory_seq_rm [2754, end)
+slot update_slots: id  1 | task 512 | prompt processing progress, n_tokens = 2755, batch.n_tokens = 1, progress = 1.000000
+slot update_slots: id  1 | task 512 | prompt done, n_tokens = 2755, batch.n_tokens = 1
+slot init_sampler: id  1 | task 512 | init sampler, took 0.22 ms, tokens: text = 2755, total = 2755
+slot print_timing: id  1 | task 512 | 
+prompt eval time =      29.88 ms /     1 tokens (   29.88 ms per token,    33.47 tokens per second)
+       eval time =    1839.69 ms /    80 tokens (   23.00 ms per token,    43.49 tokens per second)
+      total time =    1869.57 ms /    81 tokens
+slot      release: id  1 | task 512 | stop processing: n_tokens = 2834, truncated = 0
+srv  update_slots: all slots are idle
+srv  log_server_r: done request: POST /completion 127.0.0.1 200
