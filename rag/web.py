@@ -675,7 +675,18 @@ def clean_answer(text):
             seen.add(key)
             result.append(s)
     text = ' '.join(result)
-    # 4) 끝 정리
+    # 4) 고유명사 교정 (3B 모델 오생성 대응)
+    NOUN_FIXES = {
+        "팜월드": "팰월드", "팅크 월드": "팰월드", "팅크월드": "팰월드",
+        "아누bis": "아누비스", "아누비s": "아누비스",
+        "겐지i": "겐지", "한조o": "한조",
+        "엔더 드래gon": "엔더 드래곤",
+        "마인크래프트t": "마인크래프트",
+    }
+    for wrong, right in NOUN_FIXES.items():
+        if wrong in text:
+            text = text.replace(wrong, right)
+    # 5) 끝 정리
     text = text.strip()
     if text and text[-1] not in '.다요함임':
         # 마지막 마침표/문장끝까지만
