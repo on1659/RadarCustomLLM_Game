@@ -677,6 +677,36 @@ class Handler(BaseHTTPRequestHandler):
             elif any(kw in query_lower for kw in ["마인크래프트", "마크", "minecraft"]):
                 game_filter = "minecraft"
 
+            # 게임 필터 없으면 이전 대화에서 게임 컨텍스트 추출
+            if not game_filter and session_id:
+                conn_prev = get_chat_conn()
+                prev_sources = conn_prev.execute(
+                    "SELECT sources FROM messages WHERE session_id=? AND role='assistant' AND sources IS NOT NULL ORDER BY created_at DESC LIMIT 3",
+                    (session_id,)
+                ).fetchall()
+                conn_prev.close()
+                for (src_str,) in prev_sources:
+                    if src_str:
+                        src_lower = src_str.lower()
+                        if "palworld" in src_lower:
+                            game_filter = "palworld"; break
+                        elif "overwatch" in src_lower:
+                            game_filter = "overwatch"; break
+                        elif "minecraft" in src_lower:
+                            game_filter = "minecraft"; break
+
+            # 후속 질문이면 이전 질문을 검색 쿼리에 합침
+            follow_up_markers = ["자세", "더", "그거", "그것", "알려", "뭐야", "어때"]
+            if session_id and len(query) < 20 and any(m in query for m in follow_up_markers):
+                conn_fq = get_chat_conn()
+                prev_user = conn_fq.execute(
+                    "SELECT content FROM messages WHERE session_id=? AND role='user' ORDER BY created_at DESC LIMIT 2",
+                    (session_id,)
+                ).fetchall()
+                conn_fq.close()
+                if len(prev_user) >= 2:
+                    search_query = prev_user[1][0] + " " + search_query
+
             # 하이브리드 검색
             vdb = get_db()
             vec_results = vdb.similarity_search(search_query, k=8)
