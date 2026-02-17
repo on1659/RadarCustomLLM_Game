@@ -18,11 +18,13 @@ CHAT_DB = os.path.join(os.path.dirname(__file__), "chat.db")
 LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3333
 
-SYSTEM_PROMPT = """너는 게임 정보를 알려주는 한국어 도우미야.
-아래 참고 자료를 바탕으로 질문에 짧게 답해.
-모르면 "잘 모르겠어요"라고만 해. 지어내지 마.
-반드시 한국어로만 답해. 중국어, 영어, 일본어 사용 금지.
-참고 자료의 태그나 코드를 답변에 포함하지 마.
+SYSTEM_PROMPT = """너는 게임 위키 도우미야. 아래 참고 자료에서 답을 찾아서 알려줘.
+
+규칙:
+1. 참고 자료에 있는 정보는 반드시 활용해서 답해. 수치, 이름, 목록이 있으면 그대로 인용해.
+2. 참고 자료에 없는 내용은 절대 지어내지 마. "참고 자료에 해당 정보가 없습니다"라고 해.
+3. 한국어로만 답해.
+4. 태그, 코드, 위키 문법은 답변에 넣지 마.
 
 참고:
 {context}"""
@@ -695,6 +697,46 @@ def clean_answer(text):
             text = text[:last+1]
     return text.strip() or "잘 모르겠어요."
 
+def classify_intent(query):
+    """질문 의도 분류 — 검색 가중치 조절에 사용"""
+    stat_words = ["체력", "HP", "hp", "공격력", "방어력", "데미지", "스탯", "수치", "몇", "얼마"]
+    howto_words = ["어떻게", "방법", "하는법", "만드는법", "잡는법", "가는법", "공략", "팁", "가이드", "만들어"]
+    list_words = ["종류", "목록", "리스트", "뭐가있", "알려줘", "적성", "스킬", "드롭"]
+    compare_words = ["차이", "비교", "vs", "VS", "좋은", "강한", "약한", "추천"]
+
+    if any(w in query for w in stat_words):
+        return "stat"
+    if any(w in query for w in compare_words):
+        return "compare"
+    if any(w in query for w in howto_words):
+        return "howto"
+    if any(w in query for w in list_words):
+        return "list"
+    return "general"
+
+
+def rewrite_query(query, search_query):
+    """쿼리 리라이트 — 검색에 최적화된 형태로 변환
+    gamewiki 레퍼런스: 사용자 질문을 검색 키워드로 재구성"""
+    # 불용어 제거
+    stopwords = ["좀", "에 대해", "에대해", "알려줘", "설명해줘", "가르쳐줘", "뭔지", "뭐야", "뭐임", "뭐에요", "해줘"]
+    rewritten = search_query
+    for sw in stopwords:
+        rewritten = rewritten.replace(sw, "")
+    # 게임명 약어 확장
+    GAME_EXPAND = {
+        "마크": "마인크래프트",
+        "오버워치": "오버워치",
+        "옵치": "오버워치",
+        "팰": "팰월드",
+    }
+    for short, full in GAME_EXPAND.items():
+        if rewritten.startswith(short + " ") or rewritten.startswith(short + "의"):
+            rewritten = rewritten.replace(short, full, 1)
+            break
+    return rewritten.strip()
+
+
 def get_db():
     global db, bm25_index, bm25_docs
     if db is None:
@@ -800,11 +842,19 @@ class Handler(BaseHTTPRequestHandler):
                 "레드스톤": "레드스톤",
                 "솔저76": "솔저: 76",
                 "정크랫": "정크랫",
+                # 동의어 확장 (검색 정확도 향상)
+                "체력": "생명력",
+                "공격력": "공격력",
+                "피통": "생명력",
+                "HP": "생명력",
+                "hp": "생명력",
             }
             search_query = query
             for old, new in QUERY_SYNONYMS.items():
                 if old in search_query and old != new:
                     search_query = search_query.replace(old, new)
+            # 쿼리 리라이트 (불용어 제거 + 게임명 확장)
+            search_query = rewrite_query(query, search_query)
 
             # 게임명 감지
             game_filter = None
@@ -826,25 +876,62 @@ class Handler(BaseHTTPRequestHandler):
                 if sess.get("last_query"):
                     search_query = sess["last_query"] + " " + search_query
 
-            # 하이브리드 검색
+            # ── 의도 분류 ──
+            intent = classify_intent(search_query)
+
+            # ── 하이브리드 검색 + RRF (Reciprocal Rank Fusion) ──
             vdb = get_db()
-            vec_results = vdb.similarity_search(search_query, k=8)
+            vec_results = vdb.similarity_search(search_query, k=10)
+            # game_filter가 있으면 벡터 결과도 필터
+            if game_filter:
+                vec_filtered = [d for d in vec_results if d.metadata.get("game", "") == game_filter]
+                if vec_filtered:
+                    vec_results = vec_filtered
             query_tokens = tokenize_ko(search_query)
             bm25_scores = bm25_index.get_scores(query_tokens)
-            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:8]
+            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:10]
             bm25_results = [bm25_docs[i] for i in top_bm25_idx if bm25_scores[i] > 0]
-
-            seen = set()
-            merged = []
-            for doc in vec_results + bm25_results:
-                doc_id = doc.page_content[:100]
-                if doc_id not in seen:
-                    seen.add(doc_id)
-                    merged.append(doc)
-            results = merged
-
+            # game_filter가 있으면 BM25 결과도 필터
             if game_filter:
-                results = [d for d in results if d.metadata.get("game", "") == game_filter][:3]
+                bm25_results = [d for d in bm25_results if d.metadata.get("game", "") == game_filter]
+
+            # 의도별 가중치 조절 (벡터를 기본 우세로 — BM25가 노이즈 많음)
+            INTENT_WEIGHTS = {
+                "stat":    (0.3, 0.7),  # 수치 질문 → BM25 강하게 우세 (정확한 키워드 매칭 필요)
+                "howto":   (0.6, 0.4),  # 방법 질문 → 벡터 우세
+                "list":    (0.5, 0.5),  # 목록 질문 → 동등
+                "compare": (0.6, 0.4),  # 비교 질문 → 벡터 우세
+                "general": (0.6, 0.4),  # 일반 → 벡터 약간 우세
+            }
+            vec_w, bm25_w = INTENT_WEIGHTS.get(intent, (0.5, 0.5))
+
+            # RRF 점수 계산 (k=60)
+            RRF_K = 60
+            doc_scores = {}  # doc_id → (score, doc)
+            for rank, doc in enumerate(vec_results):
+                doc_id = doc.page_content[:100]
+                rrf = vec_w / (RRF_K + rank + 1)
+                if doc_id in doc_scores:
+                    doc_scores[doc_id] = (doc_scores[doc_id][0] + rrf, doc)
+                else:
+                    doc_scores[doc_id] = (rrf, doc)
+            for rank, doc in enumerate(bm25_results):
+                doc_id = doc.page_content[:100]
+                rrf = bm25_w / (RRF_K + rank + 1)
+                if doc_id in doc_scores:
+                    doc_scores[doc_id] = (doc_scores[doc_id][0] + rrf, doc)
+                else:
+                    doc_scores[doc_id] = (rrf, doc)
+
+            # RRF 점수 기준 정렬
+            ranked = sorted(doc_scores.values(), key=lambda x: x[0], reverse=True)
+            results = [doc for _, doc in ranked]
+            import sys; print(f"🔍 intent={intent} vec_w={vec_w} bm25_w={bm25_w} | search_query='{search_query}' | top3: {[d.metadata.get('title','?')[:30] for d in results[:3]]}", file=sys.stderr, flush=True)
+
+            # 의도별 chunk 수 조절 (7B + c4096이면 5개도 OK)
+            n_chunks = 5 if intent in ("stat", "list", "compare") else 3
+            if game_filter:
+                results = [d for d in results if d.metadata.get("game", "") == game_filter][:n_chunks]
             else:
                 found_games = set()
                 for doc in results:
@@ -859,7 +946,7 @@ class Handler(BaseHTTPRequestHandler):
                     cache.set_last_query(session_id, query)
                     self._json({"answer": ask_msg, "sources": [], "ask_game": True, "games": game_list, "session_id": session_id})
                     return
-                results = results[:3]
+                results = results[:n_chunks]
 
             context = ""
             sources = []
@@ -871,6 +958,8 @@ class Handler(BaseHTTPRequestHandler):
                 src = f"{game}/{title}"
                 if src not in sources:
                     sources.append(src)
+            ctx_preview = context.replace('\n', ' ')[:300]
+            print(f"📄 context ({len(context)}자): {ctx_preview}", file=sys.stderr, flush=True)
 
             # 이전 대화 컨텍스트 (캐시에서, 현재 질문 제외)
             recent = cache.get_history(session_id, limit=5)
