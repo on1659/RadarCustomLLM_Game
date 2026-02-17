@@ -16,7 +16,8 @@ from rank_bm25 import BM25Okapi
 DB_DIR = os.path.join(os.path.dirname(__file__), "faiss_db")
 CHAT_DB = os.path.join(os.path.dirname(__file__), "chat.db")
 LLAMA_URL = "http://localhost:8090/completion"
-PORT = 3333
+PORT = 3334
+API_KEY = os.getenv("GAME_WIKI_API_KEY")  # 환경변수에서 API 키 읽기 (없으면 None)
 
 SYSTEM_PROMPT = """너는 게임 위키 도우미야. 아래 참고 자료에서 답을 찾아서 알려줘.
 
@@ -753,6 +754,21 @@ def get_db():
 
 # ── 핸들러 ──
 class Handler(BaseHTTPRequestHandler):
+    def check_api_key(self):
+        """API 키 검증 (설정되어 있을 때만)"""
+        if API_KEY:  # API_KEY가 설정되어 있으면 검증
+            request_key = self.headers.get("X-API-Key", "")
+            if request_key != API_KEY:
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "error": "Invalid or missing API key",
+                    "message": "Set X-API-Key header with valid key"
+                }).encode())
+                return False
+        return True
+
     def do_GET(self):
         if self.path == '/api/sessions':
             conn = get_chat_conn()
@@ -778,10 +794,26 @@ class Handler(BaseHTTPRequestHandler):
         body = json.loads(self.rfile.read(length)) if length > 0 else {}
 
         if self.path == '/api/sessions':
+            # 새 세션 생성 (최대 10개 제한, FIFO queue)
+            conn = get_chat_conn()
+            
+            # 현재 세션 개수 확인
+            count = conn.execute("SELECT COUNT(*) FROM sessions").fetchone()[0]
+            
+            # 10개 이상이면 가장 오래된 것 삭제
+            if count >= 10:
+                oldest = conn.execute("SELECT id FROM sessions ORDER BY created_at ASC LIMIT 1").fetchone()
+                if oldest:
+                    old_id = oldest[0]
+                    conn.execute("DELETE FROM messages WHERE session_id=?", (old_id,))
+                    conn.execute("DELETE FROM sessions WHERE id=?", (old_id,))
+                    # 캐시에서도 제거
+                    with cache._lock:
+                        cache.sessions.pop(old_id, None)
+            
             # 새 세션 생성
             sid = str(uuid.uuid4())[:8]
             now = time.time()
-            conn = get_chat_conn()
             conn.execute("INSERT INTO sessions (id, title, created_at, updated_at) VALUES (?,?,?,?)",
                          (sid, "새 대화", now, now))
             conn.commit()
@@ -810,6 +842,10 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"ok": True})
 
         elif self.path == '/api/chat':
+            # API 키 검증 (외부 API 호출용)
+            if not self.check_api_key():
+                return
+            
             query = body.get("query", "")
             session_id = body.get("session_id")
 
