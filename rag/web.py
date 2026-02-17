@@ -5,6 +5,8 @@ import re
 import sqlite3
 import time
 import uuid
+import threading
+import atexit
 import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from langchain_community.vectorstores import FAISS
@@ -50,6 +52,129 @@ def get_chat_conn():
     return sqlite3.connect(CHAT_DB)
 
 init_chat_db()
+
+# ── 인메모리 세션 캐시 + 지연 저장 ──
+FLUSH_DELAY = 30  # 30초 무응답 시 DB 저장
+
+class SessionCache:
+    """채팅 중에는 메모리만 사용, 일정 시간 후 DB에 배치 저장"""
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._sessions = {}  # {sid: {"game": str, "last_query": str, "messages": [...], "dirty": bool, "last_active": float, "title": str}}
+        self._timers = {}    # {sid: Timer}
+
+    def get(self, sid):
+        with self._lock:
+            return self._sessions.get(sid)
+
+    def ensure(self, sid, title=""):
+        with self._lock:
+            if sid not in self._sessions:
+                self._sessions[sid] = {
+                    "game": None,
+                    "last_query": "",
+                    "messages": [],
+                    "dirty": False,
+                    "last_active": time.time(),
+                    "title": title or sid,
+                }
+            return self._sessions[sid]
+
+    def add_message(self, sid, role, content, sources=None):
+        with self._lock:
+            sess = self._sessions.get(sid)
+            if not sess:
+                return
+            sess["messages"].append({"role": role, "content": content, "sources": sources, "ts": time.time()})
+            sess["dirty"] = True
+            sess["last_active"] = time.time()
+            # 타이머 리셋
+            if sid in self._timers:
+                self._timers[sid].cancel()
+            self._timers[sid] = threading.Timer(FLUSH_DELAY, self._flush_session, args=[sid])
+            self._timers[sid].daemon = True
+            self._timers[sid].start()
+
+    def set_game(self, sid, game):
+        with self._lock:
+            sess = self._sessions.get(sid)
+            if sess:
+                sess["game"] = game
+
+    def set_last_query(self, sid, query):
+        with self._lock:
+            sess = self._sessions.get(sid)
+            if sess:
+                sess["last_query"] = query
+
+    def get_history(self, sid, limit=4):
+        """최근 N개 메시지 반환 (메모리에서)"""
+        with self._lock:
+            sess = self._sessions.get(sid)
+            if not sess:
+                return []
+            return sess["messages"][-limit:]
+
+    def _flush_session(self, sid):
+        """세션 데이터를 DB에 저장"""
+        with self._lock:
+            sess = self._sessions.get(sid)
+            if not sess or not sess["dirty"]:
+                return
+            try:
+                conn = get_chat_conn()
+                # 세션 존재 확인, 없으면 생성
+                exists = conn.execute("SELECT id FROM sessions WHERE id=?", (sid,)).fetchone()
+                now = time.time()
+                if not exists:
+                    conn.execute("INSERT INTO sessions (id, title, created_at, updated_at) VALUES (?,?,?,?)",
+                                 (sid, sess["title"], sess["messages"][0]["ts"] if sess["messages"] else now, now))
+                else:
+                    conn.execute("UPDATE sessions SET updated_at=?, title=? WHERE id=?", (now, sess["title"], sid))
+                # 기존 메시지 삭제 후 재삽입 (간단)
+                conn.execute("DELETE FROM messages WHERE session_id=?", (sid,))
+                for msg in sess["messages"]:
+                    conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
+                                 (sid, msg["role"], msg["content"], json.dumps(msg["sources"]) if msg["sources"] else None, msg["ts"]))
+                conn.commit()
+                conn.close()
+                sess["dirty"] = False
+                print(f"[CACHE] 세션 {sid} DB 저장 완료 ({len(sess['messages'])}건)")
+            except Exception as e:
+                print(f"[CACHE] 세션 {sid} DB 저장 실패: {e}")
+
+    def flush_all(self):
+        """모든 dirty 세션 즉시 저장 (종료 시)"""
+        sids = list(self._sessions.keys())
+        for sid in sids:
+            self._flush_session(sid)
+        print(f"[CACHE] 전체 flush 완료 ({len(sids)}개 세션)")
+
+    def load_from_db(self, sid):
+        """DB에서 기존 세션 로드 (서버 재시작 후 복원)"""
+        conn = get_chat_conn()
+        rows = conn.execute(
+            "SELECT role, content, sources, created_at FROM messages WHERE session_id=? ORDER BY created_at",
+            (sid,)
+        ).fetchall()
+        sess_row = conn.execute("SELECT title FROM sessions WHERE id=?", (sid,)).fetchone()
+        conn.close()
+        if rows:
+            sess = self.ensure(sid, title=sess_row[0] if sess_row else sid)
+            with self._lock:
+                sess["messages"] = [{"role": r, "content": c, "sources": json.loads(s) if s else None, "ts": t} for r, c, s, t in rows]
+                # 이전 게임 추출
+                for msg in reversed(sess["messages"]):
+                    if msg["sources"]:
+                        src_str = str(msg["sources"]).lower()
+                        if "palworld" in src_str: sess["game"] = "palworld"; break
+                        elif "overwatch" in src_str: sess["game"] = "overwatch"; break
+                        elif "minecraft" in src_str: sess["game"] = "minecraft"; break
+            return sess
+        return None
+
+cache = SessionCache()
+atexit.register(cache.flush_all)
 
 # ── HTML ──
 HTML = """<!DOCTYPE html>
@@ -612,6 +737,15 @@ class Handler(BaseHTTPRequestHandler):
 
         elif self.path.startswith('/api/sessions/') and self.path.endswith('/clear'):
             sid = self.path.split('/')[3]
+            # 캐시 초기화
+            sess = cache.get(sid)
+            if sess:
+                with cache._lock:
+                    sess["messages"] = [{"role": "system", "content": "컨텍스트가 초기화되었습니다.", "sources": None, "ts": time.time()}]
+                    sess["game"] = None
+                    sess["last_query"] = ""
+                    sess["dirty"] = True
+            # DB도 즉시 정리
             conn = get_chat_conn()
             conn.execute("DELETE FROM messages WHERE session_id=?", (sid,))
             now = time.time()
@@ -629,27 +763,21 @@ class Handler(BaseHTTPRequestHandler):
             # 세션 없으면 자동 생성
             if not session_id:
                 session_id = str(uuid.uuid4())[:8]
-                now = time.time()
-                conn = get_chat_conn()
-                conn.execute("INSERT INTO sessions (id, title, created_at, updated_at) VALUES (?,?,?,?)",
-                             (session_id, query[:30], now, now))
-                conn.commit()
-                conn.close()
 
-            # 유저 메시지 저장
-            now = time.time()
-            conn = get_chat_conn()
-            conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
-                         (session_id, "user", query, None, now))
+            # 캐시에 세션 확보 (없으면 DB에서 로드 시도)
+            sess = cache.get(session_id)
+            if not sess:
+                sess = cache.load_from_db(session_id)
+            if not sess:
+                sess = cache.ensure(session_id, title=query[:30])
+
+            # 유저 메시지를 캐시에 저장 (DB는 나중에 자동 flush)
+            cache.add_message(session_id, "user", query)
 
             # 첫 메시지면 제목 업데이트
-            msg_count = conn.execute("SELECT COUNT(*) FROM messages WHERE session_id=? AND role='user'", (session_id,)).fetchone()[0]
-            if msg_count == 1:
-                title = query[:30] + ("..." if len(query) > 30 else "")
-                conn.execute("UPDATE sessions SET title=? WHERE id=?", (title, session_id))
-            conn.execute("UPDATE sessions SET updated_at=? WHERE id=?", (now, session_id))
-            conn.commit()
-            conn.close()
+            user_msgs = [m for m in sess["messages"] if m["role"] == "user"]
+            if len(user_msgs) == 1:
+                sess["title"] = query[:30] + ("..." if len(query) > 30 else "")
 
             # 쿼리 정규화 (붙여쓰기 → 띄어쓰기 동의어)
             QUERY_SYNONYMS = {
@@ -677,35 +805,15 @@ class Handler(BaseHTTPRequestHandler):
             elif any(kw in query_lower for kw in ["마인크래프트", "마크", "minecraft"]):
                 game_filter = "minecraft"
 
-            # 게임 필터 없으면 이전 대화에서 게임 컨텍스트 추출
-            if not game_filter and session_id:
-                conn_prev = get_chat_conn()
-                prev_sources = conn_prev.execute(
-                    "SELECT sources FROM messages WHERE session_id=? AND role='assistant' AND sources IS NOT NULL ORDER BY created_at DESC LIMIT 3",
-                    (session_id,)
-                ).fetchall()
-                conn_prev.close()
-                for (src_str,) in prev_sources:
-                    if src_str:
-                        src_lower = src_str.lower()
-                        if "palworld" in src_lower:
-                            game_filter = "palworld"; break
-                        elif "overwatch" in src_lower:
-                            game_filter = "overwatch"; break
-                        elif "minecraft" in src_lower:
-                            game_filter = "minecraft"; break
+            # 게임 필터 없으면 캐시에서 이전 게임 컨텍스트 사용
+            if not game_filter and sess.get("game"):
+                game_filter = sess["game"]
 
-            # 후속 질문이면 이전 질문을 검색 쿼리에 합침
+            # 후속 질문이면 이전 질문을 검색 쿼리에 합침 (캐시에서)
             follow_up_markers = ["자세", "더", "그거", "그것", "알려", "뭐야", "어때"]
             if session_id and len(query) < 20 and any(m in query for m in follow_up_markers):
-                conn_fq = get_chat_conn()
-                prev_user = conn_fq.execute(
-                    "SELECT content FROM messages WHERE session_id=? AND role='user' ORDER BY created_at DESC LIMIT 2",
-                    (session_id,)
-                ).fetchall()
-                conn_fq.close()
-                if len(prev_user) >= 2:
-                    search_query = prev_user[1][0] + " " + search_query
+                if sess.get("last_query"):
+                    search_query = sess["last_query"] + " " + search_query
 
             # 하이브리드 검색
             vdb = get_db()
@@ -736,12 +844,8 @@ class Handler(BaseHTTPRequestHandler):
                     game_names = {"palworld": "팰월드", "overwatch": "오버워치", "minecraft": "마인크래프트"}
                     game_list = [game_names.get(g, g) for g in sorted(found_games)]
                     ask_msg = f"'{query}'은(는) 여러 게임에 존재합니다. 어떤 게임에 대해 알고 싶으신가요?"
-                    # 봇 메시지 저장
-                    conn = get_chat_conn()
-                    conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
-                                 (session_id, "assistant", ask_msg, None, time.time()))
-                    conn.commit()
-                    conn.close()
+                    cache.add_message(session_id, "assistant", ask_msg)
+                    cache.set_last_query(session_id, query)
                     self._json({"answer": ask_msg, "sources": [], "ask_game": True, "games": game_list, "session_id": session_id})
                     return
                 results = results[:3]
@@ -757,21 +861,14 @@ class Handler(BaseHTTPRequestHandler):
                 if src not in sources:
                     sources.append(src)
 
-            # 이전 대화 컨텍스트 (최근 4개)
-            conn = get_chat_conn()
-            prev_msgs = conn.execute(
-                "SELECT role, content FROM messages WHERE session_id=? AND role IN ('user','assistant') ORDER BY created_at DESC LIMIT 4",
-                (session_id,)
-            ).fetchall()
-            conn.close()
-            prev_msgs.reverse()
-
+            # 이전 대화 컨텍스트 (캐시에서, 현재 질문 제외)
+            recent = cache.get_history(session_id, limit=5)
             history = ""
-            for role, content in prev_msgs[:-1]:  # 현재 질문 제외
-                if role == "user":
-                    history += f"사용자: {content}\n"
-                else:
-                    history += f"답변: {content}\n"
+            for msg in recent[:-1]:  # 현재 질문 제외
+                if msg["role"] == "user":
+                    history += f"사용자: {msg['content']}\n"
+                elif msg["role"] == "assistant":
+                    history += f"답변: {msg['content']}\n"
 
             # LLM - 질문 형태 보정
             llm_query = query
@@ -802,12 +899,13 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 answer = f"LLM 오류: {e}"
 
-            # 봇 메시지 저장
-            conn = get_chat_conn()
-            conn.execute("INSERT INTO messages (session_id, role, content, sources, created_at) VALUES (?,?,?,?,?)",
-                         (session_id, "assistant", answer, json.dumps(sources, ensure_ascii=False), time.time()))
-            conn.commit()
-            conn.close()
+            # 봇 메시지를 캐시에 저장 + 게임/쿼리 컨텍스트 업데이트
+            cache.add_message(session_id, "assistant", answer, sources=sources)
+            if game_filter:
+                cache.set_game(session_id, game_filter)
+            # last_query는 의미있는 질문만 저장 (후속 질문이면 유지)
+            if not (len(query) < 20 and any(m in query for m in follow_up_markers)):
+                cache.set_last_query(session_id, query)
 
             self._json({"answer": answer, "sources": sources, "session_id": session_id})
         else:

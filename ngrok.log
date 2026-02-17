@@ -106,3 +106,14 @@ t=2026-02-17T12:55:39+0900 lvl=info msg="join connections" obj=join id=b23dc3f6e
 t=2026-02-17T12:55:42+0900 lvl=info msg="join connections" obj=join id=ab5cb671e300 l=127.0.0.1:3333 r=125.129.59.11:62397
 t=2026-02-17T12:56:02+0900 lvl=info msg="join connections" obj=join id=c11be715c0bc l=127.0.0.1:3333 r=125.129.59.11:62397
 t=2026-02-17T12:56:02+0900 lvl=info msg="join connections" obj=join id=8047e4636d39 l=127.0.0.1:3333 r=125.129.59.11:62397
+t=2026-02-17T13:04:15+0900 lvl=info msg="join connections" obj=join id=7f1962d4fb73 l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:16+0900 lvl=info msg="join connections" obj=join id=dd638017c74d l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:16+0900 lvl=info msg="join connections" obj=join id=590935992abe l=127.0.0.1:3333 r=125.129.59.11:62478
+t=2026-02-17T13:04:45+0900 lvl=info msg="join connections" obj=join id=b45baf14ac62 l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:49+0900 lvl=info msg="join connections" obj=join id=abdd821c1457 l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:50+0900 lvl=info msg="join connections" obj=join id=5bc324358e51 l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:50+0900 lvl=info msg="join connections" obj=join id=d09797f8ad16 l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:50+0900 lvl=info msg="join connections" obj=join id=7b34962c676a l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:50+0900 lvl=info msg="join connections" obj=join id=4ddc4f8b170d l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:04:55+0900 lvl=info msg="join connections" obj=join id=bb79639caed0 l=127.0.0.1:3333 r=125.129.59.11:62477
+t=2026-02-17T13:05:05+0900 lvl=info msg="join connections" obj=join id=f3d1174ddbf1 l=127.0.0.1:3333 r=125.129.59.11:62477
