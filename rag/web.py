@@ -651,6 +651,22 @@ class Handler(BaseHTTPRequestHandler):
             conn.commit()
             conn.close()
 
+            # 쿼리 정규화 (붙여쓰기 → 띄어쓰기 동의어)
+            QUERY_SYNONYMS = {
+                "엔더드래곤": "엔더 드래곤",
+                "엔더진주": "엔더 진주",
+                "엔더맨": "엔더맨",
+                "위더스켈레톤": "위더 스켈레톤",
+                "네더라이트": "네더라이트",
+                "레드스톤": "레드스톤",
+                "솔저76": "솔저: 76",
+                "정크랫": "정크랫",
+            }
+            search_query = query
+            for old, new in QUERY_SYNONYMS.items():
+                if old in search_query and old != new:
+                    search_query = search_query.replace(old, new)
+
             # 게임명 감지
             game_filter = None
             query_lower = query.lower()
@@ -663,8 +679,8 @@ class Handler(BaseHTTPRequestHandler):
 
             # 하이브리드 검색
             vdb = get_db()
-            vec_results = vdb.similarity_search(query, k=8)
-            query_tokens = tokenize_ko(query)
+            vec_results = vdb.similarity_search(search_query, k=8)
+            query_tokens = tokenize_ko(search_query)
             bm25_scores = bm25_index.get_scores(query_tokens)
             top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:8]
             bm25_results = [bm25_docs[i] for i in top_bm25_idx if bm25_scores[i] > 0]
@@ -705,8 +721,8 @@ class Handler(BaseHTTPRequestHandler):
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
-                chunk = doc.page_content[:400]
-                context += f"\n{chunk}\n"
+                chunk = doc.page_content[:600]
+                context += f"\n[{title}]\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
                     sources.append(src)
@@ -727,16 +743,21 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     history += f"답변: {content}\n"
 
-            # LLM
+            # LLM - 질문 형태 보정
+            llm_query = query
+            question_markers = ["?", "？", "뭐", "어떻게", "알려", "설명", "가르쳐", "어디", "언제", "누가", "왜"]
+            if not any(m in query for m in question_markers):
+                llm_query = f"{query}에 대해 알려줘"
+
             system = SYSTEM_PROMPT.format(context=context)
             if history:
-                prompt = f"{system}\n\n[이전 대화]\n{history}\n질문: {query}\n\n답변:"
+                prompt = f"{system}\n\n[이전 대화]\n{history}\n질문: {llm_query}\n\n답변:"
             else:
-                prompt = f"{system}\n\n질문: {query}\n\n답변:"
+                prompt = f"{system}\n\n질문: {llm_query}\n\n답변:"
 
             payload = {
                 "prompt": prompt,
-                "n_predict": 120,
+                "n_predict": 200,
                 "temperature": 0.05,
                 "repeat_penalty": 1.3,
                 "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
