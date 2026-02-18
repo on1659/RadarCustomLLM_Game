@@ -1,16 +1,45 @@
-# 챗봇 통합 가이드 (게임위키 AI API)
+# 🎮 게임위키 AI API 문서
 
-이 API를 여러분의 챗봇 서비스(카카오톡, 디스코드, 텔레그램 등)에 연결하는 방법을 설명합니다.
+로컬 LLM 기반 게임 정보 RAG 서버 — 챗봇 통합부터 API 스펙까지 한 곳에서!
 
-> 💡 **안내:** 이 문서의 모든 예시는 **참고용**입니다. 여러분의 챗봇 특성과 사용 목적에 맞게 자유롭게 변형하세요!  
-> `session_id`, 타임아웃, 에러 처리 등은 모두 **여러분의 재량**입니다.
+> 💡 **안내:** 이 문서의 모든 예시는 **참고용**입니다. 여러분의 챗봇 특성과 사용 목적에 맞게 자유롭게 변형하세요!
+
+---
+
+## 📑 목차
+
+1. [빠른 시작 (3분)](#-빠른-시작-3분)
+2. [API 기본 정보](#-api-기본-정보)
+3. [보안 설정](#-보안-설정)
+4. [대화 연속성 (session_id)](#-대화-연속성-핵심)
+5. [실전 예제](#-실전-예제)
+   - [Python (카카오톡)](#python-카카오톡-챗봇)
+   - [Node.js (디스코드)](#nodejs-디스코드-봇)
+   - [Python (텔레그램)](#python-텔레그램-봇---그룹-지원)
+   - [JavaScript (웹)](#javascript-웹-채팅)
+6. [고급 기능](#-고급-기능)
+7. [성능 최적화](#-성능-최적화)
+8. [문제 해결](#-문제-해결)
+9. [FAQ](#-faq)
+
+---
+
+## 📡 API 기본 정보
+
+- **Base URL**: `https://awhirl-preimpressive-carina.ngrok-free.dev`
+- **엔드포인트**: `POST /api/chat`
+- **응답 시간**: 평균 2-5초 (로컬 LLM)
+- **지원 게임**: 마인크래프트, 오버워치, 팰월드
+- **데이터**: 나무위키 크롤링 (총 57개 문서, 792만자)
+
+---
 
 ## 🚀 빠른 시작 (3분)
 
 ### 1️⃣ API 호출 기본
 
+**Linux/macOS:**
 ```bash
-# 테스트 요청 (curl)
 curl -X POST "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: 93bedb51b1faf8f507813267ce9f268e5b818da82ae90312c3a954f44fcc9599" \
@@ -18,6 +47,29 @@ curl -X POST "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat" \
     "query": "마인크래프트 다이아몬드 어디서 구해?",
     "session_id": "user_12345"
   }'
+```
+
+**Windows (PowerShell):**
+```powershell
+$headers = @{
+    "Content-Type" = "application/json"
+    "X-API-Key" = "93bedb51b1faf8f507813267ce9f268e5b818da82ae90312c3a954f44fcc9599"
+}
+$body = @{
+    query = "마인크래프트 다이아몬드 어디서 구해?"
+    session_id = "user_12345"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat" `
+  -Method POST -Headers $headers -Body $body
+```
+
+**Windows (CMD):**
+```cmd
+curl -X POST "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat" ^
+  -H "Content-Type: application/json" ^
+  -H "X-API-Key: 93bedb51b1faf8f507813267ce9f268e5b818da82ae90312c3a954f44fcc9599" ^
+  -d "{\"query\":\"마인크래프트 다이아몬드 어디서 구해?\",\"session_id\":\"user_12345\"}"
 ```
 
 **응답:**
@@ -37,6 +89,71 @@ curl -X POST "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat" \
 | **session_id** | 대화 연속성 유지용 ID | 사용자 ID, 채팅방 ID 등 |
 | **answer** | AI 답변 | "한조는 초자연적인 능력을..." |
 | **sources** | 참고 문서 목록 | `["overwatch/한조(오버워치)"]` |
+
+---
+
+## 🔐 보안 설정
+
+### API 키 인증 (선택)
+
+현재 API는 **API 키 인증을 지원**합니다 (환경변수 설정 시 활성화).
+
+#### 서버에 API 키 설정
+
+```bash
+# ~/.zshrc 또는 ~/.bashrc에 추가
+export GAME_WIKI_API_KEY="93bedb51b1faf8f507813267ce9f268e5b818da82ae90312c3a954f44fcc9599"
+
+# 또는 직접 생성
+export GAME_WIKI_API_KEY="$(openssl rand -hex 32)"
+```
+
+#### 요청 시 헤더에 키 포함
+
+```javascript
+fetch(API_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': 'YOUR_API_KEY'  // 👈 필수
+  },
+  body: JSON.stringify({...})
+});
+```
+
+#### 키가 없거나 틀리면
+
+```json
+{
+  "error": "Invalid or missing API key"
+}
+```
+
+#### ⚠️ 보안 주의사항
+
+**❌ 절대 하지 마세요:**
+```javascript
+// 클라이언트 JavaScript에 API 키 노출
+const API_KEY = '93bedb...';  // ← 위험!
+```
+
+**✅ 올바른 방법:**
+```python
+# 백엔드 서버에서만 API 호출
+@app.route('/ask')
+def ask():
+    answer = requests.post(API_URL, headers={'X-API-Key': os.getenv('API_KEY')})
+    return jsonify(answer)
+```
+
+**환경 변수 사용:**
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv('GAME_WIKI_API_KEY')
+```
 
 ---
 
