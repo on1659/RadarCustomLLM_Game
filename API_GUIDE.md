@@ -567,13 +567,110 @@ document.getElementById('sendBtn').addEventListener('click', async () => {
 
 → **마인크래프트 다이아몬드 정보 출력**
 
-### 3️⃣ 세션 초기화
+### 3️⃣ 세션 관리 및 초기화
+
+#### 세션 자동 만료
+
+서버는 **마지막 대화 후 30분**이 지나면 세션을 자동으로 만료시킵니다.
+
+```python
+# 30분 후 같은 session_id로 요청하면
+{"query": "안녕?", "session_id": "user_123"}
+# → 이전 대화 맥락이 사라진 새 대화로 시작
+```
+
+#### 수동 세션 리셋
 
 대화를 처음부터 다시 시작하려면:
+
+**방법 1: 타임스탬프 추가 (추천)**
 ```python
-# 새로운 session_id 생성
-new_session_id = f"user_{user_id}_{timestamp}"
+import time
+
+# 사용자가 "새 대화" 명령 입력 시
+session_id = f"user_{user_id}_{int(time.time())}"
 ```
+
+**방법 2: 카운터 증가**
+```python
+# 전역 카운터 또는 DB에 저장
+session_counter = get_user_session_counter(user_id)
+session_counter += 1
+session_id = f"user_{user_id}_v{session_counter}"
+```
+
+**방법 3: UUID 사용**
+```python
+import uuid
+
+# 완전히 새로운 세션
+session_id = f"user_{user_id}_{uuid.uuid4().hex[:8]}"
+```
+
+#### 컨텍스트 오버플로 방지
+
+현재 서버는 **최근 5개 메시지**만 LLM에 전달하지만, 세션 자체는 계속 쌓입니다.
+
+**문제:**
+- 1000턴 대화 → DB/메모리 부담
+- 너무 긴 대화는 맥락이 오히려 방해
+
+**해결책 (챗봇 측):**
+
+```python
+class ChatBot:
+    def __init__(self):
+        self.turn_count = {}  # user_id → 대화 턴 수
+    
+    def ask(self, user_id, query):
+        # 현재 세션 ID
+        session_id = f"user_{user_id}"
+        
+        # 턴 수 증가
+        self.turn_count[user_id] = self.turn_count.get(user_id, 0) + 1
+        
+        # 20턴 이상이면 세션 리셋
+        if self.turn_count[user_id] >= 20:
+            session_id = f"user_{user_id}_{int(time.time())}"
+            self.turn_count[user_id] = 0
+            print(f"[세션 리셋] {user_id} - 20턴 초과")
+        
+        # API 호출
+        response = requests.post(API_URL, json={
+            "query": query,
+            "session_id": session_id
+        })
+        return response.json()["answer"]
+```
+
+**또는 시간 기반:**
+```python
+# 1시간마다 세션 리셋
+session_id = f"user_{user_id}_{int(time.time() // 3600)}"
+```
+
+**주제별 세션 (고급):**
+```python
+# 사용자가 명시적으로 주제 변경
+if "새로운 주제" in query or "다른 게임" in query:
+    session_id = f"user_{user_id}_{uuid.uuid4().hex[:8]}"
+    await message.reply("새로운 대화를 시작합니다! 🔄")
+```
+
+#### 세션 수명 주기 요약
+
+```
+1. 생성: 첫 API 요청 시
+2. 유지: 30분 내 계속 대화 시
+3. 만료: 30분 동안 요청 없음
+4. 수동 리셋: session_id 변경 시
+```
+
+**Best Practice:**
+- **일반 대화**: 자동 만료(30분) 활용
+- **긴 대화**: 10-20턴마다 수동 리셋
+- **주제 변경**: 사용자 요청 시 리셋
+- **그룹 채팅**: 개인별 + 시간 기반 조합
 
 ---
 

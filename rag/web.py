@@ -62,6 +62,9 @@ FLUSH_DELAY = 30  # 30초 무응답 시 DB 저장
 
 class SessionCache:
     """채팅 중에는 메모리만 사용, 일정 시간 후 DB에 배치 저장"""
+    SESSION_TIMEOUT = 1800  # 30분 (초)
+    MAX_MESSAGES = 50       # 세션당 최대 메시지 수
+    
     def __init__(self):
         self._lock = threading.Lock()
         self._sessions = {}  # {sid: {"game": str, "last_query": str, "messages": [...], "dirty": bool, "last_active": float, "title": str}}
@@ -73,15 +76,27 @@ class SessionCache:
 
     def ensure(self, sid, title=""):
         with self._lock:
-            if sid not in self._sessions:
-                self._sessions[sid] = {
-                    "game": None,
-                    "last_query": "",
-                    "messages": [],
-                    "dirty": False,
-                    "last_active": time.time(),
-                    "title": title or sid,
-                }
+            # 기존 세션 확인
+            if sid in self._sessions:
+                sess = self._sessions[sid]
+                # 만료 체크 (30분 경과)
+                if time.time() - sess["last_active"] > self.SESSION_TIMEOUT:
+                    print(f"[세션 만료] {sid} - {int((time.time() - sess['last_active']) / 60)}분 경과, 초기화", file=sys.stderr, flush=True)
+                    sess["messages"] = []
+                    sess["game"] = None
+                    sess["last_query"] = ""
+                    sess["last_active"] = time.time()
+                return sess
+            
+            # 새 세션 생성
+            self._sessions[sid] = {
+                "game": None,
+                "last_query": "",
+                "messages": [],
+                "dirty": False,
+                "last_active": time.time(),
+                "title": title or sid,
+            }
             return self._sessions[sid]
 
     def add_message(self, sid, role, content, sources=None):
@@ -89,7 +104,18 @@ class SessionCache:
             sess = self._sessions.get(sid)
             if not sess:
                 return
+            
+            # 메시지 추가
             sess["messages"].append({"role": role, "content": content, "sources": sources, "ts": time.time()})
+            
+            # 최대 메시지 수 제한
+            if len(sess["messages"]) > self.MAX_MESSAGES:
+                removed_count = len(sess["messages"]) - self.MAX_MESSAGES
+                sess["messages"] = sess["messages"][-self.MAX_MESSAGES:]
+                print(f"[메시지 제한] {sid} - 오래된 {removed_count}개 메시지 제거", file=sys.stderr, flush=True)
+            
+            # 활동 시간 업데이트
+            sess["last_active"] = time.time()
             sess["dirty"] = True
             sess["last_active"] = time.time()
             # 타이머 리셋
