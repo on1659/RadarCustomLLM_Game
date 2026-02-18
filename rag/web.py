@@ -850,11 +850,12 @@ class Handler(BaseHTTPRequestHandler):
             query = body.get("query", "")
             session_id = body.get("session_id")
             
-            # 오타 자동 보정
-            fixed_query, typo_fixed = fix_typo(query, threshold=0.6)  # 유사도 임계값 낮춤
+            # 오타 감지 (자동 보정하지 않고 제안)
+            fixed_query, typo_fixed = fix_typo(query, threshold=0.5)  # 한글 유사도 낮춤
+            typo_suggestion = None
             if typo_fixed:
-                print(f"[오타 보정] '{query}' → '{fixed_query}'")
-                query = fixed_query
+                print(f"[오타 감지] '{query}' (추천: '{fixed_query}')")
+                typo_suggestion = fixed_query
 
             # 세션 없으면 자동 생성
             if not session_id:
@@ -1042,6 +1043,10 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 answer = f"LLM 오류: {e}"
 
+            # 오타 제안 (검색 결과가 없을 때만)
+            if typo_suggestion and (not sources or len(sources) == 0 or "참고" in answer or "없습니다" in answer):
+                answer = f"🔍 혹시 '**{typo_suggestion}**'를 찾으시나요?\n\n" + answer
+            
             # 봇 메시지를 캐시에 저장 + 게임/쿼리 컨텍스트 업데이트
             cache.add_message(session_id, "assistant", answer, sources=sources)
             if game_filter:
