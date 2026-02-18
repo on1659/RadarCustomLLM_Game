@@ -65,17 +65,78 @@ curl -X POST "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat" \
 session_id = f"user_{user_id}"  # 사용자별 독립 대화
 ```
 
-**그룹 채팅봇:**
+**그룹 채팅봇 (⚠️ 중요!):**
+
+❌ **잘못된 방법** (그룹 전체가 하나의 대화):
 ```python
-session_id = f"group_{group_id}"  # 그룹 전체가 하나의 대화
-# 또는
-session_id = f"group_{group_id}_user_{user_id}"  # 그룹 내 개인별
+session_id = f"group_{group_id}"
+# 문제: A가 "한조 알려줘" → B가 "궁극기는?" 하면
+# B의 질문이 A의 맥락으로 이어짐 (혼란!)
+```
+
+✅ **올바른 방법** (그룹 내 개인별 대화):
+```python
+session_id = f"group_{group_id}_user_{user_id}"
+# A: "한조 알려줘" → A만의 세션
+# B: "겐지 알려줘" → B만의 세션 (A와 독립!)
 ```
 
 **웹 채팅:**
 ```python
 session_id = f"web_{uuid.uuid4()}"  # 브라우저 세션별
 ```
+
+---
+
+## 🎭 그룹 채팅 시나리오 비교
+
+### ❌ 잘못된 구현 (그룹 전체 세션)
+
+```python
+# 모든 사용자가 같은 session_id 사용
+session_id = f"group_{chat_id}"
+```
+
+**문제 발생:**
+```
+👤 철수: 오버워치 한조 알려줘
+🤖 AI: 한조는 시마다 일족의 암살자입니다...
+
+👤 영희: 마인크래프트 다이아몬드는?
+🤖 AI: 다이아몬드는 보루 상자에서...
+
+👤 철수: 궁극기는?
+🤖 AI: 다이아몬드의 궁극기는... ❌ (한조 궁극기를 물은 건데!)
+
+👤 영희: 어떻게 구해?
+🤖 AI: 한조는 상점에서... ❌ (다이아몬드 획득법을 물은 건데!)
+```
+
+**원인:** 모두가 같은 세션을 공유해서 대화가 뒤섞임!
+
+### ✅ 올바른 구현 (개인별 세션)
+
+```python
+# 각 사용자마다 다른 session_id
+session_id = f"group_{chat_id}_user_{user_id}"
+```
+
+**정상 작동:**
+```
+👤 철수: 오버워치 한조 알려줘
+🤖 AI: 한조는 시마다 일족의 암살자입니다...
+
+👤 영희: 마인크래프트 다이아몬드는?
+🤖 AI: 다이아몬드는 보루 상자에서...
+
+👤 철수: 궁극기는?
+🤖 AI: 한조의 궁극기는 용의 일격입니다... ✅
+
+👤 영희: 어떻게 구해?
+🤖 AI: 다이아몬드는 Y좌표 -64~16에서... ✅
+```
+
+**핵심:** 각자 독립된 대화 맥락 유지!
 
 ---
 
@@ -168,7 +229,9 @@ client.on('messageCreate', async (message) => {
   // "!게임 질문" 형식
   if (message.content.startsWith('!게임 ')) {
     const query = message.content.slice(4);
-    const sessionId = `discord_${message.channel.id}`;  // 채널별 대화 관리
+    
+    // ✅ 그룹 채널: 개인별 세션 관리 (추천)
+    const sessionId = `discord_${message.channel.id}_user_${message.author.id}`;
     
     const answer = await askGameWiki(query, sessionId);
     await message.reply(answer);
@@ -177,6 +240,106 @@ client.on('messageCreate', async (message) => {
 
 client.login('YOUR_BOT_TOKEN');
 ```
+
+**왜 이렇게 해야 하나요?**
+
+```javascript
+// ❌ 채널별 세션 (문제 발생)
+const sessionId = `discord_${message.channel.id}`;
+
+// 시나리오:
+// - 철수: "!게임 오버워치 한조"
+// - AI: "한조는 초자연적인 능력을..."
+// - 영희: "!게임 궁극기는?" 
+// - AI: "한조의 궁극기는..." (← 영희가 한조를 안 물어봤는데!)
+
+// ✅ 개인별 세션 (올바른 방법)
+const sessionId = `discord_${message.channel.id}_user_${message.author.id}`;
+
+// 시나리오:
+// - 철수: "!게임 오버워치 한조"
+// - AI: "한조는 초자연적인 능력을..."
+// - 영희: "!게임 궁극기는?" 
+// - AI: "여러 게임에 존재합니다. 어떤 게임?" (← 영희 세션은 독립!)
+```
+
+### Python (텔레그램 봇 - 그룹 지원)
+
+```python
+import requests
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+
+API_URL = "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat"
+API_KEY = "93bedb51b1faf8f507813267ce9f268e5b818da82ae90312c3a954f44fcc9599"
+
+def ask_game_wiki(query: str, session_id: str) -> str:
+    """게임위키 AI에게 질문"""
+    payload = {"query": query, "session_id": session_id}
+    headers = {
+        "Content-Type": "application/json",
+        "X-API-Key": API_KEY
+    }
+    
+    try:
+        response = requests.post(API_URL, json=payload, headers=headers, timeout=30)
+        response.raise_for_status()
+        return response.json()["answer"]
+    except requests.exceptions.Timeout:
+        return "⏱️ 응답 시간 초과 (30초). 다시 시도해주세요."
+    except Exception as e:
+        return f"❌ 오류: {e}"
+
+async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """그룹/개인 채팅 모두 지원"""
+    user_query = " ".join(context.args)
+    if not user_query:
+        await update.message.reply_text("사용법: /게임 질문내용")
+        return
+    
+    # ✅ 그룹 채팅: 개인별 세션 관리
+    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
+    
+    if update.effective_chat.type in ['group', 'supergroup']:
+        # 그룹: chat_id + user_id 조합
+        session_id = f"telegram_group_{chat_id}_user_{user_id}"
+    else:
+        # 개인 채팅: user_id만 사용
+        session_id = f"telegram_user_{user_id}"
+    
+    answer = ask_game_wiki(user_query, session_id)
+    await update.message.reply_text(answer)
+
+def main():
+    app = Application.builder().token("YOUR_BOT_TOKEN").build()
+    app.add_handler(CommandHandler("게임", game_command))
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()
+```
+
+**실제 사용 예시 (텔레그램 그룹):**
+
+```
+👤 철수: /게임 오버워치 한조
+🤖 AI: 한조는 초자연적인 능력을 사용하는 영웅입니다...
+
+👤 영희: /게임 겐지는?
+🤖 AI: 겐지는 시마다 일족의...
+
+👤 철수: /게임 궁극기는?
+🤖 AI: 한조의 궁극기는... (← 철수의 이전 대화 맥락 유지!)
+
+👤 영희: /게임 궁극기는?
+🤖 AI: 겐지의 궁극기는... (← 영희의 이전 대화 맥락 유지!)
+```
+
+**session_id 구조:**
+- 철수: `telegram_group_-123456789_user_111111`
+- 영희: `telegram_group_-123456789_user_222222`
+- → 같은 그룹이지만 **각자 독립된 대화!**
 
 ### JavaScript (웹 채팅)
 
