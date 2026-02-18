@@ -12,6 +12,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from rank_bm25 import BM25Okapi
+from typo_fix import fix_typo
 
 DB_DIR = os.path.join(os.path.dirname(__file__), "faiss_db")
 CHAT_DB = os.path.join(os.path.dirname(__file__), "chat.db")
@@ -848,6 +849,12 @@ class Handler(BaseHTTPRequestHandler):
             
             query = body.get("query", "")
             session_id = body.get("session_id")
+            
+            # 오타 자동 보정
+            fixed_query, typo_fixed = fix_typo(query, threshold=0.6)  # 유사도 임계값 낮춤
+            if typo_fixed:
+                print(f"[오타 보정] '{query}' → '{fixed_query}'")
+                query = fixed_query
 
             # 세션 없으면 자동 생성
             if not session_id:
