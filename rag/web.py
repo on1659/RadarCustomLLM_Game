@@ -1043,9 +1043,82 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 answer = f"LLM 오류: {e}"
 
-            # 오타 제안 (검색 결과가 없을 때만)
-            if typo_suggestion and (not sources or len(sources) == 0 or "참고" in answer or "없습니다" in answer):
-                answer = f"🔍 혹시 '**{typo_suggestion}**'를 찾으시나요?\n\n" + answer
+            # 오타 제안 + 재검색 (검색 실패 시)
+            needs_retry = False
+            if typo_suggestion:
+                if not sources or len(sources) == 0:
+                    needs_retry = True
+                elif "참고자료에" in answer and ("없습니다" in answer or "찾을 수 없습니다" in answer):
+                    needs_retry = True
+            
+            if needs_retry:
+                print(f"[오타 재검색] '{query}' → '{typo_suggestion}'", file=sys.stderr, flush=True)
+                
+                # 보정된 쿼리로 재검색
+                retry_intent = classify_intent(typo_suggestion)
+                retry_vec = vdb.similarity_search(typo_suggestion, k=10)
+                retry_tokens = tokenize_ko(typo_suggestion)
+                retry_bm25_scores = bm25_index.get_scores(retry_tokens)
+                retry_bm25_idx = sorted(range(len(retry_bm25_scores)), key=lambda i: retry_bm25_scores[i], reverse=True)[:10]
+                retry_bm25_results = [bm25_docs[i] for i in retry_bm25_idx if retry_bm25_scores[i] > 0]
+                
+                # 재검색 RRF
+                retry_vec_w, retry_bm25_w = INTENT_WEIGHTS.get(retry_intent, (0.6, 0.4))
+                retry_scores = {}
+                for rank, doc in enumerate(retry_vec):
+                    doc_id = doc.page_content[:100]
+                    rrf = retry_vec_w / (RRF_K + rank + 1)
+                    retry_scores[doc_id] = retry_scores.get(doc_id, (0, doc))[0] + rrf, doc
+                for rank, doc in enumerate(retry_bm25_results):
+                    doc_id = doc.page_content[:100]
+                    rrf = retry_bm25_w / (RRF_K + rank + 1)
+                    retry_scores[doc_id] = retry_scores.get(doc_id, (0, doc))[0] + rrf, doc
+                
+                retry_ranked = sorted(retry_scores.values(), key=lambda x: x[0], reverse=True)
+                retry_results = [doc for _, doc in retry_ranked][:3]
+                
+                # 재검색 결과가 있으면
+                if retry_results and len(retry_results) > 0:
+                    retry_context = ""
+                    retry_sources = []
+                    for doc in retry_results:
+                        game = doc.metadata.get("game", "")
+                        title = doc.metadata.get("title", "")
+                        chunk = doc.page_content[:600]
+                        retry_context += f"\n[{title}]\n{chunk}\n"
+                        src = f"{game}/{title}"
+                        if src not in retry_sources:
+                            retry_sources.append(src)
+                    
+                    # 재검색 LLM 질의
+                    retry_system = SYSTEM_PROMPT.format(context=retry_context)
+                    retry_llm_query = f"{typo_suggestion}에 대해 알려줘"
+                    retry_prompt = f"{retry_system}\n\n질문: {retry_llm_query}\n\n답변:"
+                    retry_payload = {
+                        "prompt": retry_prompt,
+                        "n_predict": 200,
+                        "temperature": 0.05,
+                        "repeat_penalty": 1.3,
+                        "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
+                    }
+                    try:
+                        retry_resp = requests.post(LLAMA_URL, json=retry_payload, timeout=60)
+                        retry_resp.raise_for_status()
+                        retry_result = retry_resp.json()
+                        retry_answer = retry_result.get("content", "").strip() or "응답을 생성할 수 없습니다."
+                        retry_answer = clean_answer(retry_answer)
+                        print(f"[재검색 답변] '{retry_answer[:100]}'", file=sys.stderr, flush=True)
+                        
+                        # 재검색 성공 → 제안 메시지 + 재검색 결과
+                        answer = f"🔍 혹시 '**{typo_suggestion}**'를 찾으시나요?\n\n{retry_answer}"
+                        sources = retry_sources
+                        print(f"[재검색 성공] sources: {retry_sources}", file=sys.stderr, flush=True)
+                    except Exception as e:
+                        print(f"[재검색 LLM 오류] {e}", file=sys.stderr, flush=True)
+                        answer = f"🔍 혹시 '**{typo_suggestion}**'를 찾으시나요?\n\n" + answer
+                else:
+                    # 재검색도 실패
+                    answer = f"🔍 혹시 '**{typo_suggestion}**'를 찾으시나요?\n\n" + answer
             
             # 봇 메시지를 캐시에 저장 + 게임/쿼리 컨텍스트 업데이트
             cache.add_message(session_id, "assistant", answer, sources=sources)
