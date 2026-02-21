@@ -1,0 +1,32 @@
+# Logs
+*.log
+qa-history.log
+
+# Database
+rag/chat.db
+rag/*.db
+
+# FAISS index
+rag/faiss_db/index.faiss
+rag/faiss_db/index.pkl
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Mac
+.DS_Store
+
+# Backups
+crawler/data_backup_*/
+
+# Test files
+crawler/test_*.py
+crawler/test_*.txt
+
+# Environment
+.env
+venv/
+env/

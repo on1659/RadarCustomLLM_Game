@@ -1,0 +1,152 @@
+#!/usr/bin/env zsh
+# LLM RAG 크론 작업 관리 CLI
+
+# OpenClaw PATH 추가
+export PATH="$HOME/.nvm/versions/node/v24.13.0/bin:$PATH"
+
+CRON_HEALTHCHECK="82590edd-a405-426c-bb63-5463670c1e7a"
+CRON_QA="8935609d-a8e9-49e0-a9e1-196730ea8771"
+CRON_IMPROVE="04b96b52-b13f-4438-8900-6352ba70b8e1"
+
+HEALTHCHECK_INTERVAL=300000  # 5분 (고정)
+IMPROVE_INTERVAL=3600000     # 1시간 (고정)
+
+usage() {
+    cat << EOF
+LLM RAG 크론 작업 관리
+
+사용법:
+  llmcron start [QA주기_분]   # 크론 시작 (기본 20분)
+  llmcron stop                # 크론 중지
+  llmcron status              # 상태 확인
+  llmcron restart [QA주기_분] # 재시작
+
+예시:
+  llmcron start 20      # QA 20분마다 실행
+  llmcron start 10      # QA 10분마다 실행
+  llmcron stop          # 모든 크론 중지
+  llmcron status        # 현재 상태
+EOF
+}
+
+status() {
+    echo "📊 LLM RAG 크론 작업 상태\n"
+    openclaw cron list --json 2>/dev/null | python3 -c "
+import sys, json
+from datetime import datetime
+
+data = json.load(sys.stdin)
+for job in data.get('jobs', []):
+    if 'LLM' not in job.get('name', ''):
+        continue
+    
+    name = job['name']
+    enabled = job['enabled']
+    ms = job.get('schedule', {}).get('everyMs', 0)
+    
+    # 주기 변환
+    if ms == 300000: interval = '5분'
+    elif ms == 600000: interval = '10분'
+    elif ms == 1200000: interval = '20분'
+    elif ms == 1800000: interval = '30분'
+    elif ms == 3600000: interval = '1시간'
+    else: interval = f'{ms//60000}분'
+    
+    # 다음 실행 시간
+    nextMs = job.get('state', {}).get('nextRunAtMs', 0)
+    if nextMs:
+        now = datetime.now().timestamp() * 1000
+        diff = (nextMs - now) / 60000
+        if diff < 0: nextStr = '지남'
+        elif diff < 1: nextStr = '곧'
+        elif diff < 60: nextStr = f'{int(diff)}분 후'
+        else: nextStr = f'{diff/60:.1f}시간 후'
+    else:
+        nextStr = '-'
+    
+    status = '✅' if enabled else '❌'
+    print(f'{status} {name} ({interval}마다) - 다음: {nextStr}')
+"
+}
+
+start() {
+    local qa_interval=${1:-20}  # 기본 20분
+    local qa_interval_ms=$((qa_interval * 60 * 1000))
+    
+    echo "🚀 LLM RAG 크론 작업 시작..."
+    echo "   헬스 체크: 5분마다"
+    echo "   QA 테스트: ${qa_interval}분마다"
+    echo "   자동 개선: 1시간마다\n"
+    
+    # 헬스 체크 활성화
+    openclaw cron update $CRON_HEALTHCHECK --enabled true > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "✅ 헬스 체크 활성화"
+    else
+        echo "⚠️ 헬스 체크 활성화 실패 (크론이 없을 수 있음)"
+    fi
+    
+    # QA 테스트 주기 설정 및 활성화
+    openclaw cron update $CRON_QA \
+        --schedule "{\"kind\":\"every\",\"everyMs\":$qa_interval_ms}" \
+        --enabled true > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "✅ QA 테스트 활성화 (${qa_interval}분마다)"
+    else
+        echo "⚠️ QA 테스트 활성화 실패"
+    fi
+    
+    # 자동 개선 활성화
+    openclaw cron update $CRON_IMPROVE --enabled true > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "✅ 자동 개선 활성화"
+    else
+        echo "⚠️ 자동 개선 활성화 실패"
+    fi
+    
+    echo "\n✅ 크론 작업 시작 완료\n"
+    status
+}
+
+stop() {
+    echo "⏸️  LLM RAG 크론 작업 중지...\n"
+    
+    openclaw cron update $CRON_HEALTHCHECK --enabled false > /dev/null 2>&1
+    [ $? -eq 0 ] && echo "⏸️  헬스 체크 중지"
+    
+    openclaw cron update $CRON_QA --enabled false > /dev/null 2>&1
+    [ $? -eq 0 ] && echo "⏸️  QA 테스트 중지"
+    
+    openclaw cron update $CRON_IMPROVE --enabled false > /dev/null 2>&1
+    [ $? -eq 0 ] && echo "⏸️  자동 개선 중지"
+    
+    echo "\n✅ 크론 작업 중지 완료\n"
+    status
+}
+
+restart() {
+    echo "🔄 크론 작업 재시작...\n"
+    stop
+    echo ""
+    sleep 1
+    start $1
+}
+
+case "$1" in
+    start)
+        start $2
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status
+        ;;
+    restart)
+        restart $2
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac

@@ -1,77 +1,67 @@
 [
   {
-    "title": "오버워치 2",
-    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/오버워치 2.txt",
-    "length": 153337
-  },
-  {
     "title": "오버워치/영웅",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/오버워치_영웅.txt",
-    "length": 282676
+    "length": 55533
+  },
+  {
+    "title": "오버워치/게임 모드",
+    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/오버워치_게임 모드.txt",
+    "length": 568
   },
   {
     "title": "오버워치/전장",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/오버워치_전장.txt",
-    "length": 247423
+    "length": 44527
   },
   {
     "title": "오버워치/경쟁전",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/오버워치_경쟁전.txt",
-    "length": 100652
+    "length": 25800
   },
   {
     "title": "트레이서(오버워치)",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/트레이서(오버워치).txt",
-    "length": 410600
+    "length": 121522
   },
   {
     "title": "겐지(오버워치)",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/겐지(오버워치).txt",
-    "length": 580974
+    "length": 180604
   },
   {
     "title": "리퍼(오버워치)",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/리퍼(오버워치).txt",
-    "length": 441149
+    "length": 132590
   },
   {
     "title": "솔저: 76",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/솔저_ 76.txt",
-    "length": 422278
+    "length": 120008
   },
   {
-    "title": "파라(오버워치)",
-    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/파라(오버워치).txt",
-    "length": 405843
-  },
-  {
-    "title": "아나(오버워치)",
-    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/아나(오버워치).txt",
-    "length": 596401
-  },
-  {
-    "title": "루시우(오버워치)",
-    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/루시우(오버워치).txt",
-    "length": 430269
+    "title": "머시(오버워치)",
+    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/머시(오버워치).txt",
+    "length": 512
   },
   {
     "title": "라인하르트(오버워치)",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/라인하르트(오버워치).txt",
-    "length": 505229
+    "length": 151223
   },
   {
     "title": "디바(오버워치)",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/디바(오버워치).txt",
-    "length": 520028
+    "length": 154932
   },
   {
-    "title": "한조(오버워치)",
-    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/한조(오버워치).txt",
-    "length": 405437
+    "title": "정크랫(오버워치)",
+    "file": "/Users/radar/Work/LLM/crawler/data/overwatch/정크랫(오버워치).txt",
+    "length": 514
   },
   {
     "title": "메이(오버워치)",
     "file": "/Users/radar/Work/LLM/crawler/data/overwatch/메이(오버워치).txt",
-    "length": 386240
+    "length": 110679
   }
 ]

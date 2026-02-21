@@ -20,16 +20,45 @@ LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3334
 API_KEY = os.getenv("GAME_WIKI_API_KEY")  # 환경변수에서 API 키 읽기 (없으면 None)
 
-SYSTEM_PROMPT = """너는 게임 위키 도우미야. 아래 참고 자료에서 답을 찾아서 알려줘.
+SYSTEM_PROMPT = """너는 게임 위키 도우미야. **참고 자료의 정보를 EXACTLY 그대로 전달**해야 해.
 
-규칙:
-1. 참고 자료에 있는 정보는 반드시 활용해서 답해. 수치, 이름, 목록이 있으면 그대로 인용해.
-2. 참고 자료에 없는 내용은 절대 지어내지 마. "참고 자료에 해당 정보가 없습니다"라고 해.
-3. 한국어로만 답해.
-4. 태그, 코드, 위키 문법은 답변에 넣지 마.
+# 절대 규칙 (최우선)
 
-참고:
-{context}"""
+1. **숫자, 이름, 목록은 참고 자료에서 정확히 복사해서 답해**
+2. **참고 자료에 없으면 "참고 자료에 해당 정보가 없습니다"라고만 해**
+3. **추측하거나 일반 상식으로 답하지 마**
+
+# 답변 가이드
+
+1. **완전한 답변**: 질문에 대한 답을 최대한 상세히 제공하세요.
+   - 캐릭터/아이템/몬스터라면: 기본 정보, 능력, 특징, 사용법 등을 포함하세요.
+   - 시스템/메커니즘이라면: 작동 방식, 조건, 효과를 설명하세요.
+
+2. **구조화된 답변**: 여러 정보가 있다면 단락으로 나누거나 번호를 매기세요.
+
+3. **간결함 유지**: 불필요한 서론이나 맺음말 없이 핵심 정보만 전달하세요.
+
+4. **언어 제약**: 한국어로만 답변하세요. 위키 문법, HTML 태그, 코드는 제거하세요.
+
+# 참고 자료
+
+{context}
+
+# 답변 예시 (참고 자료에서 EXACT 인용!)
+
+질문: "오버워치 리퍼의 능력은?"
+답변: "리퍼는 헬파이어 샷건을 무기로 사용하며, 패시브로 영혼 수확(피해를 줄 때마다 체력 회복)을 가집니다. 스킬은 망령화(무적 상태), 그림자 밟기(순간이동)이고, 궁극기는 죽음의 꽃(주변 적에게 초당 170 피해, 3초 지속)입니다."
+
+질문: "마인크래프트 위더 소환 방법은?"
+답변: "소울샌드 4개를 T자 모양으로 쌓고, 그 위에 위더 스켈레톤 해골 3개를 올리면 위더가 소환됩니다. 네더에서만 소환 가능합니다."
+
+질문: "팰월드 람볼 특성은?"
+답변: "람볼(Lamball)은 중립 타입 팰이며, 작업 적성은 목장 Lv1입니다. 체력 70, 공격력 5로 초반 팰입니다."
+
+질문: "다이아몬드는 어디서 나와?"
+답변: "참고 자료에 다이아몬드 획득 위치 정보가 없습니다."
+
+이제 답변하세요:"""
 
 # ── SQLite 초기화 ──
 def init_chat_db():
@@ -951,7 +980,7 @@ class Handler(BaseHTTPRequestHandler):
 
             # ── 하이브리드 검색 + RRF (Reciprocal Rank Fusion) ──
             vdb = get_db()
-            vec_results = vdb.similarity_search(search_query, k=10)
+            vec_results = vdb.similarity_search(search_query, k=15)
             # game_filter가 있으면 벡터 결과도 필터
             if game_filter:
                 vec_filtered = [d for d in vec_results if d.metadata.get("game", "") == game_filter]
@@ -959,19 +988,19 @@ class Handler(BaseHTTPRequestHandler):
                     vec_results = vec_filtered
             query_tokens = tokenize_ko(search_query)
             bm25_scores = bm25_index.get_scores(query_tokens)
-            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:10]
+            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:15]
             bm25_results = [bm25_docs[i] for i in top_bm25_idx if bm25_scores[i] > 0]
             # game_filter가 있으면 BM25 결과도 필터
             if game_filter:
                 bm25_results = [d for d in bm25_results if d.metadata.get("game", "") == game_filter]
 
-            # 의도별 가중치 조절 (벡터를 기본 우세로 — BM25가 노이즈 많음)
+            # 의도별 가중치 조절 (벡터 검색 우세, BM25는 보조)
             INTENT_WEIGHTS = {
-                "stat":    (0.3, 0.7),  # 수치 질문 → BM25 강하게 우세 (정확한 키워드 매칭 필요)
-                "howto":   (0.6, 0.4),  # 방법 질문 → 벡터 우세
-                "list":    (0.5, 0.5),  # 목록 질문 → 동등
-                "compare": (0.6, 0.4),  # 비교 질문 → 벡터 우세
-                "general": (0.6, 0.4),  # 일반 → 벡터 약간 우세
+                "stat":    (0.4, 0.6),  # 수치 질문 → BM25 우세 (키워드 정확도)
+                "howto":   (0.5, 0.5),  # 방법 질문 → 균형
+                "list":    (0.5, 0.5),  # 목록 질문 → 균형
+                "compare": (0.5, 0.5),  # 비교 질문 → 균형
+                "general": (0.5, 0.5),  # 일반 → 균형 (벡터+키워드 조합)
             }
             vec_w, bm25_w = INTENT_WEIGHTS.get(intent, (0.5, 0.5))
 
@@ -993,13 +1022,33 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     doc_scores[doc_id] = (rrf, doc)
 
-            # RRF 점수 기준 정렬
+            # 제목 매칭 부스트 (검색어가 제목에 포함되면 대폭 증가)
+            for doc_id, (score, doc) in list(doc_scores.items()):
+                title = doc.metadata.get("title", "").lower()
+                # 공백/특수문자 제거 버전
+                title_clean = title.replace(" ", "").replace(":", "").replace("_", "").replace("/", "").replace("-", "")
+                query_clean = search_query.lower().replace(" ", "")
+                
+                # 키워드 분리
+                query_words = [w for w in search_query.split() if len(w) > 1]
+                
+                # 정확 매칭: 최고 점수
+                if query_clean in title_clean or title_clean in query_clean:
+                    doc_scores[doc_id] = (score + 15.0, doc)  # 강력한 부스트 (10→15)
+                # 다중 키워드 매칭 (2개 이상)
+                elif sum(1 for word in query_words if word in title_clean) >= 2:
+                    doc_scores[doc_id] = (score + 5.0, doc)  # 중간 부스트
+                # 부분 매칭: 보너스
+                elif any(word in title for word in query_words):
+                    doc_scores[doc_id] = (score + 2.0, doc)  # 작은 부스트
+            
+            # RRF + 제목 부스트 점수 기준 정렬
             ranked = sorted(doc_scores.values(), key=lambda x: x[0], reverse=True)
             results = [doc for _, doc in ranked]
             import sys; print(f"🔍 intent={intent} vec_w={vec_w} bm25_w={bm25_w} | search_query='{search_query}' | top3: {[d.metadata.get('title','?')[:30] for d in results[:3]]}", file=sys.stderr, flush=True)
 
-            # 의도별 chunk 수 조절 (7B + c4096이면 5개도 OK)
-            n_chunks = 5 if intent in ("stat", "list", "compare") else 3
+            # 의도별 chunk 수 조절 (context 8192로 증가 → 7개 문서 제공)
+            n_chunks = 7  # 모든 의도에 7개 문서 제공
             if game_filter:
                 results = [d for d in results if d.metadata.get("game", "") == game_filter][:n_chunks]
             else:
@@ -1023,7 +1072,7 @@ class Handler(BaseHTTPRequestHandler):
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
-                chunk = doc.page_content[:600]
+                chunk = doc.page_content[:1000]  # 안정적인 크기
                 context += f"\n[{title}]\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
@@ -1054,9 +1103,11 @@ class Handler(BaseHTTPRequestHandler):
 
             payload = {
                 "prompt": prompt,
-                "n_predict": 200,
-                "temperature": 0.05,
+                "n_predict": 300,
+                "temperature": 0.03,
                 "repeat_penalty": 1.3,
+                "top_p": 0.95,
+                "top_k": 30,
                 "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
             }
             try:
@@ -1082,10 +1133,10 @@ class Handler(BaseHTTPRequestHandler):
                 
                 # 보정된 쿼리로 재검색
                 retry_intent = classify_intent(typo_suggestion)
-                retry_vec = vdb.similarity_search(typo_suggestion, k=10)
+                retry_vec = vdb.similarity_search(typo_suggestion, k=15)
                 retry_tokens = tokenize_ko(typo_suggestion)
                 retry_bm25_scores = bm25_index.get_scores(retry_tokens)
-                retry_bm25_idx = sorted(range(len(retry_bm25_scores)), key=lambda i: retry_bm25_scores[i], reverse=True)[:10]
+                retry_bm25_idx = sorted(range(len(retry_bm25_scores)), key=lambda i: retry_bm25_scores[i], reverse=True)[:15]
                 retry_bm25_results = [bm25_docs[i] for i in retry_bm25_idx if retry_bm25_scores[i] > 0]
                 
                 # 재검색 RRF
@@ -1122,10 +1173,12 @@ class Handler(BaseHTTPRequestHandler):
                     retry_prompt = f"{retry_system}\n\n질문: {retry_llm_query}\n\n답변:"
                     retry_payload = {
                         "prompt": retry_prompt,
-                        "n_predict": 200,
-                        "temperature": 0.05,
+                        "n_predict": 300,
+                        "temperature": 0.03,
                         "repeat_penalty": 1.3,
-                        "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
+                        "top_p": 0.95,
+                        "top_k": 30,
+                "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
                     }
                     try:
                         retry_resp = requests.post(LLAMA_URL, json=retry_payload, timeout=60)

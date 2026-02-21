@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-나무위키 크롤러 — 게임 문서를 텍스트로 저장
-사용법: python3 namu_crawler.py
+나무위키 크롤러 V2 — JavaScript 렌더링 지원
+사용법: python3 namu_crawler_v2.py
 """
 
-import requests
 import re
 import json
-import os
 import time
 from pathlib import Path
 from urllib.parse import quote
+from requests_html import HTMLSession
+from bs4 import BeautifulSoup
 
 OUTPUT_DIR = Path(__file__).parent / "data"
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -83,44 +83,71 @@ PAGES = {
     ],
 }
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-}
 
-
-def clean_namu_text(raw_html: str) -> str:
-    """나무위키 HTML에서 본문 텍스트 추출"""
-    # HTML 태그 제거
-    text = re.sub(r'<script[^>]*>.*?</script>', '', raw_html, flags=re.DOTALL)
-    text = re.sub(r'<style[^>]*>.*?</style>', '', raw_html, flags=re.DOTALL)
-    text = re.sub(r'<[^>]+>', ' ', text)
+def clean_text(text: str) -> str:
+    """텍스트 정리"""
     # 나무위키 문법 정리
     text = re.sub(r'\[\[([^\]|]+)\|([^\]]+)\]\]', r'\2', text)  # [[링크|텍스트]] → 텍스트
     text = re.sub(r'\[\[([^\]]+)\]\]', r'\1', text)  # [[링크]] → 링크
     text = re.sub(r'\{\{[^}]*\}\}', '', text)  # {{매크로}} 제거
-    text = re.sub(r'&#\d+;', ' ', text)  # HTML 엔티티
-    text = re.sub(r'&[a-z]+;', ' ', text)
     # 여러 공백/줄바꿈 정리
     text = re.sub(r'[ \t]+', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
 
-def fetch_namu_page(title: str) -> str | None:
-    """나무위키 문서 가져오기 (API 사용)"""
+def fetch_namu_page(session: HTMLSession, title: str) -> str | None:
+    """나무위키 문서 가져오기 (JavaScript 렌더링)"""
     encoded = quote(title, safe='')
-    
-    # 나무위키 raw 문서 시도
     url = f"https://namu.wiki/w/{encoded}"
+    
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        if resp.status_code == 200:
-            return clean_namu_text(resp.text)
-        else:
-            print(f"  ⚠️ HTTP {resp.status_code}: {title}")
+        print(f"    📡 요청 중...", end=" ", flush=True)
+        resp = session.get(url, timeout=30)
+        
+        if resp.status_code != 200:
+            print(f"⚠️ HTTP {resp.status_code}")
             return None
+        
+        # JavaScript 렌더링 (시간 소요)
+        print(f"🎨 렌더링...", end=" ", flush=True)
+        resp.html.render(timeout=20, sleep=2)
+        
+        # BeautifulSoup으로 본문 추출
+        soup = BeautifulSoup(resp.html.html, 'lxml')
+        
+        # 나무위키 본문 영역 찾기
+        content_divs = soup.find_all(['div', 'article'], class_=lambda x: x and any(
+            keyword in str(x).lower() for keyword in ['wiki-content', 'wiki-article', 'document', 'content']
+        ))
+        
+        if not content_divs:
+            # 클래스 없이 전체 텍스트 추출
+            content_divs = [soup.body] if soup.body else []
+        
+        # 텍스트 추출
+        texts = []
+        for div in content_divs:
+            # 스크립트/스타일 태그 제거
+            for tag in div.find_all(['script', 'style', 'nav', 'footer', 'header']):
+                tag.decompose()
+            
+            text = div.get_text(separator='\n', strip=True)
+            if text and len(text) > 100:
+                texts.append(text)
+        
+        if not texts:
+            print("⏭️ 본문 없음")
+            return None
+        
+        # 가장 긴 텍스트 선택
+        final_text = max(texts, key=len)
+        final_text = clean_text(final_text)
+        
+        return final_text if len(final_text) > 100 else None
+        
     except Exception as e:
-        print(f"  ❌ 에러: {title} — {e}")
+        print(f"❌ {e}")
         return None
 
 
@@ -130,16 +157,18 @@ def crawl_game(game: str, pages: list[str]):
     game_dir.mkdir(exist_ok=True)
     
     results = []
+    session = HTMLSession()
     
-    print(f"\n{'='*50}")
+    print(f"\n{'='*60}")
     print(f"🎮 {game.upper()} 크롤링 시작 ({len(pages)}개 문서)")
-    print(f"{'='*50}")
+    print(f"{'='*60}")
     
     for i, title in enumerate(pages, 1):
-        print(f"  [{i}/{len(pages)}] {title}...", end=" ", flush=True)
+        print(f"  [{i}/{len(pages)}] {title}")
         
-        text = fetch_namu_page(title)
-        if text and len(text) > 100:  # 너무 짧으면 스킵
+        text = fetch_namu_page(session, title)
+        
+        if text and len(text) > 100:
             # 개별 파일 저장
             safe_name = re.sub(r'[/\\:*?"<>|]', '_', title)
             filepath = game_dir / f"{safe_name}.txt"
@@ -150,11 +179,13 @@ def crawl_game(game: str, pages: list[str]):
                 "file": str(filepath),
                 "length": len(text),
             })
-            print(f"✅ ({len(text):,}자)")
+            print(f"    ✅ 저장 완료 ({len(text):,}자)\n")
         else:
-            print(f"⏭️ 스킵 (내용 없음)")
+            print(f"    ⏭️ 스킵 (내용 부족)\n")
         
-        time.sleep(2)  # 2초 대기 (rate limit)
+        time.sleep(3)  # 3초 대기 (rate limit)
+    
+    session.close()
     
     # 게임별 메타데이터 저장
     meta_path = game_dir / "_meta.json"
@@ -168,17 +199,18 @@ def crawl_game(game: str, pages: list[str]):
 
 
 def main():
-    print("🕷️ 나무위키 게임 크롤러 시작")
+    print("🕷️ 나무위키 게임 크롤러 V2 (JavaScript 렌더링 지원)")
     print(f"📁 저장 경로: {OUTPUT_DIR}")
+    print("⏱️  렌더링으로 인해 시간이 걸립니다...\n")
     
     all_results = {}
     for game, pages in PAGES.items():
         all_results[game] = crawl_game(game, pages)
     
     # 전체 요약
-    print(f"\n{'='*50}")
+    print(f"\n{'='*60}")
     print("📋 크롤링 완료 요약")
-    print(f"{'='*50}")
+    print(f"{'='*60}")
     
     total_docs = 0
     total_chars = 0
@@ -191,7 +223,7 @@ def main():
     
     print(f"\n  총합: {total_docs}개 문서, {total_chars:,}자")
     print(f"  저장 위치: {OUTPUT_DIR}")
-    print("\n✅ 완료! RAG에 이 데이터를 넣으면 됩니다.")
+    print("\n✅ 완료! 이제 ingest.py로 벡터DB를 생성하세요.")
 
 
 if __name__ == "__main__":
