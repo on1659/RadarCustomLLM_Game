@@ -10,10 +10,10 @@ from pathlib import Path
 from datetime import datetime
 
 # 경로
-LOG_DIR = Path.home() / ".openclaw/workspace/log"
-WEB_PY = Path.home() / "Work/LLM/rag/web.py"
+LOG_DIR = Path(__file__).parent / "log"
+WEB_PY = Path(__file__).parent / "rag/web.py"
 IMPROVE_SCRIPT = Path.home() / ".openclaw/workspace/skills/llm-improve/scripts/improve_prompt.py"
-IMPROVEMENT_LOG = Path.home() / ".openclaw/workspace/log/improvement-log.md"
+IMPROVEMENT_LOG = Path(__file__).parent / "log/improvement-log.md"
 
 def get_latest_qa_accuracy():
     """오늘 로그에서 최근 정확도 가져오기"""

@@ -1,6 +1,7 @@
-# Logs
+# Logs (서버 로그만 제외, log/ 폴더의 .md는 추적)
 *.log
 qa-history.log
+!log/*.md
 
 # Database
 rag/chat.db

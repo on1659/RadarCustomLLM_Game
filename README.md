@@ -66,7 +66,11 @@
 ├── qa-test.py               # 20분마다 정확도 테스트
 ├── auto-improve.py          # 1시간마다 자동 개선
 ├── healthcheck.py           # 5분마다 서버 헬스 체크
-└── llmcron                  # 크론 관리 CLI
+├── llmcron                  # 크론 관리 CLI
+│
+└── log/                     # 📝 QA/개선 작업 히스토리
+    ├── YYYY-MM-DD.md        # 날짜별 로그 (QA 테스트, 헬스 체크)
+    └── improvement-log.md   # 자동 개선 제안 기록
 ```
 
 ## 🚀 빠른 시작

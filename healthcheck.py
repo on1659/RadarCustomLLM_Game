@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime
 
 # 로그 파일
-LOG_FILE = Path.home() / ".openclaw/workspace/log" / f"{datetime.now().strftime('%Y-%m-%d')}.md"
+LOG_FILE = Path(__file__).parent / "log" / f"{datetime.now().strftime('%Y-%m-%d')}.md"
 
 def log(message):
     """로그 기록"""

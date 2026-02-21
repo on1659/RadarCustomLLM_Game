@@ -10,7 +10,7 @@ from pathlib import Path
 
 # 설정
 API_URL = "https://awhirl-preimpressive-carina.ngrok-free.dev/api/chat"
-LOG_DIR = Path.home() / ".openclaw/workspace/log"
+LOG_DIR = Path(__file__).parent / "log"
 LOG_FILE = LOG_DIR / f"{datetime.now().strftime('%Y-%m-%d')}.md"
 
 # 질문 풀 (게임명 명시 + 정답 키워드)
