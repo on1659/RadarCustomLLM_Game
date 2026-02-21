@@ -152,7 +152,7 @@ llmcron stop     # 모든 크론 중지
 
 자세한 내용: [QA_OPERATIONS.md](./QA_OPERATIONS.md)
 
-**⚠️ 작업 시 필수**: 프롬프트 수정, 데이터 추가, 알고리즘 튜닝 등 모든 작업을 `log/YYYY-MM-DD.md`에 기록! ([가이드](./QA_OPERATIONS.md#-작업-기록-가이드))
+**⚠️ 작업 시 필수**: 프롬프트 수정, 데이터 추가, 알고리즘 튜닝 등 모든 작업을 `log/YYYY-MM-DD.md`에 **개선 사이클 4단계** (문제 발견 → 개선 작업 → 재테스트 → 결론)로 기록! ([가이드](./QA_OPERATIONS.md#-개선-사이클-기록-방법) | [템플릿](./log/IMPROVEMENT_TEMPLATE.md))
 
 ## 📊 데이터
 
