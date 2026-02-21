@@ -20,13 +20,13 @@ LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3334
 API_KEY = os.getenv("GAME_WIKI_API_KEY")  # 환경변수에서 API 키 읽기 (없으면 None)
 
-SYSTEM_PROMPT = """너는 게임 위키 도우미야. **참고 자료의 정보를 EXACTLY 그대로 전달**해야 해.
+SYSTEM_PROMPT = """너는 게임 위키 전문 도우미야. **참고 자료를 기반으로 정확하고 자연스럽게 답변**해야 해.
 
 # 절대 규칙 (최우선)
 
-1. **숫자, 이름, 목록은 참고 자료에서 정확히 복사해서 답해**
-2. **참고 자료에 없으면 "참고 자료에 해당 정보가 없습니다"라고만 해**
-3. **추측하거나 일반 상식으로 답하지 마**
+1. **숫자, 이름, 능력치는 참고 자료 그대로 인용** (예: "체력 70", "공격력 100")
+2. **참고 자료에 없는 정보는 답하지 마** - "참고 자료에 해당 정보가 없습니다"라고만 해
+3. **참고 자료를 바탕으로 자연스러운 문장으로 설명** (복사-붙여넣기 X, 자연스러운 요약 O)
 
 # 답변 가이드
 
@@ -980,7 +980,7 @@ class Handler(BaseHTTPRequestHandler):
 
             # ── 하이브리드 검색 + RRF (Reciprocal Rank Fusion) ──
             vdb = get_db()
-            vec_results = vdb.similarity_search(search_query, k=15)
+            vec_results = vdb.similarity_search(search_query, k=20)
             # game_filter가 있으면 벡터 결과도 필터
             if game_filter:
                 vec_filtered = [d for d in vec_results if d.metadata.get("game", "") == game_filter]
@@ -988,19 +988,19 @@ class Handler(BaseHTTPRequestHandler):
                     vec_results = vec_filtered
             query_tokens = tokenize_ko(search_query)
             bm25_scores = bm25_index.get_scores(query_tokens)
-            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:15]
+            top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)[:20]
             bm25_results = [bm25_docs[i] for i in top_bm25_idx if bm25_scores[i] > 0]
             # game_filter가 있으면 BM25 결과도 필터
             if game_filter:
                 bm25_results = [d for d in bm25_results if d.metadata.get("game", "") == game_filter]
 
-            # 의도별 가중치 조절 (벡터 검색 우세, BM25는 보조)
+            # 의도별 가중치 조절 (벡터 검색 강화)
             INTENT_WEIGHTS = {
                 "stat":    (0.4, 0.6),  # 수치 질문 → BM25 우세 (키워드 정확도)
-                "howto":   (0.5, 0.5),  # 방법 질문 → 균형
-                "list":    (0.5, 0.5),  # 목록 질문 → 균형
-                "compare": (0.5, 0.5),  # 비교 질문 → 균형
-                "general": (0.5, 0.5),  # 일반 → 균형 (벡터+키워드 조합)
+                "howto":   (0.6, 0.4),  # 방법 질문 → Vector 우세 (의미론적)
+                "list":    (0.6, 0.4),  # 목록 질문 → Vector 우세
+                "compare": (0.6, 0.4),  # 비교 질문 → Vector 우세
+                "general": (0.6, 0.4),  # 일반 → Vector 우세 (의미론적 유사도 중시)
             }
             vec_w, bm25_w = INTENT_WEIGHTS.get(intent, (0.5, 0.5))
 
@@ -1103,10 +1103,10 @@ class Handler(BaseHTTPRequestHandler):
 
             payload = {
                 "prompt": prompt,
-                "n_predict": 300,
-                "temperature": 0.03,
-                "repeat_penalty": 1.3,
-                "top_p": 0.95,
+                "n_predict": 200,
+                "temperature": 0.01,
+                "repeat_penalty": 1.2,
+                "top_p": 0.9,
                 "top_k": 30,
                 "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
             }
@@ -1173,10 +1173,10 @@ class Handler(BaseHTTPRequestHandler):
                     retry_prompt = f"{retry_system}\n\n질문: {retry_llm_query}\n\n답변:"
                     retry_payload = {
                         "prompt": retry_prompt,
-                        "n_predict": 300,
-                        "temperature": 0.03,
-                        "repeat_penalty": 1.3,
-                        "top_p": 0.95,
+                        "n_predict": 200,
+                        "temperature": 0.01,
+                        "repeat_penalty": 1.2,
+                        "top_p": 0.9,
                         "top_k": 30,
                 "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
                     }
