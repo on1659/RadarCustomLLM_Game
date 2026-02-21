@@ -1047,8 +1047,14 @@ class Handler(BaseHTTPRequestHandler):
             results = [doc for _, doc in ranked]
             import sys; print(f"🔍 intent={intent} vec_w={vec_w} bm25_w={bm25_w} | search_query='{search_query}' | top3: {[d.metadata.get('title','?')[:30] for d in results[:3]]}", file=sys.stderr, flush=True)
 
-            # 의도별 chunk 수 조절 (context 8192로 증가 → 7개 문서 제공)
-            n_chunks = 7  # 모든 의도에 7개 문서 제공
+            # 의도별 chunk 수 조절 (컨텍스트 압축)
+            # 너무 많은 문서를 넣으면 지연/품질 저하가 발생하므로 축소
+            if intent == "stat":
+                n_chunks = 3
+            elif intent in ("howto", "list", "compare"):
+                n_chunks = 4
+            else:
+                n_chunks = 4
             if game_filter:
                 results = [d for d in results if d.metadata.get("game", "") == game_filter][:n_chunks]
             else:
@@ -1072,7 +1078,7 @@ class Handler(BaseHTTPRequestHandler):
             for doc in results:
                 game = doc.metadata.get("game", "")
                 title = doc.metadata.get("title", "")
-                chunk = doc.page_content[:1000]  # 안정적인 크기
+                chunk = doc.page_content[:450]  # 컨텍스트 압축 (속도/정확도 균형)
                 context += f"\n[{title}]\n{chunk}\n"
                 src = f"{game}/{title}"
                 if src not in sources:
@@ -1161,7 +1167,7 @@ class Handler(BaseHTTPRequestHandler):
                     for doc in retry_results:
                         game = doc.metadata.get("game", "")
                         title = doc.metadata.get("title", "")
-                        chunk = doc.page_content[:600]
+                        chunk = doc.page_content[:350]
                         retry_context += f"\n[{title}]\n{chunk}\n"
                         src = f"{game}/{title}"
                         if src not in retry_sources:
