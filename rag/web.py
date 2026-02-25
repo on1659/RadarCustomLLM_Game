@@ -693,6 +693,17 @@ function mixColor(c1, c2, ratio) {
 </body></html>"""
 
 
+# ── 검색 상수 (모듈 레벨 — 매 요청마다 재생성 방지) ──
+RRF_K = 60  # Reciprocal Rank Fusion 파라미터
+
+INTENT_WEIGHTS = {
+    "stat":    (0.4, 0.6),  # 수치 질문 → BM25 우세 (키워드 정확도)
+    "howto":   (0.6, 0.4),  # 방법 질문 → Vector 우세 (의미론적)
+    "list":    (0.6, 0.4),  # 목록 질문 → Vector 우세
+    "compare": (0.6, 0.4),  # 비교 질문 → Vector 우세
+    "general": (0.6, 0.4),  # 일반 → Vector 우세 (의미론적 유사도 중시)
+}
+
 # ── 벡터 DB + BM25 ──
 db = None
 bm25_index = None
@@ -870,7 +881,7 @@ class Handler(BaseHTTPRequestHandler):
                     conn.execute("DELETE FROM sessions WHERE id=?", (old_id,))
                     # 캐시에서도 제거
                     with cache._lock:
-                        cache.sessions.pop(old_id, None)
+                        cache._sessions.pop(old_id, None)
             
             # 새 세션 생성
             sid = str(uuid.uuid4())[:8]
@@ -980,19 +991,9 @@ class Handler(BaseHTTPRequestHandler):
                 if sess.get("last_query"):
                     search_query = sess["last_query"] + " " + search_query
 
-            # ── 공통 상수 (멀티스텝 + 일반 검색 공통 사용) ──
+            # ── DB 초기화 (lazy load) ──
             vdb = get_db()
-            RRF_K = 60  # RRF 파라미터
-            
-            # 의도별 가중치
-            INTENT_WEIGHTS = {
-                "stat":    (0.4, 0.6),  # 수치 질문 → BM25 우세 (키워드 정확도)
-                "howto":   (0.6, 0.4),  # 방법 질문 → Vector 우세 (의미론적)
-                "list":    (0.6, 0.4),  # 목록 질문 → Vector 우세
-                "compare": (0.6, 0.4),  # 비교 질문 → Vector 우세
-                "general": (0.6, 0.4),  # 일반 → Vector 우세 (의미론적 유사도 중시)
-            }
-            
+
             # ── 멀티스텝 추론: 복합 질문 감지 (원본 query 사용) ──
             is_complex, query_type, subqueries = detect_complex_query(query)
             
