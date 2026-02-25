@@ -1,5 +1,6 @@
 """게임위키 AI — localhost:3333 (하이브리드 검색 + 대화 세션)"""
 import os
+import sys
 import json
 import re
 import sqlite3
@@ -13,6 +14,9 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from rank_bm25 import BM25Okapi
 from typo_fix import fix_typo
+from multi_step import detect_complex_query, merge_results, build_multi_step_prompt
+from reranker import calculate_search_quality, should_retry_search, expand_query_for_retry, contextual_boost
+from validator import validate_answer
 
 DB_DIR = os.path.join(os.path.dirname(__file__), "faiss_db")
 CHAT_DB = os.path.join(os.path.dirname(__file__), "chat.db")
@@ -20,13 +24,14 @@ LLAMA_URL = "http://localhost:8090/completion"
 PORT = 3334
 API_KEY = os.getenv("GAME_WIKI_API_KEY")  # 환경변수에서 API 키 읽기 (없으면 None)
 
-SYSTEM_PROMPT = """너는 게임 위키 전문 도우미야. **참고 자료를 기반으로 정확하고 자연스럽게 답변**해야 해.
+SYSTEM_PROMPT = """너는 게임 위키 도우미야. **참고 자료의 정보를 EXACTLY 그대로 전달**해야 해.
 
-# 절대 규칙 (최우선)
+# 절대 규칙 (최우선 - 반드시 지킬 것!)
 
-1. **숫자, 이름, 능력치는 참고 자료 그대로 인용** (예: "체력 70", "공격력 100")
-2. **참고 자료에 없는 정보는 답하지 마** - "참고 자료에 해당 정보가 없습니다"라고만 해
-3. **참고 자료를 바탕으로 자연스러운 문장으로 설명** (복사-붙여넣기 X, 자연스러운 요약 O)
+1. **숫자, 이름, 능력치, 목록은 참고 자료에서 정확히 복사해서 답해** (예: "체력 70", "공격력 100", "초당 170 피해")
+2. **참고 자료에 없는 정보는 절대 답하지 마** - "참고 자료에 해당 정보가 없습니다"라고만 해
+3. **추측하거나 일반 상식으로 답하지 마** - 오직 참고 자료만 사용
+4. **참고 자료를 바탕으로 자연스러운 문장으로 설명** (복사-붙여넣기 X, 자연스러운 요약 O)
 
 # 답변 가이드
 
@@ -975,11 +980,122 @@ class Handler(BaseHTTPRequestHandler):
                 if sess.get("last_query"):
                     search_query = sess["last_query"] + " " + search_query
 
+            # ── 공통 상수 (멀티스텝 + 일반 검색 공통 사용) ──
+            vdb = get_db()
+            RRF_K = 60  # RRF 파라미터
+            
+            # 의도별 가중치
+            INTENT_WEIGHTS = {
+                "stat":    (0.4, 0.6),  # 수치 질문 → BM25 우세 (키워드 정확도)
+                "howto":   (0.6, 0.4),  # 방법 질문 → Vector 우세 (의미론적)
+                "list":    (0.6, 0.4),  # 목록 질문 → Vector 우세
+                "compare": (0.6, 0.4),  # 비교 질문 → Vector 우세
+                "general": (0.6, 0.4),  # 일반 → Vector 우세 (의미론적 유사도 중시)
+            }
+            
+            # ── 멀티스텝 추론: 복합 질문 감지 (원본 query 사용) ──
+            is_complex, query_type, subqueries = detect_complex_query(query)
+            
+            if is_complex and len(subqueries) >= 2:
+                print(f"[멀티스텝] type={query_type}, subqueries={subqueries}", file=sys.stderr, flush=True)
+                
+                # 각 서브쿼리별 검색
+                subquery_results = []
+                for sq in subqueries[:3]:  # 최대 3개까지
+                    sq_intent = classify_intent(sq)
+                    sq_vec_w, sq_bm25_w = INTENT_WEIGHTS.get(sq_intent, (0.6, 0.4))
+                    
+                    # 벡터 검색
+                    sq_vec = vdb.similarity_search(sq, k=10)
+                    if game_filter:
+                        sq_vec = [d for d in sq_vec if d.metadata.get("game", "") == game_filter]
+                    
+                    # BM25 검색
+                    sq_tokens = tokenize_ko(sq)
+                    sq_bm25_scores = bm25_index.get_scores(sq_tokens)
+                    sq_bm25_idx = sorted(range(len(sq_bm25_scores)), key=lambda i: sq_bm25_scores[i], reverse=True)[:10]
+                    sq_bm25_results = [bm25_docs[i] for i in sq_bm25_idx if sq_bm25_scores[i] > 0]
+                    if game_filter:
+                        sq_bm25_results = [d for d in sq_bm25_results if d.metadata.get("game", "") == game_filter]
+                    
+                    # RRF 통합
+                    sq_scores = {}
+                    for rank, doc in enumerate(sq_vec):
+                        doc_id = doc.page_content[:100]
+                        rrf = sq_vec_w / (RRF_K + rank + 1)
+                        sq_scores[doc_id] = (sq_scores.get(doc_id, (0, doc))[0] + rrf, doc)
+                    for rank, doc in enumerate(sq_bm25_results):
+                        doc_id = doc.page_content[:100]
+                        rrf = sq_bm25_w / (RRF_K + rank + 1)
+                        sq_scores[doc_id] = (sq_scores.get(doc_id, (0, doc))[0] + rrf, doc)
+                    
+                    # 제목 부스트
+                    for doc_id, (score, doc) in list(sq_scores.items()):
+                        title = doc.metadata.get("title", "").lower()
+                        title_clean = title.replace(" ", "").replace(":", "").replace("_", "").replace("/", "").replace("-", "")
+                        sq_clean = sq.lower().replace(" ", "")
+                        if sq_clean in title_clean or title_clean in sq_clean:
+                            sq_scores[doc_id] = (score + 10.0, doc)
+                    
+                    sq_ranked = sorted(sq_scores.values(), key=lambda x: x[0], reverse=True)
+                    sq_docs = [doc for _, doc in sq_ranked][:3]  # 서브쿼리당 3개
+                    
+                    # sources 수집
+                    sq_sources = []
+                    for doc in sq_docs:
+                        game = doc.metadata.get("game", "")
+                        title = doc.metadata.get("title", "")
+                        src = f"{game}/{title}"
+                        if src not in sq_sources:
+                            sq_sources.append(src)
+                    
+                    subquery_results.append((sq, sq_docs, sq_sources))
+                    print(f"  - {sq}: {len(sq_docs)}개 문서, sources={sq_sources}", file=sys.stderr, flush=True)
+                
+                # 결과 통합
+                context, sources = merge_results(subquery_results, query_type)
+                
+                # 멀티스텝 프롬프트
+                prompt = build_multi_step_prompt(query, context, query_type)
+                
+                payload = {
+                    "prompt": prompt,
+                    "n_predict": 300,  # 복합 질문이라 더 긴 답변
+                    "temperature": 0.01,
+                    "repeat_penalty": 1.2,
+                    "top_p": 0.9,
+                    "top_k": 30,
+                    "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
+                }
+                try:
+                    resp = requests.post(LLAMA_URL, json=payload, timeout=90)
+                    resp.raise_for_status()
+                    result = resp.json()
+                    answer = result.get("content", "").strip() or "응답을 생성할 수 없습니다."
+                    answer = clean_answer(answer)
+                    
+                    # 멀티스텝 답변 검증
+                    is_valid, confidence, issues = validate_answer(answer, query, sources)
+                    print(f"🔍 [멀티스텝] 답변 검증: valid={is_valid}, confidence={confidence:.2f}, issues={issues}", file=sys.stderr, flush=True)
+                    
+                    if not is_valid and confidence < 0.3:
+                        answer = f"⚠️ 답변 신뢰도가 낮습니다 ({int(confidence*100)}%).\n\n{answer}"
+                except Exception as e:
+                    answer = f"LLM 오류: {e}"
+                
+                # 캐시에 저장
+                cache.add_message(session_id, "assistant", answer, sources=sources)
+                if game_filter:
+                    cache.set_game(session_id, game_filter)
+                cache.set_last_query(session_id, query)
+                
+                self._json({"answer": answer, "sources": sources, "session_id": session_id})
+                return
+            
             # ── 의도 분류 ──
             intent = classify_intent(search_query)
 
             # ── 하이브리드 검색 + RRF (Reciprocal Rank Fusion) ──
-            vdb = get_db()
             vec_results = vdb.similarity_search(search_query, k=20)
             # game_filter가 있으면 벡터 결과도 필터
             if game_filter:
@@ -994,18 +1110,10 @@ class Handler(BaseHTTPRequestHandler):
             if game_filter:
                 bm25_results = [d for d in bm25_results if d.metadata.get("game", "") == game_filter]
 
-            # 의도별 가중치 조절 (벡터 검색 강화)
-            INTENT_WEIGHTS = {
-                "stat":    (0.4, 0.6),  # 수치 질문 → BM25 우세 (키워드 정확도)
-                "howto":   (0.6, 0.4),  # 방법 질문 → Vector 우세 (의미론적)
-                "list":    (0.6, 0.4),  # 목록 질문 → Vector 우세
-                "compare": (0.6, 0.4),  # 비교 질문 → Vector 우세
-                "general": (0.6, 0.4),  # 일반 → Vector 우세 (의미론적 유사도 중시)
-            }
+            # 의도별 가중치 적용
             vec_w, bm25_w = INTENT_WEIGHTS.get(intent, (0.5, 0.5))
 
-            # RRF 점수 계산 (k=60)
-            RRF_K = 60
+            # RRF 점수 계산
             doc_scores = {}  # doc_id → (score, doc)
             for rank, doc in enumerate(vec_results):
                 doc_id = doc.page_content[:100]
@@ -1042,10 +1150,76 @@ class Handler(BaseHTTPRequestHandler):
                 elif any(word in title for word in query_words):
                     doc_scores[doc_id] = (score + 2.0, doc)  # 작은 부스트
             
-            # RRF + 제목 부스트 점수 기준 정렬
+            # ── 검색 품질 평가 + 재검색 ──
+            ranked_initial = sorted(doc_scores.values(), key=lambda x: x[0], reverse=True)
+            quality_score = calculate_search_quality(ranked_initial[:10], search_query, {k: v[0] for k, v in doc_scores.items()})
+            print(f"📊 검색 품질: {quality_score:.3f}", file=sys.stderr, flush=True)
+            
+            # 품질이 낮으면 쿼리 확장 후 재검색
+            if should_retry_search(quality_score, threshold=0.15):
+                print(f"[재검색] 품질 낮음 ({quality_score:.3f}), 쿼리 확장", file=sys.stderr, flush=True)
+                expanded_query = expand_query_for_retry(search_query)
+                print(f"  확장: '{search_query}' → '{expanded_query}'", file=sys.stderr, flush=True)
+                
+                # 재검색
+                retry_vec = vdb.similarity_search(expanded_query, k=20)
+                if game_filter:
+                    retry_vec = [d for d in retry_vec if d.metadata.get("game", "") == game_filter]
+                retry_tokens = tokenize_ko(expanded_query)
+                retry_bm25_scores = bm25_index.get_scores(retry_tokens)
+                retry_bm25_idx = sorted(range(len(retry_bm25_scores)), key=lambda i: retry_bm25_scores[i], reverse=True)[:20]
+                retry_bm25_results = [bm25_docs[i] for i in retry_bm25_idx if retry_bm25_scores[i] > 0]
+                if game_filter:
+                    retry_bm25_results = [d for d in retry_bm25_results if d.metadata.get("game", "") == game_filter]
+                
+                # 재검색 RRF
+                retry_scores = {}
+                for rank, doc in enumerate(retry_vec):
+                    doc_id = doc.page_content[:100]
+                    rrf = vec_w / (RRF_K + rank + 1)
+                    retry_scores[doc_id] = (retry_scores.get(doc_id, (0, doc))[0] + rrf, doc)
+                for rank, doc in enumerate(retry_bm25_results):
+                    doc_id = doc.page_content[:100]
+                    rrf = bm25_w / (RRF_K + rank + 1)
+                    retry_scores[doc_id] = (retry_scores.get(doc_id, (0, doc))[0] + rrf, doc)
+                
+                # 재검색 품질 체크
+                retry_ranked = sorted(retry_scores.values(), key=lambda x: x[0], reverse=True)
+                retry_quality = calculate_search_quality(retry_ranked[:10], expanded_query, {k: v[0] for k, v in retry_scores.items()})
+                print(f"  재검색 품질: {retry_quality:.3f}", file=sys.stderr, flush=True)
+                
+                # 재검색이 더 좋으면 교체
+                if retry_quality > quality_score:
+                    doc_scores = retry_scores
+                    ranked_initial = retry_ranked
+                    print(f"  ✅ 재검색 채택 (품질 향상: {quality_score:.3f} → {retry_quality:.3f})", file=sys.stderr, flush=True)
+                else:
+                    print(f"  ⏭️ 원본 유지 (재검색 효과 없음)", file=sys.stderr, flush=True)
+            
+            # ── 제목 부스트 + 문맥 부스트 ──
+            for doc_id, (score, doc) in list(doc_scores.items()):
+                # 제목 부스트
+                title = doc.metadata.get("title", "").lower()
+                title_clean = title.replace(" ", "").replace(":", "").replace("_", "").replace("/", "").replace("-", "")
+                query_clean = search_query.lower().replace(" ", "")
+                query_words = [w for w in search_query.split() if len(w) > 1]
+                
+                if query_clean in title_clean or title_clean in query_clean:
+                    score += 15.0
+                elif sum(1 for word in query_words if word in title_clean) >= 2:
+                    score += 5.0
+                elif any(word in title for word in query_words):
+                    score += 2.0
+                
+                # 문맥 부스트
+                score = contextual_boost(doc, search_query, score)
+                
+                doc_scores[doc_id] = (score, doc)
+            
+            # RRF + 부스트 점수 기준 정렬
             ranked = sorted(doc_scores.values(), key=lambda x: x[0], reverse=True)
             results = [doc for _, doc in ranked]
-            import sys; print(f"🔍 intent={intent} vec_w={vec_w} bm25_w={bm25_w} | search_query='{search_query}' | top3: {[d.metadata.get('title','?')[:30] for d in results[:3]]}", file=sys.stderr, flush=True)
+            print(f"🔍 intent={intent} vec_w={vec_w} bm25_w={bm25_w} | search_query='{search_query}' | top3: {[d.metadata.get('title','?')[:30] for d in results[:3]]}", file=sys.stderr, flush=True)
 
             # 의도별 chunk 수 조절 (컨텍스트 압축)
             # 너무 많은 문서를 넣으면 지연/품질 저하가 발생하므로 축소
@@ -1123,6 +1297,14 @@ class Handler(BaseHTTPRequestHandler):
                 answer = result.get("content", "").strip() or "응답을 생성할 수 없습니다."
                 # 후처리: 중국어 제거, 반복 제거, 태그 제거
                 answer = clean_answer(answer)
+                
+                # ── 답변 검증 ──
+                is_valid, confidence, issues = validate_answer(answer, query, sources)
+                print(f"🔍 답변 검증: valid={is_valid}, confidence={confidence:.2f}, issues={issues}", file=sys.stderr, flush=True)
+                
+                if not is_valid and confidence < 0.3:
+                    # 신뢰도 매우 낮음 → 경고 추가
+                    answer = f"⚠️ 답변 신뢰도가 낮습니다 ({int(confidence*100)}%).\n\n{answer}"
             except Exception as e:
                 answer = f"LLM 오류: {e}"
 
