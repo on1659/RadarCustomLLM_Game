@@ -115,9 +115,7 @@ def build_multi_step_prompt(query, context, query_type):
 4. **참고 자료의 정보만 사용** (추측 금지)
 
 # 참고 자료
-{context}
-
-답변:"""
+{context}"""
     elif query_type == "multi":
         system = """너는 게임 위키 도우미야. 여러 질문에 대해 각각 답변해줘.
 
@@ -127,15 +125,11 @@ def build_multi_step_prompt(query, context, query_type):
 3. **참고 자료의 정보만 사용** (추측 금지)
 
 # 참고 자료
-{context}
-
-답변:"""
+{context}"""
     else:
         system = """너는 게임 위키 도우미야. **참고 자료의 정보를 EXACTLY 그대로 전달**해야 해.
 
 # 참고 자료
-{context}
+{context}"""
 
-답변:"""
-    
     return system.format(context=context) + f"\n\n질문: {query}\n\n답변:"

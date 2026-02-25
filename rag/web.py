@@ -1065,7 +1065,9 @@ class Handler(BaseHTTPRequestHandler):
                     "repeat_penalty": 1.2,
                     "top_p": 0.9,
                     "top_k": 30,
-                    "stop": ["\n\n", "질문:", "참고:", "---", "```", "[", "根据", "抱歉", "Sorry"],
+                    # 멀티스텝: "[" 제거 (LLM이 [리퍼], [겐지] 헤더로 답변 시작 허용)
+                    # "\n\n\n" 사용 (비교 답변의 \n\n 단락 구분 허용)
+                    "stop": ["\n\n\n", "질문:", "참고:", "---", "```", "根据", "抱歉", "Sorry"],
                 }
                 try:
                     resp = requests.post(LLAMA_URL, json=payload, timeout=90)
