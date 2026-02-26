@@ -1005,19 +1005,41 @@ class Handler(BaseHTTPRequestHandler):
                 for sq in subqueries[:3]:  # 최대 3개까지
                     sq_intent = classify_intent(sq)
                     sq_vec_w, sq_bm25_w = INTENT_WEIGHTS.get(sq_intent, (0.6, 0.4))
-                    
+
+                    # 서브쿼리별 게임 필터: 원본 쿼리에서 엔티티 직전에 등장한 가장 가까운 게임명 탐색
+                    # (다중 게임 쿼리 대응: "팰월드 람볼이랑 오버워치 리퍼" → 각각 분리)
+                    q_lower = query.lower()
+                    sq_pos = q_lower.find(sq.lower())
+                    sq_game_filter = None
+                    if sq_pos != -1:
+                        before = q_lower[:sq_pos]  # 엔티티 이전 텍스트
+                        _gmap = {
+                            "palworld":   ["팰월드", "palworld"],
+                            "overwatch":  ["오버워치", "overwatch", "옵치"],
+                            "minecraft":  ["마인크래프트", "마크", "minecraft"],
+                        }
+                        best_pos, best_game = -1, None
+                        for gname, kws in _gmap.items():
+                            for kw in kws:
+                                p = before.rfind(kw)  # 엔티티 앞에서 가장 가까운(오른쪽) 게임명
+                                if p > best_pos:
+                                    best_pos, best_game = p, gname
+                        sq_game_filter = best_game
+                    if not sq_game_filter:
+                        sq_game_filter = game_filter  # 감지 실패 시 전체 쿼리 필터 사용
+
                     # 벡터 검색
                     sq_vec = vdb.similarity_search(sq, k=10)
-                    if game_filter:
-                        sq_vec = [d for d in sq_vec if d.metadata.get("game", "") == game_filter]
-                    
+                    if sq_game_filter:
+                        sq_vec = [d for d in sq_vec if d.metadata.get("game", "") == sq_game_filter]
+
                     # BM25 검색
                     sq_tokens = tokenize_ko(sq)
                     sq_bm25_scores = bm25_index.get_scores(sq_tokens)
                     sq_bm25_idx = sorted(range(len(sq_bm25_scores)), key=lambda i: sq_bm25_scores[i], reverse=True)[:10]
                     sq_bm25_results = [bm25_docs[i] for i in sq_bm25_idx if sq_bm25_scores[i] > 0]
-                    if game_filter:
-                        sq_bm25_results = [d for d in sq_bm25_results if d.metadata.get("game", "") == game_filter]
+                    if sq_game_filter:
+                        sq_bm25_results = [d for d in sq_bm25_results if d.metadata.get("game", "") == sq_game_filter]
                     
                     # RRF 통합
                     sq_scores = {}

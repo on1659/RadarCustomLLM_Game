@@ -41,14 +41,22 @@ def detect_complex_query(query):
         r"(.+?),\s*(.+?)\s*알려",
     ]
     
+    # 엔티티 후처리 헬퍼 (이랑/와/과 연결어 잔여 + noise 단어 제거)
+    _NOISE_SUFFIX = re.compile(r'\s*(각각|특징|알려|가르쳐|뭐야|어때|좀|설명|전부|둘다|각자|따로|정리|요약).*$')
+    _GAME_NAMES = re.compile(r'(팰월드|마인크래프트|오버워치|마크|옵치|게임|에서|의)')
+
+    def _clean_entity(e):
+        e = _GAME_NAMES.sub('', e).strip()          # 게임명 제거
+        e = _NOISE_SUFFIX.sub('', e).strip()          # 후미 noise 제거
+        e = re.sub(r'이$', '', e).strip()             # "이랑" 연결어 잔여 '이' 제거
+        return e
+
     for pattern in list_patterns:
         match = re.search(pattern, query)
         if match:
-            entity1 = match.group(1).strip()
-            entity2 = match.group(2).strip()
-            entity1 = re.sub(r'(팰월드|마인크래프트|오버워치|게임|에서|의)', '', entity1).strip()
-            entity2 = re.sub(r'(팰월드|마인크래프트|오버워치|게임|에서|의)', '', entity2).strip()
-            if entity1 and entity2:
+            entity1 = _clean_entity(match.group(1).strip())
+            entity2 = _clean_entity(match.group(2).strip())
+            if entity1 and entity2 and len(entity1) >= 2 and len(entity2) >= 2:
                 return True, "multi", [entity1, entity2]
     
     # "A는? B는?" 패턴
