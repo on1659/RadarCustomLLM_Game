@@ -992,6 +992,8 @@ class Handler(BaseHTTPRequestHandler):
                     search_query = sess["last_query"] + " " + search_query
 
             # ── DB 초기화 (lazy load) ──
+            # 주의: vdb는 멀티스텝 블록 이전에 초기화해야 함 (스코프 버그 방지)
+            # bm25_index / bm25_docs 도 get_db() 내부에서 global로 초기화됨
             vdb = get_db()
 
             # ── 멀티스텝 추론: 복합 질문 감지 (원본 query 사용) ──
